@@ -76,16 +76,34 @@ func stack() string {
 	return s[index+1:]
 }
 
-func Min(a,b int) int{
+//Min return the smaller value
+func Min(a, b int) int {
 	if a <= b {
 		return a
 	}
 	return b
 }
 
-func Max(a,b int) int{
-	if a >= b{
+//Max return the bigger value
+func Max(a, b int) int {
+	if a >= b {
 		return a
 	}
 	return b
+}
+
+//SliceMax return the slice max value
+func SliceMax(origin []int) int {
+	//假设第一个元素是最大值，下标为0
+	maxVal := origin[0]
+	maxIndex := 0
+
+	for i := 1; i < len(origin); i++ {
+		//从第二个 元素开始循环比较，如果发现有更大的，则交换
+		if maxVal < origin[i] {
+			maxVal = origin[i]
+			maxIndex = i
+		}
+	}
+	return origin[maxIndex]
 }

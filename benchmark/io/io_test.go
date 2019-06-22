@@ -20,7 +20,7 @@ import (
 
 const (
 	addr = "127.0.0.1:13250" // local address
-	conc = 1000              // concurrent client count
+	conc = 100              // concurrent client count
 )
 
 //
