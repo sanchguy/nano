@@ -23,6 +23,11 @@ type (
 	}
 )
 
+//NewDeck return a deck object
+func NewDeck() *Deck {
+	return &Deck{}
+}
+
 func (d *Deck) sorted() []*Card {
 	var deck []*Card
 	for _, suit := range suits {

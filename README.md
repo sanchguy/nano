@@ -2,10 +2,10 @@
 
 [1]: https://travis-ci.org/lonng/nano.svg?branch=master
 [2]: https://travis-ci.org/lonng/nano
-[3]: https://godoc.org/github.com/lonng/nano?status.svg
-[4]: https://godoc.org/github.com/lonng/nano
-[5]: https://goreportcard.com/badge/github.com/lonng/nano
-[6]: https://goreportcard.com/report/github.com/lonng/nano
+[3]: https://godoc.org/github.com/sanchguy/nano?status.svg
+[4]: https://godoc.org/github.com/sanchguy/nano
+[5]: https://goreportcard.com/badge/github.com/sanchguy/nano
+[6]: https://goreportcard.com/report/github.com/sanchguy/nano
 [7]: https://img.shields.io/badge/license-MIT-blue.svg
 [8]: LICENSE
 
@@ -154,7 +154,7 @@ func (manager *PlayerManager) Login(s *session.Session, msg *ReqPlayerLogin) err
 ## Installation
 
 ```shell
-go get github.com/lonng/nano
+go get github.com/sanchguy/nano
 
 # dependencies
 go get -u github.com/golang/protobuf
@@ -169,7 +169,7 @@ go get -u github.com/gorilla/websocket
 # Device: i5-6500 3.2GHz 4 Core/1000-Concurrent   => IOPS 11W(Average)
 # Other:  ...
 
-cd $GOPATH/src/github.com/lonng/nano/benchmark/io
+cd $GOPATH/src/github.com/sanchguy/nano/benchmark/io
 go test -v -tags "benchmark"
 ```
 

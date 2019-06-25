@@ -1,4 +1,4 @@
-module github.com/lonng/nano
+module github.com/sanchguy/nano
 
 go 1.12
 
@@ -8,6 +8,5 @@ require (
 	github.com/gorilla/websocket v1.4.0
 	github.com/looplab/fsm v0.1.0
 	github.com/mdempsky/gocode v0.0.0-20190203001940-7fb65232883f // indirect
-	github.com/sanchguy/nano v0.4.0
 	github.com/urfave/cli v1.20.0
 )

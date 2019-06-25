@@ -28,11 +28,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/lonng/nano/component"
-	"github.com/lonng/nano/internal/codec"
-	"github.com/lonng/nano/internal/message"
-	"github.com/lonng/nano/internal/packet"
-	"github.com/lonng/nano/session"
+	"github.com/sanchguy/nano/component"
+	"github.com/sanchguy/nano/internal/codec"
+	"github.com/sanchguy/nano/internal/message"
+	"github.com/sanchguy/nano/internal/packet"
+	"github.com/sanchguy/nano/session"
 )
 
 // Unhandled message buffer size

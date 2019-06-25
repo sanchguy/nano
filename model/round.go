@@ -534,7 +534,7 @@ func (r *Round) calculateScoreTruco(action string, playername string, value stri
 }
 
 func (r *Round) setTable(value string, player string) {
-	encontrado := false
+	// encontrado := false
 	if player == r.player1name {
 		card := NewCard(r.returnNumber(value), r.returnSuit(value))
 		aux := -1
@@ -546,7 +546,7 @@ func (r *Round) setTable(value string, player string) {
 				if i < len(r.cartasp1) {
 					if r.cartasp1[i].number == card.number && r.cartasp1[i].suit == card.suit {
 						aux = i
-						encontrado = true
+						// encontrado = true
 						r.tablep1 = append(r.tablep1, card)
 					}
 					i++
@@ -569,7 +569,7 @@ func (r *Round) setTable(value string, player string) {
 				if i < len(r.cartasp2) {
 					if r.cartasp2[i].number == card.number && r.cartasp2[i].suit == card.suit {
 						aux = i
-						encontrado = true
+						// encontrado = true
 						r.tablep2 = append(r.tablep2, card)
 					}
 					i++

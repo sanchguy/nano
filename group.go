@@ -25,7 +25,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/lonng/nano/session"
+	"github.com/sanchguy/nano/session"
 )
 
 const (

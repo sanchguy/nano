@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lonng/nano"
-	"github.com/lonng/nano/component"
-	"github.com/lonng/nano/serialize/json"
-	"github.com/lonng/nano/session"
+	"github.com/sanchguy/nano"
+	"github.com/sanchguy/nano/component"
+	"github.com/sanchguy/nano/serialize/json"
+	"github.com/sanchguy/nano/session"
 	"strings"
 )
 
