@@ -10,10 +10,14 @@ type (
 	//Player object
 	Player struct {
 		id           int64
+		head 		string
 		nickname     string
 		envidoPoints int
 		cards        []*Card
 		logger       *log.Entry
+		isReady		bool
+		Sex 		int
+
 
 		chOperation chan *protocol.OpChoosed
 	}

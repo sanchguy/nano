@@ -4,6 +4,7 @@ import (
 	"github.com/pborman/uuid"
 	"github.com/sanchguy/nano"
 	"github.com/sanchguy/nano/constant"
+	"github.com/sanchguy/nano/protocol"
 	"github.com/sanchguy/nano/session"
 )
 type (
@@ -14,6 +15,7 @@ type (
 		players []*Player
 		group *nano.Group
 		die	chan struct{}
+		latestEnter *protocol.PlayerEnterRoom
 	}
 )
 
@@ -47,4 +49,15 @@ func (r *Room) playerJoin(s *session.Session,isReJoin bool){
 
 	}
 
+}
+
+func (r *Room) syncRoomStatus()  {
+	r.latestEnter = &protocol.PlayerEnterRoom{Players:[]protocol.PlayerInfo{}}
+	for _,p := range r.players{
+		uid := p.UID()
+		r.latestEnter.Players = append(r.latestEnter.Players,protocol.PlayerInfo{
+			UID:p.UID(),
+			Nickname:p.nickname,
+		})
+	}
 }
