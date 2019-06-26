@@ -7,6 +7,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/websocket v1.4.0
 	github.com/looplab/fsm v0.1.0
-	github.com/mdempsky/gocode v0.0.0-20190203001940-7fb65232883f // indirect
+	github.com/pborman/uuid v1.2.0
+	github.com/sirupsen/logrus v1.4.2
 	github.com/urfave/cli v1.20.0
 )

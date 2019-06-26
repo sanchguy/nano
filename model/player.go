@@ -2,23 +2,33 @@ package model
 
 import (
 	"github.com/sanchguy/nano"
+	"github.com/sanchguy/nano/protocol"
+	log "github.com/sirupsen/logrus"
 )
 
 type (
 	//Player object
 	Player struct {
-		id           int
+		id           int64
 		nickname     string
 		envidoPoints int
 		cards        []*Card
+		logger       *log.Entry
+
+		chOperation chan *protocol.OpChoosed
 	}
 )
 
 //NewPlayer return a new player object
-func NewPlayer(playerid int, name string) *Player {
+func NewPlayer(playerid int64, name string) *Player {
 	return &Player{
 		id:       playerid,
 		nickname: name,
+		envidoPoints:0,
+		cards:[]*Card{},
+		logger:log.WithField("player",playerid),
+
+		chOperation:make(chan *protocol.OpChoosed),
 	}
 }
 
@@ -39,4 +49,8 @@ func (p *Player) points() int {
 		pairValue = append(pairValue, pair[0].envido(pair[1]))
 	}
 	return nano.SliceMax(pairValue)
+}
+
+func (p *Player) UID() int64 {
+	return p.id
 }

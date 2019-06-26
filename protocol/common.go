@@ -24,3 +24,11 @@ type EnterRoomResponse struct {
 	State   int          `json:"isSuccess"`
 	Players []PlayerInfo `json:"data"`
 }
+//选择执行的动作
+type OpChoosed struct {
+	Type   int
+	PaiID int
+}
+
+
+
