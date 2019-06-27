@@ -6,6 +6,7 @@ import (
 	"github.com/sanchguy/nano/constant"
 	"github.com/sanchguy/nano/protocol"
 	"github.com/sanchguy/nano/session"
+	log "github.com/sirupsen/logrus"
 )
 type (
 	//Room is room object
@@ -16,6 +17,8 @@ type (
 		group *nano.Group
 		die	chan struct{}
 		latestEnter *protocol.PlayerEnterRoom
+
+		logger *log.Entry
 	}
 )
 
@@ -27,6 +30,7 @@ func NewRoom(rid int64) *Room {
 		players:[]*Player{},
 		group:nano.NewGroup(uuid.New()),
 		die:make(chan struct{}),
+		logger:log.WithField("room",rid),
 	}
 }
 
@@ -56,8 +60,49 @@ func (r *Room) syncRoomStatus()  {
 	for _,p := range r.players{
 		uid := p.UID()
 		r.latestEnter.Players = append(r.latestEnter.Players,protocol.PlayerInfo{
-			UID:p.UID(),
+			UID:uid,
 			Nickname:p.nickname,
+			IsReady:true,
+			Offline:false,
 		})
 	}
+	r.group.Broadcast("onPlayerEnter",r.latestEnter)
+}
+
+func (r *Room) checkStart() {
+	s := r.state
+	if (s != constant.RoomStatusCreate) && (s != constant.RoomStatusCleaned){
+		r.logger.Infof("当前房间状态不对，不能开始游戏，当前状态=%s",s.String())
+		return
+	}
+	if len(r.players) < 2 {
+		r.logger.Infof("当前房间玩家数量不足")
+		return
+	}
+
+}
+
+func (r *Room)start() {
+
+}
+
+func (r *Room) destroy() {
+	if r.state == constant.RoomStatusDestroy {
+		r.logger.Info("房间已解散")
+		return
+	}
+
+	close(r.die)
+
+	r.state = constant.RoomStatusDestroy
+	r.logger.Info("销毁房间")
+
+	for i := range r.players {
+		p := r.players[i]
+		p.reSet()
+	}
+}
+
+func (r *Room) isDestroy() bool {
+	return r.status == constant.RoomStatusDestroy
 }
