@@ -1,4 +1,4 @@
-package model
+package game
 
 import (
 	"github.com/pborman/uuid"
@@ -7,6 +7,7 @@ import (
 	"github.com/sanchguy/nano/protocol"
 	"github.com/sanchguy/nano/session"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 type (
 	//Room is room object
@@ -17,7 +18,7 @@ type (
 		group *nano.Group
 		die	chan struct{}
 		latestEnter *protocol.PlayerEnterRoom
-
+		createdAt int64		//创建时间
 		logger *log.Entry
 	}
 )
@@ -28,6 +29,7 @@ func NewRoom(rid int64) *Room {
 		roomID: rid,
 		state:constant.RoomStatusCreate,
 		players:[]*Player{},
+		createdAt: time.Now().Unix(),
 		group:nano.NewGroup(uuid.New()),
 		die:make(chan struct{}),
 		logger:log.WithField("room",rid),
@@ -84,6 +86,29 @@ func (r *Room) checkStart() {
 
 func (r *Room)start() {
 
+}
+
+func (r *Room) onPlayerExit(s *session.Session,isDisconnect bool) {
+	uid := s.UID()
+	r.group.Leave(s)
+	if isDisconnect {
+		//TODO 断开直接判断胜负
+	}else {
+		tmpPlayers := r.players[:0]
+		for _,p := range r.players{
+			if p.id != uid {
+				tmpPlayers = append(tmpPlayers,p)
+			}else {
+				p.reSet()
+				p.room = nil
+				p.envidoPoints = 0
+			}
+		}
+		r.players = tmpPlayers
+	}
+	if len(r.players) == 0 {
+		r.destroy()
+	}
 }
 
 func (r *Room) destroy() {
