@@ -32,10 +32,10 @@ import (
 
 // NetworkEntity represent low-level network instance
 type NetworkEntity interface {
-	Push(route string, v interface{}) error
+	Push(route string, v []byte) error
 	MID() uint
-	Response(v interface{}) error
-	ResponseMID(mid uint, v interface{}) error
+	Response(v []byte) error
+	ResponseMID(mid uint, v []byte) error
 	Close() error
 	RemoteAddr() net.Addr
 }
@@ -70,18 +70,18 @@ func New(entity NetworkEntity) *Session {
 }
 
 // Push message to client
-func (s *Session) Push(route string, v interface{}) error {
+func (s *Session) Push(route string, v []byte) error {
 	return s.entity.Push(route, v)
 }
 
 // Response message to client
-func (s *Session) Response(v interface{}) error {
+func (s *Session) Response(v []byte) error {
 	return s.entity.Response(v)
 }
 
 // ResponseMID responses message to client, mid is
 // request message ID
-func (s *Session) ResponseMID(mid uint, v interface{}) error {
+func (s *Session) ResponseMID(mid uint, v []byte) error {
 	return s.entity.ResponseMID(mid, v)
 }
 

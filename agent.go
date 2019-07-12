@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	agentWriteBacklog = 16
+	agentWriteBacklog = 32
 )
 
 var (
@@ -55,7 +55,7 @@ type (
 		lastMid uint                // last message id
 		state   int32               // current agent state
 		chDie   chan struct{}       // wait for close
-		chSend  chan pendingMessage // push message queue
+		chSend  chan []byte // push message queue
 		lastAt  int64               // last heartbeat unix time stamp
 		decoder *codec.Decoder      // binary decoder
 		options *options
@@ -75,10 +75,10 @@ type (
 func newAgent(conn net.Conn, options *options) *agent {
 	a := &agent{
 		conn:    conn,
-		state:   statusStart,
+		state:   statusWorking,
 		chDie:   make(chan struct{}),
 		lastAt:  time.Now().Unix(),
-		chSend:  make(chan pendingMessage, agentWriteBacklog),
+		chSend:  make(chan []byte, agentWriteBacklog),
 		decoder: codec.NewDecoder(),
 		options: options,
 	}
@@ -91,7 +91,7 @@ func newAgent(conn net.Conn, options *options) *agent {
 	return a
 }
 
-func (a *agent) send(m pendingMessage) (err error) {
+func (a *agent) send(m []byte) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = ErrBrokenPipe
@@ -106,7 +106,7 @@ func (a *agent) MID() uint {
 }
 
 // Push, implementation for session.NetworkEntity interface
-func (a *agent) Push(route string, v interface{}) error {
+func (a *agent) Push(route string, msg []byte) error {
 	if a.status() == statusClosed {
 		return ErrBrokenPipe
 	}
@@ -116,17 +116,13 @@ func (a *agent) Push(route string, v interface{}) error {
 	}
 
 	if env.debug {
-		switch d := v.(type) {
-		case []byte:
-			logger.Println(fmt.Sprintf("Type=Push, ID=%d, UID=%d, Route=%s, Data=%dbytes",
-				a.session.ID(), a.session.UID(), route, len(d)))
-		default:
-			logger.Println(fmt.Sprintf("Type=Push, ID=%d, UID=%d, Route=%s, Data=%+v",
-				a.session.ID(), a.session.UID(), route, v))
-		}
+
+		logger.Println(fmt.Sprintf("Type=Push, ID=%d, UID=%d, Route=%s, Data=%dbytes",
+			a.session.ID(), a.session.UID(), route, len(msg)))
+
 	}
 
-	return a.send(pendingMessage{typ: message.Push, route: route, payload: v})
+	return a.send(msg)
 }
 
 // Response, implementation for session.NetworkEntity interface
@@ -161,7 +157,7 @@ func (a *agent) ResponseMID(mid uint, v interface{}) error {
 		}
 	}
 
-	return a.send(pendingMessage{typ: message.Response, mid: mid, payload: v})
+	return a.send([]byte{})
 }
 
 // Close, implementation for session.NetworkEntity interface
@@ -241,47 +237,48 @@ func (a *agent) write() {
 			}
 
 		case data := <-a.chSend:
-			payload, err := serializeOrRaw(data.payload)
-			if err != nil {
-				switch data.typ {
-				case message.Push:
-					logger.Println(fmt.Sprintf("Push: %s error: %s", data.route, err.Error()))
-				case message.Response:
-					logger.Println(fmt.Sprintf("Response message(id: %d) error: %s", data.mid, err.Error()))
-				default:
-					// expect
-				}
-				break
-			}
+			//payload, err := serializeOrRaw(data.payload)
+			//if err != nil {
+			//	switch data.typ {
+			//	case message.Push:
+			//		logger.Println(fmt.Sprintf("Push: %s error: %s", data.route, err.Error()))
+			//	case message.Response:
+			//		logger.Println(fmt.Sprintf("Response message(id: %d) error: %s", data.mid, err.Error()))
+			//	default:
+			//		// expect
+			//	}
+			//	break
+			//}
 
 			// construct message and encode
-			m := &message.Message{
-				Type:  data.typ,
-				Data:  payload,
-				Route: data.route,
-				ID:    data.mid,
-			}
-			if pipe := a.options.pipeline; pipe != nil {
-				err := pipe.Outbound().Process(a.session, Message{m})
-				if err != nil {
-					logger.Println("broken pipeline", err.Error())
-					break
-				}
-			}
+			//m := &message.Message{
+			//	Type:  data.typ,
+			//	Data:  payload,
+			//	Route: data.route,
+			//	ID:    data.mid,
+			//}
+			//if pipe := a.options.pipeline; pipe != nil {
+			//	err := pipe.Outbound().Process(a.session, Message{m})
+			//	if err != nil {
+			//		logger.Println("broken pipeline", err.Error())
+			//		break
+			//	}
+			//}
+			//
+			//em, err := m.Encode()
+			//if err != nil {
+			//	logger.Println(err.Error())
+			//	break
+			//}
+			//
+			//// packet encode
+			//p, err := codec.Encode(packet.Data, em)
+			//if err != nil {
+			//	logger.Println(err)
+			//	break
+			//}
 
-			em, err := m.Encode()
-			if err != nil {
-				logger.Println(err.Error())
-				break
-			}
-
-			// packet encode
-			p, err := codec.Encode(packet.Data, em)
-			if err != nil {
-				logger.Println(err)
-				break
-			}
-			chWrite <- p
+			chWrite <- data
 
 		case <-a.chDie: // agent closed signal
 			return

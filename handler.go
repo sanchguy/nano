@@ -21,15 +21,15 @@
 package nano
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/gorilla/websocket"
+	pbtruco "github.com/sanchguy/nano/protocol/truco_pb"
 	"net"
 	"reflect"
 	"sync/atomic"
 	"time"
 
 	"github.com/sanchguy/nano/component"
-	"github.com/sanchguy/nano/internal/codec"
 	"github.com/sanchguy/nano/internal/message"
 	"github.com/sanchguy/nano/internal/packet"
 	"github.com/sanchguy/nano/session"
@@ -38,6 +38,10 @@ import (
 // Unhandled message buffer size
 const packetBacklog = 1024
 const funcBacklog = 1 << 8
+
+type ServiceMethods map[int32]string
+
+var ServiceHandler = ServiceMethods{}
 
 var (
 	// handler service singleton
@@ -49,23 +53,37 @@ var (
 )
 
 func hbdEncode() {
-	data, err := json.Marshal(map[string]interface{}{
-		"code": 200,
-		"sys":  map[string]float64{"heartbeat": env.heartbeat.Seconds()},
-	})
+	//data, err := json.Marshal(map[string]interface{}{
+	//	"code": 200,
+	//	"sys":  map[string]float64{"heartbeat": env.heartbeat.Seconds()},
+	//})
+	//if err != nil {
+	//	panic(err)
+	//}
+
+	//hrd, err = codec.Encode(packet.Handshake, data)
+	//if err != nil {
+	//	panic(err)
+	//}
+
+	//hbd, err = codec.Encode(packet.Heartbeat, nil)
+	//if err != nil {
+	//	panic(err)
+	//}
+	heartbeat := &pbtruco.HeartbeatRsp{
+		Timestamp:time.Now().UnixNano() / 1e6,
+	}
+	hbdata,err := heartbeat.Marshal()
 	if err != nil {
 		panic(err)
+	}
+	heartbeatPacket := &pbtruco.Packet{
+		Uri:1,
+		Body:hbdata,
 	}
 
-	hrd, err = codec.Encode(packet.Handshake, data)
-	if err != nil {
-		panic(err)
-	}
+	hbd ,err := heartbeatPacket.Marshal()
 
-	hbd, err = codec.Encode(packet.Heartbeat, nil)
-	if err != nil {
-		panic(err)
-	}
 }
 
 type (
@@ -194,6 +212,58 @@ func (h *handlerService) register(comp component.Component, opts []component.Opt
 	return nil
 }
 
+func (h *handlerService) handleWS(conn *websocket.Conn) {
+	c, err := newWSConn(conn)
+	if err != nil {
+		logger.Println(err)
+		return
+	}
+	// create a client agent and startup write gorontine
+	agent := newAgent(c, h.options)
+	agent.setStatus(statusWorking)
+	// startup write goroutine
+	go agent.write()
+
+	if env.debug {
+		logger.Println(fmt.Sprintf("New session established: %s", agent.String()))
+	}
+
+	// guarantee agent related resource be destroyed
+	defer func() {
+		agent.Close()
+		if env.debug {
+			logger.Println(fmt.Sprintf("Session read goroutine exit, SessionID=%d, UID=%d", agent.session.ID(), agent.session.UID()))
+		}
+	}()
+
+	//read loop
+	for{
+		t,b,err := c.conn.ReadMessage()
+		_ = t
+		if err != nil {
+			logger.Println(err)
+		}
+		p := &pbtruco.Packet{}
+		err = p.Unmarshal(b)
+		if err != nil {
+			logger.Println("unpack pb error")
+		}
+
+		uri := p.Uri
+		logger.Println("get url income = %d",uri)
+		method := ServiceHandler[uri]
+		logger.Println("get method name = %s",method)
+		msg := &message.Message{
+			ID:0,
+			Route:method,
+			Data:p.Body,
+			Type:0x02,
+		}
+		h.processWsMessage(agent,msg)
+		atomic.StoreInt64(&agent.lastAt, time.Now().Unix())
+	}
+}
+
 func (h *handlerService) handle(conn net.Conn) {
 	// create a client agent and startup write gorontine
 	agent := newAgent(conn, h.options)
@@ -279,6 +349,28 @@ func (h *handlerService) processPacket(agent *agent, p *packet.Packet) error {
 
 	atomic.StoreInt64(&agent.lastAt, time.Now().Unix())
 	return nil
+}
+
+func (h *handlerService) processWsMessage(agent *agent, msg *message.Message) {
+	var lastMid uint
+	lastMid = msg.ID
+
+	handler, ok := h.handlers[msg.Route]
+	if !ok {
+		logger.Println(fmt.Sprintf("nano/handler: %s not found(forgot registered?)", msg.Route))
+		return
+	}
+
+	var payload = msg.Data
+	var data interface{}
+	data = payload
+
+	if env.debug {
+		logger.Println(fmt.Sprintf("UID=%d, Message={%s}, Data=%+v", agent.session.UID(), msg.String(), data))
+	}
+
+	args := []reflect.Value{handler.Receiver, agent.srv, reflect.ValueOf(data)}
+	h.chLocalProcess <- unhandledMessage{agent, lastMid, handler.Method, args}
 }
 
 func (h *handlerService) processMessage(agent *agent, msg *message.Message) {

@@ -136,11 +136,3 @@ func (c *wsConn) SetWriteDeadline(t time.Time) error {
 	return c.conn.SetWriteDeadline(t)
 }
 
-func (h *handlerService) handleWS(conn *websocket.Conn) {
-	c, err := newWSConn(conn)
-	if err != nil {
-		logger.Println(err)
-		return
-	}
-	h.handle(c)
-}

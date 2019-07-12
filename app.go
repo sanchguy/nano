@@ -30,8 +30,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"strings"
-	"time"
 	"sync/atomic"
+	"time"
 )
 
 var running int32
