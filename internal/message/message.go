@@ -213,6 +213,24 @@ func Decode(data []byte) (*Message, error) {
 	return m, nil
 }
 
+func GerMsgCode(data []byte) uint{
+	offset := 1
+
+	id := uint(0)
+	// little end byte order
+	// WARNING: must can be stored in 64 bits integer
+	// variant length encode
+	for i := offset; i < len(data); i++ {
+		b := data[i]
+		id += uint(b&0x7F) << uint(7*(i-offset))
+		if b < 128 {
+			offset = i + 1
+			break
+		}
+	}
+	return id
+}
+
 // SetDictionary set routes map which be used to compress route.
 // TODO(warning): set dictionary in runtime would be a dangerous operation!!!!!!
 func SetDictionary(dict map[string]uint16) {

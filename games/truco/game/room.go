@@ -11,19 +11,20 @@ import (
 type (
 	//Room is room object
 	Room struct {
-		roomID  int64
+		roomID  int32
 		state	constant.RoomStatus
 		players []*Player
 		group *nano.Group
 		die	chan struct{}
 		latestEnter int64
 		createdAt int64		//创建时间
+		creator int64
 		logger *log.Entry
 	}
 )
 
 //NewRoom return new room
-func NewRoom(rid int64) *Room {
+func NewRoom(rid int32) *Room {
 	return &Room{
 		roomID: rid,
 		state:constant.RoomStatusCreate,

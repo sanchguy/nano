@@ -24,14 +24,12 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	pbtruco "github.com/sanchguy/nano/protocol/truco_pb"
-	"net"
 	"reflect"
 	"sync/atomic"
 	"time"
 
 	"github.com/sanchguy/nano/component"
 	"github.com/sanchguy/nano/internal/message"
-	"github.com/sanchguy/nano/internal/packet"
 	"github.com/sanchguy/nano/session"
 )
 
@@ -70,19 +68,19 @@ func hbdEncode() {
 	//if err != nil {
 	//	panic(err)
 	//}
-	heartbeat := &pbtruco.HeartbeatRsp{
-		Timestamp:time.Now().UnixNano() / 1e6,
-	}
-	hbdata,err := heartbeat.Marshal()
-	if err != nil {
-		panic(err)
-	}
-	heartbeatPacket := &pbtruco.Packet{
-		Uri:1,
-		Body:hbdata,
-	}
-
-	hbd ,err := heartbeatPacket.Marshal()
+	//heartbeat := &pbtruco.HeartbeatRsp{
+	//	Timestamp:time.Now().UnixNano() / 1e6,
+	//}
+	//hbdata,err := heartbeat.Marshal()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//heartbeatPacket := &pbtruco.Packet{
+	//	Uri:1,
+	//	Body:hbdata,
+	//}
+	//
+	//hbd ,err := heartbeatPacket.Marshal()
 
 }
 
@@ -175,6 +173,7 @@ func (h *handlerService) dispatch() {
 		select {
 		case m := <-h.chLocalProcess: // logic dispatch
 			m.agent.lastMid = m.lastMid
+			logger.Println("agent lastMid = ",m.lastMid)
 			pcall(m.handler, m.args)
 
 		case s := <-h.chCloseSession: // session closed callback
@@ -212,14 +211,15 @@ func (h *handlerService) register(comp component.Component, opts []component.Opt
 	return nil
 }
 
-func (h *handlerService) handleWS(conn *websocket.Conn) {
-	c, err := newWSConn(conn)
-	if err != nil {
-		logger.Println(err)
-		return
-	}
+func (h *handlerService) handleWS(conn *websocket.Conn,info map[string][]string) {
+	//c, err := newWSConn(conn)
+	//if err != nil {
+	//	logger.Println(err)
+	//	return
+	//}
 	// create a client agent and startup write gorontine
-	agent := newAgent(c, h.options)
+	agent := newAgent(conn, h.options)
+	
 	agent.setStatus(statusWorking)
 	// startup write goroutine
 	go agent.write()
@@ -238,11 +238,12 @@ func (h *handlerService) handleWS(conn *websocket.Conn) {
 
 	//read loop
 	for{
-		t,b,err := c.conn.ReadMessage()
+		t,b,err := conn.ReadMessage()
 		_ = t
 		if err != nil {
 			logger.Println(err)
 		}
+		logger.Println("get packet = ",b)
 		p := &pbtruco.Packet{}
 		err = p.Unmarshal(b)
 		if err != nil {
@@ -253,8 +254,9 @@ func (h *handlerService) handleWS(conn *websocket.Conn) {
 		logger.Println("get url income = %d",uri)
 		method := ServiceHandler[uri]
 		logger.Println("get method name = %s",method)
+		msgId := message.GerMsgCode(p.Body)
 		msg := &message.Message{
-			ID:0,
+			ID:msgId,
 			Route:method,
 			Data:p.Body,
 			Type:0x02,
@@ -264,92 +266,92 @@ func (h *handlerService) handleWS(conn *websocket.Conn) {
 	}
 }
 
-func (h *handlerService) handle(conn net.Conn) {
-	// create a client agent and startup write gorontine
-	agent := newAgent(conn, h.options)
+//func (h *handlerService) handle(conn net.Conn) {
+//	// create a client agent and startup write gorontine
+//	agent := newAgent(conn, h.options)
+//
+//	// startup write goroutine
+//	go agent.write()
+//
+//	if env.debug {
+//		logger.Println(fmt.Sprintf("New session established: %s", agent.String()))
+//	}
+//
+//	// guarantee agent related resource be destroyed
+//	defer func() {
+//		agent.Close()
+//		if env.debug {
+//			logger.Println(fmt.Sprintf("Session read goroutine exit, SessionID=%d, UID=%d", agent.session.ID(), agent.session.UID()))
+//		}
+//	}()
+//
+//	// read loop
+//	buf := make([]byte, 2048)
+//	for {
+//		n, err := conn.Read(buf)
+//		if err != nil {
+//			logger.Println(fmt.Sprintf("Read message error: %s, session will be closed immediately", err.Error()))
+//			return
+//		}
+//
+//		// TODO(warning): decoder use slice for performance, packet data should be copy before next Decode
+//		packets, err := agent.decoder.Decode(buf[:n])
+//		if err != nil {
+//			logger.Println(err.Error())
+//			return
+//		}
+//
+//		if len(packets) < 1 {
+//			continue
+//		}
+//
+//		// process all packet
+//		for i := range packets {
+//			if err := h.processPacket(agent, packets[i]); err != nil {
+//				logger.Println(err.Error())
+//				return
+//			}
+//		}
+//	}
+//}
 
-	// startup write goroutine
-	go agent.write()
-
-	if env.debug {
-		logger.Println(fmt.Sprintf("New session established: %s", agent.String()))
-	}
-
-	// guarantee agent related resource be destroyed
-	defer func() {
-		agent.Close()
-		if env.debug {
-			logger.Println(fmt.Sprintf("Session read goroutine exit, SessionID=%d, UID=%d", agent.session.ID(), agent.session.UID()))
-		}
-	}()
-
-	// read loop
-	buf := make([]byte, 2048)
-	for {
-		n, err := conn.Read(buf)
-		if err != nil {
-			logger.Println(fmt.Sprintf("Read message error: %s, session will be closed immediately", err.Error()))
-			return
-		}
-
-		// TODO(warning): decoder use slice for performance, packet data should be copy before next Decode
-		packets, err := agent.decoder.Decode(buf[:n])
-		if err != nil {
-			logger.Println(err.Error())
-			return
-		}
-
-		if len(packets) < 1 {
-			continue
-		}
-
-		// process all packet
-		for i := range packets {
-			if err := h.processPacket(agent, packets[i]); err != nil {
-				logger.Println(err.Error())
-				return
-			}
-		}
-	}
-}
-
-func (h *handlerService) processPacket(agent *agent, p *packet.Packet) error {
-	switch p.Type {
-	case packet.Handshake:
-		if _, err := agent.conn.Write(hrd); err != nil {
-			return err
-		}
-
-		agent.setStatus(statusHandshake)
-		if env.debug {
-			logger.Println(fmt.Sprintf("Session handshake Id=%d, Remote=%s", agent.session.ID(), agent.conn.RemoteAddr()))
-		}
-
-	case packet.HandshakeAck:
-		agent.setStatus(statusWorking)
-		if env.debug {
-			logger.Println(fmt.Sprintf("Receive handshake ACK Id=%d, Remote=%s", agent.session.ID(), agent.conn.RemoteAddr()))
-		}
-
-	case packet.Data:
-		if agent.status() < statusWorking {
-			return fmt.Errorf("receive data on socket which not yet ACK, session will be closed immediately, remote=%s",
-				agent.conn.RemoteAddr().String())
-		}
-
-		msg, err := message.Decode(p.Data)
-		if err != nil {
-			return err
-		}
-		h.processMessage(agent, msg)
-
-	case packet.Heartbeat:
-		// expected
-	}
-
-	atomic.StoreInt64(&agent.lastAt, time.Now().Unix())
-	return nil
-}
+//func (h *handlerService) processPacket(agent *agent, p *packet.Packet) error {
+//	switch p.Type {
+//	case packet.Handshake:
+//		if _, err := agent.conn.Write(hrd); err != nil {
+//			return err
+//		}
+//
+//		agent.setStatus(statusHandshake)
+//		if env.debug {
+//			logger.Println(fmt.Sprintf("Session handshake Id=%d, Remote=%s", agent.session.ID(), agent.conn.RemoteAddr()))
+//		}
+//
+//	case packet.HandshakeAck:
+//		agent.setStatus(statusWorking)
+//		if env.debug {
+//			logger.Println(fmt.Sprintf("Receive handshake ACK Id=%d, Remote=%s", agent.session.ID(), agent.conn.RemoteAddr()))
+//		}
+//
+//	case packet.Data:
+//		if agent.status() < statusWorking {
+//			return fmt.Errorf("receive data on socket which not yet ACK, session will be closed immediately, remote=%s",
+//				agent.conn.RemoteAddr().String())
+//		}
+//
+//		msg, err := message.Decode(p.Data)
+//		if err != nil {
+//			return err
+//		}
+//		h.processMessage(agent, msg)
+//
+//	case packet.Heartbeat:
+//		// expected
+//	}
+//
+//	atomic.StoreInt64(&agent.lastAt, time.Now().Unix())
+//	return nil
+//}
 
 func (h *handlerService) processWsMessage(agent *agent, msg *message.Message) {
 	var lastMid uint

@@ -22,7 +22,6 @@ package nano
 
 import (
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -98,38 +97,41 @@ func listenTLS(addr string, isWs bool, certificate string, key string, opts ...O
 
 // Enable current server accept connection
 func listenAndServe(addr string) {
-	listener, err := net.Listen("tcp", addr)
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
-
-	defer listener.Close()
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			logger.Println(err.Error())
-			continue
-		}
-
-		go handler.handle(conn)
-	}
+	//listener, err := net.Listen("tcp", addr)
+	//if err != nil {
+	//	logger.Fatal(err.Error())
+	//}
+	//
+	//defer listener.Close()
+	//for {
+	//	conn, err := listener.Accept()
+	//	if err != nil {
+	//		logger.Println(err.Error())
+	//		continue
+	//	}
+	//
+	//	go handler.handle(conn)
+	//}
 }
 
 func listenAndServeWS(addr string) {
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
-		CheckOrigin:     env.checkOrigin,
+		//CheckOrigin:     env.checkOrigin,
 	}
 
 	http.HandleFunc("/"+strings.TrimPrefix(env.wsPath, "/"), func(w http.ResponseWriter, r *http.Request) {
+		info := r.URL.Query()
+		logger.Println("get websocket~~~~~",info)
+		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			logger.Println(fmt.Sprintf("Upgrade failure, URI=%s, Error=%s", r.RequestURI, err.Error()))
 			return
 		}
 
-		handler.handleWS(conn)
+		handler.handleWS(conn,info)
 	})
 
 	if err := http.ListenAndServe(addr, nil); err != nil {

@@ -23,6 +23,7 @@ package nano
 import (
 	"errors"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"net"
 	"reflect"
 	"sync/atomic"
@@ -30,12 +31,11 @@ import (
 
 	"github.com/sanchguy/nano/internal/codec"
 	"github.com/sanchguy/nano/internal/message"
-	"github.com/sanchguy/nano/internal/packet"
 	"github.com/sanchguy/nano/session"
 )
 
 const (
-	agentWriteBacklog = 32
+	agentWriteBacklog = 16
 )
 
 var (
@@ -51,7 +51,7 @@ type (
 	agent struct {
 		// regular agent member
 		session *session.Session    // session
-		conn    net.Conn            // low-level conn fd
+		conn    *websocket.Conn           // low-level conn fd
 		lastMid uint                // last message id
 		state   int32               // current agent state
 		chDie   chan struct{}       // wait for close
@@ -72,7 +72,7 @@ type (
 )
 
 // Create new agent instance
-func newAgent(conn net.Conn, options *options) *agent {
+func newAgent(conn *websocket.Conn, options *options) *agent {
 	a := &agent{
 		conn:    conn,
 		state:   statusWorking,
@@ -127,13 +127,13 @@ func (a *agent) Push(route string, msg []byte) error {
 
 // Response, implementation for session.NetworkEntity interface
 // Response message to session
-func (a *agent) Response(v interface{}) error {
+func (a *agent) Response(v []byte) error {
 	return a.ResponseMID(a.lastMid, v)
 }
 
 // Response, implementation for session.NetworkEntity interface
 // Response message to session
-func (a *agent) ResponseMID(mid uint, v interface{}) error {
+func (a *agent) ResponseMID(mid uint, v []byte) error {
 	if a.status() == statusClosed {
 		return ErrBrokenPipe
 	}
@@ -147,17 +147,17 @@ func (a *agent) ResponseMID(mid uint, v interface{}) error {
 	}
 
 	if env.debug {
-		switch d := v.(type) {
-		case []byte:
+		//switch d := v.(type) {
+		//case []byte:
 			logger.Println(fmt.Sprintf("Type=Response, ID=%d, UID=%d, MID=%d, Data=%dbytes",
-				a.session.ID(), a.session.UID(), mid, len(d)))
-		default:
-			logger.Println(fmt.Sprintf("Type=Response, ID=%d, UID=%d, MID=%d, Data=%+v",
-				a.session.ID(), a.session.UID(), mid, v))
-		}
+				a.session.ID(), a.session.UID(), mid, len(v)))
+		//default:
+		//	logger.Println(fmt.Sprintf("Type=Response, ID=%d, UID=%d, MID=%d, Data=%+v",
+		//		a.session.ID(), a.session.UID(), mid, v))
+		//}
 	}
 
-	return a.send([]byte{})
+	return a.send(v)
 }
 
 // Close, implementation for session.NetworkEntity interface
@@ -227,11 +227,12 @@ func (a *agent) write() {
 				logger.Println(fmt.Sprintf("Session heartbeat timeout, LastTime=%d, Deadline=%d", atomic.LoadInt64(&a.lastAt), deadline))
 				return
 			}
-			chWrite <- hbd
+			//chWrite <- hbd
 
 		case data := <-chWrite:
 			// close agent while low-level conn broken
-			if _, err := a.conn.Write(data); err != nil {
+			logger.Println("write dada = ",data)
+			if err := a.conn.WriteMessage(websocket.BinaryMessage,data); err != nil {
 				logger.Println(err.Error())
 				return
 			}
