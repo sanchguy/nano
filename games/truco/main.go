@@ -27,7 +27,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "config, c",
-			Value: "../../configs/config.toml",
+			Value: "../configs/config.toml",
 			Usage: "load configuration from `FILE`",
 		},
 		cli.BoolFlag{

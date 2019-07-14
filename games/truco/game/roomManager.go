@@ -12,46 +12,50 @@ type(
 	RoomManager struct{
 		component.Base
 		//房间数据
-		rooms map[int32]*Room
+		rooms map[string]*Room
 	}
 )
 
-var defaultRoomManager = NewManager()
+var defaultRoomManager = NewRoomManager()
 
 func NewRoomManager() *RoomManager {
 	return &RoomManager{
-		rooms:map[int32]*Room{},
+		rooms:map[string]*Room{},
 	}
 }
 
-func (manager *RoomManager) AfterInit() {
+func (m *RoomManager) AfterInit() {
 	session.Lifetime.OnClosed(func(s *session.Session) {
 		if s.UID() > 0{
-			if err := manager.onPlayerDisconnect(s); err != nil {
+			if err := m.onPlayerDisconnect(s); err != nil {
 
 			}
 		}
 	})
 	//每5分钟清空一次已摧毁的房间信息
-	nano.NewTimer(300*time.Second, func() {
-		roomDestroy := map[int32]*Room{}
+	nano.NewTimer(30*time.Second, func() {
+		roomDestroy := map[string]*Room{}
 		deadline := time.Now().Add(-24 * time.Hour).Unix()
-		for no, d := range manager.rooms {
+		for no, d := range m.rooms {
 			//清除创建超过24小时的房间
-			if d.state == constant.RoomStatusDestroy || d.createdAt > deadline {
+			d.logger.Info("清楚房间条件",d.state,d.createdAt,deadline)
+			if d.state == constant.RoomStatusDestroy || d.createdAt < deadline {
 				roomDestroy[no] = d
 			}
 		}
 		for _,d := range roomDestroy{
 			d.destroy()
+			delete(m.rooms,d.roomID)
 		}
+
 	})
 }
 
-func (manager *RoomManager)onPlayerDisconnect(s *session.Session) error {
+func (m *RoomManager)onPlayerDisconnect(s *session.Session) error {
 	uid := s.UID()
 	p,err := playerWithSession(s)
 	if err != nil {
+
 		return err
 	}
 	p.logger.Debug("roomManager.onPlayerDisconnect:玩家已断开")
@@ -66,25 +70,28 @@ func (manager *RoomManager)onPlayerDisconnect(s *session.Session) error {
 
 	r := p.room
 	r.onPlayerExit(s,true)
+	if r.isDestroy() {
+		delete(m.rooms,r.roomID)
+	}
 	return nil
 }
 // 根据桌号返回牌桌数据
-func (manager *RoomManager) desk(number int32) (*Room, bool) {
-	d, ok := manager.rooms[number]
+func (m *RoomManager) desk(number string) (*Room, bool) {
+	d, ok := m.rooms[number]
 	return d, ok
 }
 
 // 设置桌号对应的牌桌数据
-func (manager *RoomManager) setDesk(number int32, r *Room) {
+func (m *RoomManager) setDesk(number string, r *Room) {
 	if r == nil {
-		delete(manager.rooms, number)
-		r.logger.WithField("fieldDesk", number).Debugf("清除房间: 剩余: %d", len(manager.rooms))
+		delete(m.rooms, number)
+		r.logger.WithField("fieldDesk", number).Debugf("清除房间: 剩余: %d", len(m.rooms))
 	} else {
-		manager.rooms[number] = r
+		m.rooms[number] = r
 	}
 }
 
-func (m *RoomManager)CreateRoom(s *session.Session,roomId int32)  {
+func (m *RoomManager)CreateRoom(s *session.Session,roomId string)  {
 	r,ok := m.desk(roomId)
 	if ok {
 		r.playerJoin(s,false)
@@ -101,7 +108,7 @@ func (m *RoomManager)CreateRoom(s *session.Session,roomId int32)  {
 	room := NewRoom(roomId)
 	room.createdAt = time.Now().Unix()
 	room.creator = s.UID()
-
+	p.logger.Infof("roomManager.createRoom:createdAt = %d",room.createdAt)
 	room.playerJoin(s,false)
 
 	m.setDesk(roomId,room)

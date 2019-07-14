@@ -173,7 +173,7 @@ func (h *handlerService) dispatch() {
 		select {
 		case m := <-h.chLocalProcess: // logic dispatch
 			m.agent.lastMid = m.lastMid
-			logger.Println("agent lastMid = ",m.lastMid)
+			//logger.Println("agent lastMid = ",m.lastMid)
 			pcall(m.handler, m.args)
 
 		case s := <-h.chCloseSession: // session closed callback
@@ -211,7 +211,7 @@ func (h *handlerService) register(comp component.Component, opts []component.Opt
 	return nil
 }
 
-func (h *handlerService) handleWS(conn *websocket.Conn,info map[string][]string) {
+func (h *handlerService) handleWS(conn *websocket.Conn,postData []byte) {
 	//c, err := newWSConn(conn)
 	//if err != nil {
 	//	logger.Println(err)
@@ -219,7 +219,15 @@ func (h *handlerService) handleWS(conn *websocket.Conn,info map[string][]string)
 	//}
 	// create a client agent and startup write gorontine
 	agent := newAgent(conn, h.options)
-	
+	msgId := message.GerMsgCode(postData)
+	msg := &message.Message{
+		ID:msgId,
+		Route:"Manager.Login",
+		Data:postData,
+		Type:0x02,
+	}
+	h.processWsMessage(agent,msg)
+
 	agent.setStatus(statusWorking)
 	// startup write goroutine
 	go agent.write()
@@ -242,18 +250,20 @@ func (h *handlerService) handleWS(conn *websocket.Conn,info map[string][]string)
 		_ = t
 		if err != nil {
 			logger.Println(err)
+			return
 		}
-		logger.Println("get packet = ",b)
+		//logger.Println("get packet = ",b)
 		p := &pbtruco.Packet{}
 		err = p.Unmarshal(b)
 		if err != nil {
 			logger.Println("unpack pb error")
+			return
 		}
 
 		uri := p.Uri
-		logger.Println("get url income = %d",uri)
+		//logger.Println("get url income = %d",uri)
 		method := ServiceHandler[uri]
-		logger.Println("get method name = %s",method)
+		//logger.Println("get method name = %s",method)
 		msgId := message.GerMsgCode(p.Body)
 		msg := &message.Message{
 			ID:msgId,
@@ -368,7 +378,10 @@ func (h *handlerService) processWsMessage(agent *agent, msg *message.Message) {
 	data = payload
 
 	if env.debug {
-		logger.Println(fmt.Sprintf("UID=%d, Message={%s}, Data=%+v", agent.session.UID(), msg.String(), data))
+		if msg.Route != "Manager.HeartbeatReq" {
+			logger.Println(fmt.Sprintf("UID=%d, Message={%s}, Data=%+v", agent.session.UID(), msg.String(), data))
+		}
+
 	}
 
 	args := []reflect.Value{handler.Receiver, agent.srv, reflect.ValueOf(data)}

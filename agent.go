@@ -147,14 +147,10 @@ func (a *agent) ResponseMID(mid uint, v []byte) error {
 	}
 
 	if env.debug {
-		//switch d := v.(type) {
-		//case []byte:
-			logger.Println(fmt.Sprintf("Type=Response, ID=%d, UID=%d, MID=%d, Data=%dbytes",
-				a.session.ID(), a.session.UID(), mid, len(v)))
-		//default:
-		//	logger.Println(fmt.Sprintf("Type=Response, ID=%d, UID=%d, MID=%d, Data=%+v",
-		//		a.session.ID(), a.session.UID(), mid, v))
-		//}
+
+		//logger.Println(fmt.Sprintf("Type=Response, ID=%d, UID=%d, MID=%d, Data=%dbytes",
+		//	a.session.ID(), a.session.UID(), mid, len(v)))
+
 	}
 
 	return a.send(v)
@@ -231,7 +227,7 @@ func (a *agent) write() {
 
 		case data := <-chWrite:
 			// close agent while low-level conn broken
-			logger.Println("write dada = ",data)
+			//logger.Println("write dada = ",data)
 			if err := a.conn.WriteMessage(websocket.BinaryMessage,data); err != nil {
 				logger.Println(err.Error())
 				return

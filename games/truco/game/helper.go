@@ -6,22 +6,6 @@ import (
 	"github.com/sanchguy/nano/session"
 )
 
-type roleinfo struct {
-	Uid       *int64  `json:"uid"`
-	Name      *string `json:"name"`
-	AvatarUrl *string `json:"avatarUrl"`
-	Sex       *int32  `json:"sex"`
-	Ai        *bool   `json:"ai"`
-}
-
-type Data struct {
-	RoomId *string   `json:"roomId"`
-	Player *roleinfo `json:"player"`
-	Other  *roleinfo `json:"other"`
-	Other1 *roleinfo `json:"other1"`
-	Other2 *roleinfo `json:"other2"`
-}
-
 func playerWithSession(s *session.Session) (*Player, error) {
 	p, ok := s.Value("player").(*Player)
 	if !ok {

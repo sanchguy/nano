@@ -1,9 +1,11 @@
 package game
 
 import (
+	"fmt"
 	"github.com/pborman/uuid"
 	"github.com/sanchguy/nano"
 	"github.com/sanchguy/nano/constant"
+	pbtruco "github.com/sanchguy/nano/protocol/truco_pb"
 	"github.com/sanchguy/nano/session"
 	log "github.com/sirupsen/logrus"
 	"time"
@@ -11,20 +13,28 @@ import (
 type (
 	//Room is room object
 	Room struct {
-		roomID  int32
+		roomID  string
 		state	constant.RoomStatus
 		players []*Player
+		game	*Game
 		group *nano.Group
 		die	chan struct{}
 		latestEnter int64
 		createdAt int64		//创建时间
 		creator int64
 		logger *log.Entry
+
+		currentHand  int64
+		currentTurn  int64
+		currentState string
+		currentRound *Round
+		score        []int
+		transitions  []string
 	}
 )
 
 //NewRoom return new room
-func NewRoom(rid int32) *Room {
+func NewRoom(rid string) *Room {
 	return &Room{
 		roomID: rid,
 		state:constant.RoomStatusCreate,
@@ -52,7 +62,24 @@ func (r *Room) playerJoin(s *session.Session,isReJoin bool){
 	if !exists {
 		p = s.Value("player").(*Player)
 		r.players = append(r.players,p)
+		r.group.Add(s)
+	}
+	p.logger.Infof("房间玩家数量 = %d",len(r.players))
+	if len(r.players) == 2 {
+		//response
+		res := &pbtruco.PlayerInfoRsp{}
+		for _,p := range r.players{
+			res.Players = append(res.Players,p.getPbPacketInfo())
+		}
+		resData ,err := res.Marshal()
+		if err != nil {
+			logger.Error(err.Error())
+		}
+		sendData,err := encodePbPacket(PktPlayerInfoRsp,resData)
 
+		p.logger.Infof("Broadcast onPlayerInfoRep = %d",len(r.players))
+
+		r.group.Broadcast("onPlayerInfoRep",sendData)
 	}
 
 }
@@ -82,11 +109,43 @@ func (r *Room) checkStart() {
 		return
 	}
 
+	isAllReady := true
+	for _,p := range r.players{
+		if !p.isReady {
+			isAllReady = false
+		}
+	}
+	if isAllReady {
+		r.currentRound = r.newRound("init")
+		r.deal()
+		r.currentHand = r.players[0].id
+		r.currentTurn = r.currentHand
+	}
+
 }
 
 func (r *Room)start() {
 
 }
+
+func (r *Room) newRound(state string) *Round {
+	round := NewRound(r)
+	round.FSM = round.newTrucoFSM(state)
+	return round
+}
+
+func (r *Room) deal() {
+	deck := NewDeck().sorted()
+	cards1 := []*Card{deck[0], deck[2], deck[4]}
+	cards2 := []*Card{deck[1], deck[3], deck[5]}
+
+	fmt.Println("cards1 = ",cards1)
+	fmt.Println("cards2 = ",cards2)
+
+	r.players[0].setCards(cards1)
+	r.players[1].setCards(cards2)
+}
+
 
 func (r *Room) onPlayerExit(s *session.Session,isDisconnect bool) {
 	uid := s.UID()
@@ -106,6 +165,7 @@ func (r *Room) onPlayerExit(s *session.Session,isDisconnect bool) {
 		}
 		r.players = tmpPlayers
 	}
+	r.logger.Info("onPlayerExit players = %d",len(r.players))
 	if len(r.players) == 0 {
 		r.destroy()
 	}

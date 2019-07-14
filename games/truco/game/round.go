@@ -20,13 +20,13 @@ var tablep2 = []*Card{}
 type (
 	//Round is one round in games object
 	Round struct {
-		player1name string
+		player1name int64
 
-		player2name string
+		player2name int64
 
-		currentHand string
+		currentHand int64
 
-		currentTrun string
+		currentTrun int64
 
 		FSM *fsm.FSM
 
@@ -63,19 +63,19 @@ type (
 )
 
 //NewRound return a round obj
-func NewRound(g *Game) *Round {
+func NewRound(room *Room) *Round {
 	r := &Round{
-		player1name: g.player1.nickname,
+		player1name: room.players[0].id,
 
-		player2name: g.player2.nickname,
+		player2name: room.players[1].id,
 
-		currentHand: g.currentHand,
+		currentHand: room.currentHand,
 
-		currentTrun: g.currentTurn,
+		currentTrun: room.currentTurn,
 
 		status: "running",
 
-		score: g.score,
+		score: []int{},
 
 		turnWin: []int{},
 
@@ -93,18 +93,18 @@ func NewRound(g *Game) *Round {
 
 		auxWin: false,
 
-		cartasp1: g.player1.cards,
+		cartasp1: []*Card{},
 
-		cartasp2: g.player2.cards,
+		cartasp2: []*Card{},
 
-		pointsEnvidoP1: g.player1.envidoPoints,
+		pointsEnvidoP1: 0,
 
-		pointsEnvidoP2: g.player2.envidoPoints,
+		pointsEnvidoP2: 0,
 
 		pardas: false,
 	}
 
-	r.FSM = r.newTrucoFSM(g.currentState)
+	r.FSM = r.newTrucoFSM(room.currentState)
 	return r
 }
 
@@ -151,7 +151,7 @@ func (r *Round) newTrucoFSM(state string) *fsm.FSM {
 	return trucoFsm
 }
 
-func (r *Round) switchPlayer(pname string) string {
+func (r *Round) switchPlayer(pname int64) int64 {
 	if r.player1name == pname {
 		return r.player2name
 	}
@@ -231,7 +231,7 @@ func (r *Round) selectWin(conf int) []int {
 	return r.turnWin
 }
 
-func (r *Round) changeTurn() string {
+func (r *Round) changeTurn() int64 {
 	if len(r.tablep1) != len(r.tablep2) || r.FSM.Current() == "truco" || r.FSM.Current() == "retruco" || r.FSM.Current() == "valecuatro" {
 		r.currentTrun = r.switchPlayer(r.currentTrun)
 		return r.currentTrun
@@ -268,43 +268,43 @@ func (r *Round) findPosiblesE(p string, action string) bool {
 	return foundActon
 }
 
-func (r *Round) calculateScore(game *Game, action string, prev string, value string, playername string) {
+func (r *Round) calculateScore(action string, prev string, value string, playerid int64) {
 	if (action == "played-card" || action == "playcard") && r.auxWin == false {
-		r.setTable(value, playername)
+		r.setTable(value, playerid)
 		r.confrontScore()
 		if (r.flagTruco == true) && (len(r.tablep1) > 1) && (len(r.tablep2) > 1) {
-			r.calculateScoreTruco(action, playername, "")
+			r.calculateScoreTruco(action, playerid, "")
 		}
 		if (r.flagTruco == false) && (r.flagNoCanto == false) && (len(r.tablep1) > 1 && len(r.tablep2) > 1) {
-			r.calculateScoreTruco(action, playername, "")
+			r.calculateScoreTruco(action, playerid, "")
 		}
 	}
 	if (action == "quiero" || action == "no-quiero") && (r.findPosiblesE("p", prev) == true) {
-		r.calculateScoreEnvido(action, prev, playername)
+		r.calculateScoreEnvido(action, prev, playerid)
 	}
 	if (action == "quiero" || action == "no-quiero") && prev == "truco" {
 		if action == "quiero" {
 			r.flagTruco = true
 		}
 		if (len(r.tablep1) < 2) || (len(r.tablep2) < 2) {
-			r.calculateScoreTruco(action, playername, "")
+			r.calculateScoreTruco(action, playerid, "")
 		}
 	}
 	if (action == "quiero" || action == "no-quiero") && prev == "retruco" {
 		r.flagRetruco = true
 		if len(r.tablep1) < 2 || len(r.tablep2) < 2 {
-			r.calculateScoreTruco(action, playername, value)
+			r.calculateScoreTruco(action, playerid, value)
 		}
 	}
 	if (action == "quiero" || action == "no-quiero") && prev == "valecuatro" {
 		r.flagValeCuatro = true
 		if len(r.tablep1) < 2 || len(r.tablep2) < 2 {
-			r.calculateScoreTruco(action, playername, value)
+			r.calculateScoreTruco(action, playerid, value)
 		}
 	}
 }
 
-func (r *Round) calculateScoreEnvido(action string, prev string, player string) {
+func (r *Round) calculateScoreEnvido(action string, prev string, player int64) {
 	total := 9
 	if action == "quiero" {
 		switch prev {
@@ -419,7 +419,7 @@ func (r *Round) calculateScoreEnvido(action string, prev string, player string) 
 	}
 }
 
-func (r *Round) assignPoints(action string, num int, playername string) {
+func (r *Round) assignPoints(action string, num int, playername int64) {
 	if action == "quiero" {
 		if r.pointsEnvidoP1 > r.pointsEnvidoP2 {
 			if r.currentHand == r.player1name {
@@ -483,7 +483,7 @@ func (r *Round) checkWinner(arr [][]int, num int) {
 	}
 }
 
-func (r *Round) calculateScoreTruco(action string, playername string, value string) {
+func (r *Round) calculateScoreTruco(action string, playerid int64, value string) {
 	if (action == "quiero" || action == "playcard") && (r.auxWin == false) {
 		//posibilodades ganar player1
 		var fst = [][]int{{0, 0}, {-1, 0}, {1, 0, 0}, {0, -1}, {-1, -1, 0}, {0, 1, 0}, {0, 1, -1}}
@@ -493,7 +493,7 @@ func (r *Round) calculateScoreTruco(action string, playername string, value stri
 		var ch = []int{-1, -1, -1}
 
 		if r.distHamming(ch, r.turnWin) == 0 {
-			r.calculateScoreTruco(action, playername, value)
+			r.calculateScoreTruco(action, playerid, value)
 			if r.player1name == r.currentHand {
 				r.score[0] += 2
 			} else {
@@ -508,32 +508,32 @@ func (r *Round) calculateScoreTruco(action string, playername string, value stri
 
 	if action == "no-quiero" {
 		r.auxWin = true
-		if playername == r.player1name {
+		if playerid == r.player1name {
 			r.score[1]++
 		}
-		if playername == r.player2name {
+		if playerid == r.player2name {
 			r.score[0]++
 		}
 		if r.flagRetruco == true {
-			if playername == r.player1name {
+			if playerid == r.player1name {
 				r.score[1]++
 			}
-			if playername == r.player2name {
+			if playerid == r.player2name {
 				r.score[0]++
 			}
 		}
 		if r.flagValeCuatro == true {
-			if playername == r.player1name {
+			if playerid == r.player1name {
 				r.score[1] += 2
 			}
-			if playername == r.player2name {
+			if playerid == r.player2name {
 				r.score[0] += 2
 			}
 		}
 	}
 }
 
-func (r *Round) setTable(value string, player string) {
+func (r *Round) setTable(value string, player int64) {
 	// encontrado := false
 	if player == r.player1name {
 		card := NewCard(r.returnNumber(value), r.returnSuit(value))
@@ -582,9 +582,9 @@ func (r *Round) setTable(value string, player string) {
 	}
 }
 
-func (r *Round) play(game *Game, player string, action string, value string) {
+func (r *Round) play(player int64, action string, value string) {
 	prev := r.actionPrevious()
 	r.FSM.Event(action)
-	r.calculateScore(game, action, prev, value, player)
+	r.calculateScore(action, prev, value, player)
 	r.changeTurn()
 }

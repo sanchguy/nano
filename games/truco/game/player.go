@@ -2,6 +2,7 @@ package game
 
 import (
 	"github.com/sanchguy/nano"
+	pbtruco "github.com/sanchguy/nano/protocol/truco_pb"
 	"github.com/sanchguy/nano/session"
 	log "github.com/sirupsen/logrus"
 )
@@ -11,6 +12,9 @@ type (
 	Player struct {
 		id           int64
 		nickname     string
+		sex			int32
+		AvatarUrl	string
+		isAi		bool
 		envidoPoints int
 		cards        []*Card
 		logger       *log.Entry
@@ -23,14 +27,15 @@ type (
 )
 
 //NewPlayer return a new player object
-func NewPlayer(s *session.Session,playerid int64, name string) *Player {
+func NewPlayer(s *session.Session,playerId int64, name string,isAi bool) *Player {
 	p := &Player{
-		id:       playerid,
+		id:       playerId,
 		nickname: name,
+		isAi:isAi,
 		envidoPoints:0,
 		cards:[]*Card{},
-		logger:log.WithField("player",playerid),
-		isReady:true,
+		logger:log.WithField("player",playerId),
+		isReady:false,
 		offLine:false,
 		chOperation:make(chan string),
 	}
@@ -45,6 +50,10 @@ func (p *Player) bindSession(s *session.Session) {
 
 func (p *Player) setRoom(r *Room) {
 	p.room = r
+}
+
+func (p *Player)setReady(ready bool)  {
+	p.isReady = ready
 }
 
 
@@ -81,4 +90,15 @@ func (p *Player)reSet()	 {
 	p.cards = []*Card{}
 	close(p.chOperation)
 	p.chOperation = make(chan string)
+}
+
+func (p *Player)getPbPacketInfo() *pbtruco.PlayerInfo {
+	info := &pbtruco.PlayerInfo{
+		Uid:p.id,
+		Name:p.nickname,
+		Sex:p.sex,
+		AvatarUrl:p.AvatarUrl,
+		Ai:p.isAi,
+	}
+	return info
 }

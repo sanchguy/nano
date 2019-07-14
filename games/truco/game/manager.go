@@ -12,6 +12,22 @@ import (
 
 const kickResetBacklog  = 8
 
+
+type roleinfo struct {
+	Uid       *int64  `json:"uid"`
+	Name      *string `json:"name"`
+	AvatarUrl *string `json:"avatarUrl"`
+	Sex       *int32  `json:"sex"`
+	Ai        *bool   `json:"ai"`
+}
+type Data struct {
+	RoomId *string   `json:"roomId"`
+	Player *roleinfo `json:"player"`
+	Other  *roleinfo `json:"other"`
+	Other1 *roleinfo `json:"other1"`
+	Other2 *roleinfo `json:"other2"`
+}
+
 var defaultManager = NewManager()
 
 type(
@@ -34,6 +50,8 @@ func NewManager() *Manager {
 func (m *Manager) registerHandler(){
 	logger.Println("manager registerHandler~~~~~")
 	nano.ServiceHandler[PktHeartbeatReq] = "Manager.HeartbeatReq"
+	nano.ServiceHandler[PktLoginReq] = "Manager.Login"
+	nano.ServiceHandler[PktLoadingReq] = "Manager.onPlayerLoadingReq"
 }
 
 func (m *Manager) AfterInit() {
@@ -63,24 +81,14 @@ func (m *Manager) AfterInit() {
 	})
 }
 
-//func (m *Manager) LoadingReq(s *session.Session, proto *pbtruco.LoadingReq) error {
-//
-//	res := &pbtruco.HeartbeatRsp{
-//		Timestamp: time.Now().Unix(),
-//	}
-//
-//	return s.Response(res)
-//}
-
 func (m *Manager) HeartbeatReq(s *session.Session, data []byte) error {
-
-	logger.Println("manager HeratbeatReq~~~~~~")
+	//logger.Println("manager HeratbeatReq~~~~~~")
 	req := &pbtruco.HeartbeatReq{}
 	err := req.Unmarshal(data)
 	if err != nil {
 		logger.Error(err.Error())
 	}
-	logger.Println("manager HeratbeatReq~~~~~~ get timestamp = ",req.Timestamp)
+	//logger.Println("manager HeratbeatReq~~~~~~ get timestamp = ",req.Timestamp)
 
 	//response
 	res := &pbtruco.HeartbeatRsp{
@@ -91,7 +99,7 @@ func (m *Manager) HeartbeatReq(s *session.Session, data []byte) error {
 		logger.Error(err.Error())
 	}
 	sendData,err := encodePbPacket(PktHeartbeatRsp,resData)
-	logger.Println("sendHeartbeat dada = ",sendData)
+	//logger.Println("sendHeartbeat dada = ",sendData)
 	return s.Response(sendData)
 }
 
@@ -101,48 +109,29 @@ func (m *Manager) player(uid int64) (*Player, bool) {
 	return p, ok
 }
 
-func (m *Manager)parseLoginInfo(s *session.Session,info map[string][]string)  {
-	data ,ok := info["postData"]
-	if !ok {
-		panic("没有postData数据")
-	}
-	postData := data[0]
-	ti, ok := info["timestamp"]
-	if !ok {
-		panic("没有timestamp数据")
-	}
-	t := ti[0]
-	n, ok := info["nonce"]
-	if !ok {
-		panic("没有nonce数据")
-	}
-	nonce := n[0]
-	s, ok := info["sign"]
-	if !ok {
-		panic("没有sign数据")
-	}
-	sign := s[0]
-	logger.Println("LoginInfo %v", info)
+func (m *Manager)Login(s *session.Session,userInfo []byte) error {
 	var str Data
-	err1 := json.Unmarshal([]byte(postData), &str)
+	err1 := json.Unmarshal([]byte(userInfo), &str)
 	if err1 != nil {
 		logger.Println(err1)
 		panic("反序列转换错误")
 	}
 	p1 := str.Player
-	playerId := *p1.Uid
-	player1 :=
-}
+	uid := *p1.Uid
+	name := *p1.Name
+	ai := *p1.Ai
 
-func (m *Manager)Login(s *session.Session,Uid int64,Name string) error {
-	uid := Uid
 	s.Bind(uid)
 
 	log.Infof("玩家:%d登录： %v",uid)
 	if p,ok := m.player(uid); !ok{
 		log.Infof("玩家：%d不在线，创建新玩家",uid)
-		p = NewPlayer(s,uid,Name)
+		p = NewPlayer(s,uid,name,ai)
 		m.setPlayer(uid,p)
+
+		//第一个登录的玩家创建房间
+		rid := *str.RoomId
+		defaultRoomManager.CreateRoom(s,rid)
 	}else {
 		log.Infof("玩家:%d已经在线",uid)
 		//移除广播频道
@@ -162,16 +151,36 @@ func (m *Manager)Login(s *session.Session,Uid int64,Name string) error {
 		p.bindSession(s)
 	}
 	m.group.Add(s)
-
-	//res := &pbtruco.HeartbeatRsp{
-	//	Timestamp:time.Now().Unix(),
-		//Uid:s.UID(),
-		//Nickname:req.Name,
-		//Sex:req.Sex,
-		//HeadUrl:req.HeadUrl,
-	//}
-
 	return nil//s.Response(res)
+}
+
+func (m *Manager) onPlayerLoadingReq(s *session.Session,data []byte) error{
+	p,err := playerWithSession(s)
+	if err != nil {
+		logger.Error("玩家不存在或者session过期",err.Error())
+		return err
+	}
+	req := &pbtruco.LoadingReq{}
+	err = req.Unmarshal(data)
+	if err != nil {
+		logger.Error(err.Error())
+	}
+	loadingProgress := req.Progress
+	if loadingProgress == 100 {
+		p.setReady(true)
+	}
+	//response
+	res := &pbtruco.LoadingRsp{
+		Uid:p.id,
+		Progress:loadingProgress,
+	}
+	resData ,err := res.Marshal()
+	if err != nil {
+		logger.Error(err.Error())
+	}
+	sendData,err := encodePbPacket(PktLoadingRsp,resData)
+
+	return s.Response(sendData)
 }
 
 func (m *Manager) setPlayer(uid int64, p *Player) {

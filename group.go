@@ -21,6 +21,7 @@
 package nano
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -118,9 +119,13 @@ func (c *Group) Broadcast(route string, v interface{}) error {
 		return ErrClosedGroup
 	}
 
-	data, err := serializeOrRaw(v)
-	if err != nil {
-		return err
+	//data, err := serializeOrRaw(v)
+	//if err != nil {
+	//	return err
+	//}
+	 data, ok := v.([]byte)
+	 if !ok {
+		return errors.New("Broadcast 转换出错")
 	}
 
 	if env.debug {
@@ -129,7 +134,7 @@ func (c *Group) Broadcast(route string, v interface{}) error {
 
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-
+	var err error = nil
 	for _, s := range c.sessions {
 		if err = s.Push(route, data); err != nil {
 			logger.Println(fmt.Sprintf("Session push message error, ID=%d, UID=%d, Error=%s", s.ID(), s.UID(), err.Error()))

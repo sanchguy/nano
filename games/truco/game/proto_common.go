@@ -10,7 +10,7 @@ PktLoadingRsp int32 = 3
 PktPlayerInfoRsp int32 = 4
 PktEmojiRsp int32 = 5
 PktGameStartFailedRsp int32 = 6 // 游戏启动失败，比如对手在一定时间内没能成功加入游戏房间
-PktGameStartRspint32 =7//游戏开始
+PktGameStartRsp int32 =7//游戏开始
 PktPlayerOutRsp int32 = 8//退出游戏
 PktGameWinRsp int32 = 9//游戏胜利信息
 PktGameSignError int32 = 10//鉴权失败
@@ -23,6 +23,7 @@ PktGameTakePokerRsp int32 = 16//点牌返回
 PktGameHuPokerRsp int32 = 17//胡牌
 
 // client to server
+PktLoginReq int32 = 999		//登录
 PktHeartbeatReq int32 = 1000 // 心跳
 PktLoadingReq int32 = 1001 // 客户端加载进度
 PktQuitReq int32 = 1002      // 客户端主动退出游戏

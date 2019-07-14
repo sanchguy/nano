@@ -123,15 +123,36 @@ func listenAndServeWS(addr string) {
 
 	http.HandleFunc("/"+strings.TrimPrefix(env.wsPath, "/"), func(w http.ResponseWriter, r *http.Request) {
 		info := r.URL.Query()
-		logger.Println("get websocket~~~~~",info)
+		//logger.Println("get websocket~~~~~",info)
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			logger.Println(fmt.Sprintf("Upgrade failure, URI=%s, Error=%s", r.RequestURI, err.Error()))
 			return
 		}
+		data ,ok := info["postData"]
+		if !ok {
+			panic("没有postData数据")
+		}
+		postData := data[0]
+		//ti, ok := info["timestamp"]
+		//if !ok {
+		//	panic("没有timestamp数据")
+		//}
+		//t := ti[0]
+		//n, ok := info["nonce"]
+		//if !ok {
+		//	panic("没有nonce数据")
+		//}
+		//nonce := n[0]
+		//s, ok := info["sign"]
+		//if !ok {
+		//	panic("没有sign数据")
+		//}
+		//sign := s[0]
+		logger.Println("LoginInfo %v", info)
 
-		handler.handleWS(conn,info)
+		handler.handleWS(conn,[]byte(postData))
 	})
 
 	if err := http.ListenAndServe(addr, nil); err != nil {
@@ -153,7 +174,7 @@ func listenAndServeWSTLS(addr string, certificate string, key string) {
 			return
 		}
 
-		handler.handleWS(conn)
+		handler.handleWS(conn,[]byte{})
 	})
 
 	if err := http.ListenAndServeTLS(addr, certificate, key, nil); err != nil {
