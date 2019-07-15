@@ -26,11 +26,11 @@ import (
 *       1  -  4
  */
 
-var weights = map[string][13]int{
-	"oro":    [13]int{0, 7, 8, 9, 1, 2, 3, 10, 0, 0, 0, 5, 6},
-	"copa":   [13]int{0, 7, 8, 9, 1, 2, 3, 4, 0, 0, 0, 5, 6},
-	"espada": [13]int{0, 13, 8, 9, 1, 2, 3, 11, 0, 0, 0, 5, 6},
-	"basto":  [13]int{0, 12, 8, 9, 1, 2, 3, 4, 0, 0, 0, 5, 6},
+var weights = map[string][]int{
+	"oro":    {0, 7, 8, 9, 1, 2, 3, 10, 0, 0, 0, 5, 6},
+	"copa":   {0, 7, 8, 9, 1, 2, 3, 4, 0, 0, 0, 5, 6},
+	"espada": {0, 13, 8, 9, 1, 2, 3, 11, 0, 0, 0, 5, 6},
+	"basto":  {0, 12, 8, 9, 1, 2, 3, 4, 0, 0, 0, 5, 6},
 }
 
 type (
@@ -64,6 +64,13 @@ func (c *Card) show() string {
 }
 
 /*
+ *  get a card name
+ */
+func (c *Card) getCardName() string {
+	return c.suit + "-" + strconv.Itoa(c.number)
+}
+
+/*
  * Compares two cards
  *   @card: the card to compare this
  *
@@ -86,22 +93,22 @@ func (c *Card) confront(cc *Card) int {
 /*
  * Returns the envido points of two cards 'this' and 'card'
  */
-func (c *Card) envido(cc *Card) int {
-	cardValue := cc.number
+func (c *Card) envido(cc *Card) int32 {
+	cardValue := 0
 	if cc.isBlackCard() {
 		cardValue = 0
 	}
-	thisValue := c.number
+	thisValue := 0
 	if c.isBlackCard() {
 		thisValue = 0
 	}
 
 	if !c.isSameSuit(cc) {
-		return nano.Max(cardValue, thisValue)
+		return nano.Max(int32(cardValue), int32(thisValue))
 	} else if cc.isBlackCard() && c.isBlackCard() {
 		return 20
 	} else {
-		return cardValue + thisValue + 20
+		return int32(cardValue + thisValue + 20)
 	}
 }
 
@@ -112,3 +119,4 @@ func (c *Card) isBlackCard() bool {
 func (c *Card) isSameSuit(cc *Card) bool {
 	return c.suit == cc.suit
 }
+

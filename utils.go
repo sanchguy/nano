@@ -85,7 +85,7 @@ func Min(a, b int) int {
 }
 
 //Max return the bigger value
-func Max(a, b int) int {
+func Max(a, b int32) int32 {
 	if a >= b {
 		return a
 	}
@@ -93,7 +93,7 @@ func Max(a, b int) int {
 }
 
 //SliceMax return the slice max value
-func SliceMax(origin []int) int {
+func SliceMax(origin []int32) int32 {
 	//假设第一个元素是最大值，下标为0
 	maxVal := origin[0]
 	maxIndex := 0

@@ -21,6 +21,8 @@ PktPlayerOutPokerRsp int32 = 14//出牌操作
 PktGameSuccessPokerRsp int32 = 15//本局结束
 PktGameTakePokerRsp int32 = 16//点牌返回
 PktGameHuPokerRsp int32 = 17//胡牌
+PktGameSetPointRsp int32 = 18//设置分数合押注
+PktGameSetCardsRsp int32 = 19//设置牌局
 
 // client to server
 PktLoginReq int32 = 999		//登录

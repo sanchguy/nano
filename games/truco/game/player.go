@@ -15,8 +15,9 @@ type (
 		sex			int32
 		AvatarUrl	string
 		isAi		bool
-		envidoPoints int
+		envidoPoints int32
 		cards        []*Card
+		tableCards	 []*Card
 		logger       *log.Entry
 		isReady		bool
 		offLine		bool
@@ -34,6 +35,7 @@ func NewPlayer(s *session.Session,playerId int64, name string,isAi bool) *Player
 		isAi:isAi,
 		envidoPoints:0,
 		cards:[]*Card{},
+		tableCards:[]*Card{},
 		logger:log.WithField("player",playerId),
 		isReady:false,
 		offLine:false,
@@ -62,14 +64,14 @@ func (p *Player) setCards(initCard []*Card) {
 	p.envidoPoints = p.points()
 }
 
-func (p *Player) points() int {
+func (p *Player) points() int32 {
 	pairs := [3][2]*Card{
 		{p.cards[0], p.cards[1]},
 		{p.cards[0], p.cards[2]},
 		{p.cards[1], p.cards[2]},
 	}
 
-	var pairValue []int
+	var pairValue []int32
 	for _, pair := range pairs {
 		pairValue = append(pairValue, pair[0].envido(pair[1]))
 	}

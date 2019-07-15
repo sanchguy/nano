@@ -1,0 +1,2 @@
+base.proto
+truco.proto

@@ -1,0 +1,46 @@
+syntax = "proto3";
+package pbtruco;
+import "base.proto";
+
+enum Statue{
+	OUT_CARD = 0; //出牌阶段
+	OP  = 1 ;//叫牌阶段
+	WAIT     = 2 ;//等待对方操作
+}
+
+message Empty {
+};
+
+
+message RoundEnvidoPoints{
+	int32 score = 1;//玩家当前分数
+	int32 envidoPoint = 2;//赌注
+}
+
+message GameOverInfo{
+	 int64 PlayerId = 1;//玩家id
+	 int32 Score = 2;//分数
+}
+
+message GameWinInfo{
+	repeated GameInfo  Game=1;//游戏胜利信息
+}
+
+message GameInfo{
+	int64 PlayerId = 1;//玩家id
+	int32 score = 2;//分数
+	int64 WinPlayerId = 3;//胜利玩家id
+	WinState State = 4;//游戏结束状态
+}
+
+message PokerMsg{
+	repeated string PokerList = 1;//自己的手牌
+	repeated string TablePokerList = 2;//打出去的牌
+}
+
+message OperateInfo{
+	bool IsOp = 1;//是否叫牌
+	string OpName = 2;//叫牌
+	int32 CardNum = 3;//出牌
+	int64 PlayerId = 4;//
+}

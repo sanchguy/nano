@@ -32,7 +32,7 @@ type (
 
 		status string
 
-		score []int
+		score []int32
 
 		turnWin []int
 
@@ -75,7 +75,7 @@ func NewRound(room *Room) *Round {
 
 		status: "running",
 
-		score: []int{},
+		score: []int32{},
 
 		turnWin: []int{},
 
@@ -305,7 +305,7 @@ func (r *Round) calculateScore(action string, prev string, value string, playeri
 }
 
 func (r *Round) calculateScoreEnvido(action string, prev string, player int64) {
-	total := 9
+	var total int32 = 9
 	if action == "quiero" {
 		switch prev {
 		case "envido":
@@ -419,7 +419,7 @@ func (r *Round) calculateScoreEnvido(action string, prev string, player int64) {
 	}
 }
 
-func (r *Round) assignPoints(action string, num int, playername int64) {
+func (r *Round) assignPoints(action string, num int32, playername int64) {
 	if action == "quiero" {
 		if r.pointsEnvidoP1 > r.pointsEnvidoP2 {
 			if r.currentHand == r.player1name {

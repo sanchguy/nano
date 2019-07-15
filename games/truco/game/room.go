@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"github.com/pborman/uuid"
 	"github.com/sanchguy/nano"
 	"github.com/sanchguy/nano/constant"
@@ -28,7 +27,7 @@ type (
 		currentTurn  int64
 		currentState string
 		currentRound *Round
-		score        []int
+		score        map[int64]int32
 		transitions  []string
 	}
 )
@@ -40,6 +39,7 @@ func NewRoom(rid string) *Room {
 		state:constant.RoomStatusCreate,
 		players:[]*Player{},
 		createdAt: time.Now().Unix(),
+		score : map[int64]int32{},
 		group:nano.NewGroup(uuid.New()),
 		die:make(chan struct{}),
 		logger:log.WithField("room",rid),
@@ -85,17 +85,48 @@ func (r *Room) playerJoin(s *session.Session,isReJoin bool){
 }
 
 func (r *Room) syncRoomStatus()  {
-	//r.latestEnter = &protocol.PlayerEnterRoom{Players:[]protocol.PlayerInfo{}}
-	//for _,p := range r.players{
-	//	uid := UID()
-	//	r.latestEnter.Players = append(r.latestEnter.Players,protocol.PlayerInfo{
-	//		UID:      uid,
-	//		Nickname: nickname,
-	//		IsReady:  true,
-	//		Offline:  false,
-	//	})
-	//}
-	//r.group.Broadcast("onPlayerEnter",r.latestEnter)
+
+
+	for _,p := range r.players{
+		//cards
+		var cards []string
+		var tableCards []string
+		for _,card := range p.cards{
+			cards = append(cards,card.getCardName())
+		}
+		for _,card := range p.tableCards{
+			tableCards = append(tableCards,card.getCardName())
+		}
+		pokerMsgs := &pbtruco.PokerMsg{
+			TablePokerList:tableCards,
+			PokerList:cards,
+		}
+
+		//points
+		var point *pbtruco.RoundEnvidoPoints
+		if r.currentRound.player1name == p.id {
+			point = &pbtruco.RoundEnvidoPoints{
+				Score:r.currentRound.score[0],
+				EnvidoPoint:p.envidoPoints,
+			}
+		}else {
+			point = &pbtruco.RoundEnvidoPoints{
+				Score:r.currentRound.score[1],
+				EnvidoPoint:p.envidoPoints,
+			}
+		}
+
+		psession ,err := r.group.Member(p.id)
+		if err != nil {
+			r.logger.Error("此用户不存在")
+			continue
+		}
+
+		pokerPacket := encodePbPacket()
+		psession.Response()
+
+	}
+
 }
 
 func (r *Room) checkStart() {
@@ -120,6 +151,7 @@ func (r *Room) checkStart() {
 		r.deal()
 		r.currentHand = r.players[0].id
 		r.currentTurn = r.currentHand
+		r.transitions = r.currentRound.FSM.AvailableTransitions()
 	}
 
 }
@@ -139,11 +171,15 @@ func (r *Room) deal() {
 	cards1 := []*Card{deck[0], deck[2], deck[4]}
 	cards2 := []*Card{deck[1], deck[3], deck[5]}
 
-	fmt.Println("cards1 = ",cards1)
-	fmt.Println("cards2 = ",cards2)
+	r.logger.Info("room deal cards1 = ",cards1)
+	r.logger.Info("room deal cards2 = ",cards2)
 
 	r.players[0].setCards(cards1)
 	r.players[1].setCards(cards2)
+}
+
+func (r *Room) onPlayerAction(s *session.Session, info []byte) error {
+
 }
 
 
