@@ -108,6 +108,7 @@ func (r *Room) syncRoomStatus()  {
 			tableCards = append(tableCards,card.getCardName())
 		}
 		pokerMsgs := &pbtruco.PokerMsg{
+			PlayerId:p.id,
 			TablePokerList:tableCards,
 			PokerList:cards,
 		}
@@ -116,6 +117,7 @@ func (r *Room) syncRoomStatus()  {
 		var point *pbtruco.RoundEnvidoPoints
 		if r.currentRound.player1name == p.id {
 			point = &pbtruco.RoundEnvidoPoints{
+				PlayerId:p.id,
 				Score:r.currentRound.score[0],
 				EnvidoPoint:p.envidoPoints,
 			}
