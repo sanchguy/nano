@@ -39,8 +39,8 @@ message PokerMsg{
 }
 
 message OperateInfo{
-	bool IsOp = 1;//是否叫牌
-	string OpName = 2;//叫牌
-	int32 CardNum = 3;//出牌
-	int64 PlayerId = 4;//
+	int64 ActionPlayer = 1;//上一个操作的玩家
+	int64 CurrentTurn = 2;//当前操作玩家
+	string Action = 3;//指令
+	repeated string transitions = 4;//当前可用操作
 }

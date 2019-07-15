@@ -80,6 +80,16 @@ func (r *Room) playerJoin(s *session.Session,isReJoin bool){
 		p.logger.Infof("Broadcast onPlayerInfoRep = %d",len(r.players))
 
 		r.group.Broadcast("onPlayerInfoRep",sendData)
+
+		startGame := &pbtruco.GameStartRsp{
+			CountDown:100,
+			ReconnTimeout:30,
+		}
+		startGameData,err := startGame.Marshal()
+		if err != nil {
+			logger.Error("startGame encode faile")
+		}
+		r.group.Broadcast("onPlayerInfoRep",startGameData)
 	}
 
 }
@@ -121,11 +131,30 @@ func (r *Room) syncRoomStatus()  {
 			r.logger.Error("此用户不存在")
 			continue
 		}
+		pokerMsgsData,err := pokerMsgs.Marshal()
+		pokerPacket,err:= encodePbPacket(PktGameSetPointRsp,pokerMsgsData)
+		psession.Response(pokerPacket)
 
-		pokerPacket := encodePbPacket()
-		psession.Response()
+		pointsData,err := point.Marshal()
+		pointsPacket,err:= encodePbPacket(PktGameSetCardsRsp,pointsData)
+		psession.Response(pointsPacket)
 
 	}
+
+	opinfo := &pbtruco.OperateInfo{
+		ActionPlayer:0,
+		CurrentTurn:r.currentTurn,
+		Action:"",
+		Transitions:r.transitions,
+	}
+	operateInfoData,err := opinfo.Marshal()
+	if err != nil {
+		r.logger.Error("初始化操作数据失败")
+	}
+	operateInfoPacket,err:= encodePbPacket(PktPlayerAddPokerRsp,operateInfoData)
+
+	r.group.Broadcast("onPlayerAddPokerRsp",operateInfoPacket)
+
 
 }
 
@@ -152,6 +181,8 @@ func (r *Room) checkStart() {
 		r.currentHand = r.players[0].id
 		r.currentTurn = r.currentHand
 		r.transitions = r.currentRound.FSM.AvailableTransitions()
+
+		r.syncRoomStatus()
 	}
 
 }
