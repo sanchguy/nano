@@ -134,6 +134,11 @@ message KickRsp {
     string reason = 2;
 }
 
+message GameStartRsp {
+    int32 countDown = 1;
+    int32 reconnTimeout = 2;
+}
+
 message GameFailedRsp {
     int32 roomId = 1;
     string message = 2;
