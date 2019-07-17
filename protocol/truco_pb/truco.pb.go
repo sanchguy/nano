@@ -388,11 +388,10 @@ func (m *PokerMsg) GetTablePokerList() []string {
 }
 
 type OperateInfo struct {
-	OperaterId           int64    `protobuf:"varint,1,opt,name=OperaterId,proto3" json:"OperaterId,omitempty"`
-	ActionPlayer         int64    `protobuf:"varint,2,opt,name=ActionPlayer,proto3" json:"ActionPlayer,omitempty"`
-	CurrentTurn          int64    `protobuf:"varint,3,opt,name=CurrentTurn,proto3" json:"CurrentTurn,omitempty"`
-	Action               string   `protobuf:"bytes,4,opt,name=Action,proto3" json:"Action,omitempty"`
-	Transitions          []string `protobuf:"bytes,5,rep,name=transitions,proto3" json:"transitions,omitempty"`
+	ActionPlayer         int64    `protobuf:"varint,1,opt,name=ActionPlayer,proto3" json:"ActionPlayer,omitempty"`
+	CurrentTurn          int64    `protobuf:"varint,2,opt,name=CurrentTurn,proto3" json:"CurrentTurn,omitempty"`
+	Action               string   `protobuf:"bytes,3,opt,name=Action,proto3" json:"Action,omitempty"`
+	Transitions          []string `protobuf:"bytes,4,rep,name=transitions,proto3" json:"transitions,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -431,13 +430,6 @@ func (m *OperateInfo) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_OperateInfo proto.InternalMessageInfo
 
-func (m *OperateInfo) GetOperaterId() int64 {
-	if m != nil {
-		return m.OperaterId
-	}
-	return 0
-}
-
 func (m *OperateInfo) GetActionPlayer() int64 {
 	if m != nil {
 		return m.ActionPlayer
@@ -466,6 +458,77 @@ func (m *OperateInfo) GetTransitions() []string {
 	return nil
 }
 
+type PlayerAction struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
+	Action               string   `protobuf:"bytes,2,opt,name=Action,proto3" json:"Action,omitempty"`
+	OtherId              int64    `protobuf:"varint,3,opt,name=OtherId,proto3" json:"OtherId,omitempty"`
+	Card                 string   `protobuf:"bytes,4,opt,name=Card,proto3" json:"Card,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PlayerAction) Reset()         { *m = PlayerAction{} }
+func (m *PlayerAction) String() string { return proto.CompactTextString(m) }
+func (*PlayerAction) ProtoMessage()    {}
+func (*PlayerAction) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{7}
+}
+func (m *PlayerAction) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PlayerAction) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PlayerAction.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PlayerAction) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerAction.Merge(m, src)
+}
+func (m *PlayerAction) XXX_Size() int {
+	return m.Size()
+}
+func (m *PlayerAction) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerAction.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayerAction proto.InternalMessageInfo
+
+func (m *PlayerAction) GetPlayerId() int64 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
+func (m *PlayerAction) GetAction() string {
+	if m != nil {
+		return m.Action
+	}
+	return ""
+}
+
+func (m *PlayerAction) GetOtherId() int64 {
+	if m != nil {
+		return m.OtherId
+	}
+	return 0
+}
+
+func (m *PlayerAction) GetCard() string {
+	if m != nil {
+		return m.Card
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("pbtruco.Statue", Statue_name, Statue_value)
 	proto.RegisterType((*Empty)(nil), "pbtruco.Empty")
@@ -475,38 +538,41 @@ func init() {
 	proto.RegisterType((*GameInfo)(nil), "pbtruco.GameInfo")
 	proto.RegisterType((*PokerMsg)(nil), "pbtruco.PokerMsg")
 	proto.RegisterType((*OperateInfo)(nil), "pbtruco.OperateInfo")
+	proto.RegisterType((*PlayerAction)(nil), "pbtruco.PlayerAction")
 }
 
 func init() { proto.RegisterFile("truco.proto", fileDescriptor_2e54be1aa9105a3e) }
 
 var fileDescriptor_2e54be1aa9105a3e = []byte{
-	// 410 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xd1, 0x8a, 0xd4, 0x30,
-	0x14, 0x86, 0xcd, 0x74, 0xda, 0xed, 0x9c, 0x96, 0x65, 0x36, 0x88, 0x94, 0x45, 0x4a, 0x09, 0xa8,
-	0xc5, 0x8b, 0xb9, 0x50, 0x1f, 0xc0, 0x71, 0x5d, 0x64, 0x40, 0x69, 0xc9, 0x56, 0x7a, 0x29, 0xed,
-	0x4c, 0x5c, 0x82, 0xb3, 0x49, 0x49, 0xd3, 0x85, 0x7d, 0x02, 0x9f, 0xc6, 0xf7, 0xf0, 0xd2, 0x47,
-	0x90, 0x79, 0x12, 0x49, 0xda, 0x9d, 0x56, 0x2f, 0x14, 0xbc, 0xfc, 0xbf, 0x73, 0x4e, 0xce, 0xf9,
-	0x7f, 0x02, 0x81, 0x56, 0xdd, 0x56, 0xae, 0x1a, 0x25, 0xb5, 0xc4, 0x27, 0x4d, 0x6d, 0xe5, 0x39,
-	0xd4, 0x55, 0xcb, 0x7a, 0x48, 0x4e, 0xc0, 0xbd, 0xbc, 0x69, 0xf4, 0x1d, 0xb9, 0x86, 0x33, 0x2a,
-	0x3b, 0xb1, 0xbb, 0x14, 0xb7, 0x7c, 0x27, 0x73, 0xc9, 0x85, 0x6e, 0xf1, 0x39, 0xf8, 0xf9, 0xbe,
-	0xba, 0x63, 0x6a, 0xb3, 0x8b, 0x50, 0x82, 0x52, 0x87, 0x1e, 0x35, 0x7e, 0x08, 0x6e, 0xbb, 0x95,
-	0x8a, 0x45, 0xb3, 0x04, 0xa5, 0x2e, 0xed, 0x05, 0x4e, 0x20, 0x60, 0xe3, 0x0b, 0x91, 0x63, 0x6b,
-	0x53, 0x44, 0x5e, 0x43, 0xf8, 0xae, 0xba, 0x61, 0xd9, 0x2d, 0x53, 0x1b, 0xf1, 0x59, 0xfe, 0x6b,
-	0xc7, 0xd5, 0x74, 0x87, 0x15, 0xe4, 0x15, 0x04, 0xe6, 0x85, 0x92, 0x0b, 0xfb, 0xc0, 0x13, 0x98,
-	0x1b, 0x19, 0xa1, 0xc4, 0x49, 0x83, 0x17, 0x67, 0xab, 0xc1, 0xe6, 0xca, 0x40, 0xd3, 0x40, 0x6d,
-	0x99, 0x7c, 0x45, 0xe0, 0xdf, 0xa3, 0xff, 0x33, 0x56, 0x72, 0x71, 0x1c, 0x72, 0xec, 0xd0, 0x14,
-	0xe1, 0x67, 0xe0, 0x5e, 0xe9, 0x4a, 0xb3, 0x68, 0x9e, 0xa0, 0xf4, 0x74, 0x72, 0x48, 0xc9, 0x85,
-	0x2d, 0xd0, 0xbe, 0x4e, 0xf6, 0xe0, 0xe7, 0xf2, 0x0b, 0x53, 0x1f, 0xda, 0xeb, 0xbf, 0x1e, 0xf2,
-	0x18, 0x16, 0xb6, 0xef, 0x3d, 0x6f, 0x75, 0x34, 0x4b, 0x9c, 0x74, 0x41, 0x47, 0x80, 0x9f, 0xc2,
-	0x69, 0x51, 0xd5, 0x7b, 0x36, 0xb6, 0x38, 0xb6, 0xe5, 0x0f, 0x4a, 0xbe, 0x21, 0x08, 0xb2, 0x86,
-	0xa9, 0x4a, 0xf7, 0xd6, 0x63, 0x80, 0x41, 0x8e, 0x3b, 0x27, 0x04, 0x13, 0x08, 0xd7, 0x5b, 0xcd,
-	0xe5, 0x60, 0xcc, 0xa6, 0xe0, 0xd0, 0xdf, 0x98, 0x09, 0xe3, 0xa2, 0x53, 0x8a, 0x09, 0x5d, 0x74,
-	0x4a, 0xdc, 0x87, 0x31, 0x41, 0xf8, 0x11, 0x78, 0xfd, 0x84, 0x4d, 0x63, 0x41, 0x07, 0x65, 0x26,
-	0xb5, 0xaa, 0x44, 0xcb, 0x8d, 0x6a, 0x23, 0xd7, 0x9e, 0x3c, 0x45, 0xcf, 0x53, 0xf0, 0x4c, 0x4c,
-	0x1d, 0xc3, 0x21, 0xf8, 0xd9, 0xc7, 0xe2, 0xd3, 0xc5, 0x9a, 0xbe, 0x5d, 0x3e, 0xc0, 0x1e, 0xcc,
-	0xb2, 0x7c, 0x89, 0xb0, 0x0f, 0xf3, 0x72, 0xbd, 0x29, 0x96, 0xb3, 0x37, 0xe1, 0xf7, 0x43, 0x8c,
-	0x7e, 0x1c, 0x62, 0xf4, 0xf3, 0x10, 0xa3, 0xda, 0xb3, 0x1f, 0xfa, 0xe5, 0xaf, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0x3b, 0xfd, 0xe1, 0x69, 0xf4, 0x02, 0x00, 0x00,
+	// 436 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0xdf, 0x8a, 0xd3, 0x40,
+	0x14, 0xc6, 0x9d, 0x24, 0x6d, 0xd3, 0x93, 0xb0, 0x74, 0x07, 0x91, 0x61, 0x91, 0x12, 0x06, 0xd4,
+	0xe0, 0x45, 0x2f, 0xd4, 0x07, 0xb0, 0xd6, 0x45, 0x0a, 0x4a, 0xca, 0x6c, 0xa5, 0x97, 0x32, 0x6d,
+	0xc7, 0x75, 0xb0, 0x3b, 0x13, 0x26, 0x93, 0x85, 0x7d, 0x02, 0xaf, 0x7c, 0x2f, 0x2f, 0x7d, 0x04,
+	0xe9, 0x93, 0xc8, 0x4c, 0xb2, 0xdb, 0xac, 0x17, 0x15, 0xf6, 0x2e, 0xdf, 0xef, 0xfc, 0xf9, 0xce,
+	0x39, 0x43, 0x20, 0xb1, 0xa6, 0xde, 0xe8, 0x49, 0x69, 0xb4, 0xd5, 0x78, 0x50, 0xae, 0xbd, 0x3c,
+	0x83, 0x35, 0xaf, 0x44, 0x03, 0xe9, 0x00, 0x7a, 0xe7, 0x57, 0xa5, 0xbd, 0xa1, 0x97, 0x70, 0xca,
+	0x74, 0xad, 0xb6, 0xe7, 0xea, 0x5a, 0x6e, 0xf5, 0x42, 0x4b, 0x65, 0x2b, 0x7c, 0x06, 0xf1, 0x62,
+	0xc7, 0x6f, 0x84, 0x99, 0x6f, 0x09, 0xca, 0x50, 0x1e, 0xb2, 0x3b, 0x8d, 0x1f, 0x43, 0xaf, 0xda,
+	0x68, 0x23, 0x48, 0x90, 0xa1, 0xbc, 0xc7, 0x1a, 0x81, 0x33, 0x48, 0xc4, 0xa1, 0x03, 0x09, 0x7d,
+	0xac, 0x8b, 0xe8, 0x5b, 0x48, 0x3f, 0xf0, 0x2b, 0x51, 0x5c, 0x0b, 0x33, 0x57, 0x5f, 0xf5, 0xff,
+	0x3c, 0x2e, 0xba, 0x1e, 0x5e, 0xd0, 0x37, 0x90, 0xb8, 0x0e, 0x2b, 0xa9, 0x7c, 0x83, 0x67, 0x10,
+	0x39, 0x49, 0x50, 0x16, 0xe6, 0xc9, 0xab, 0xd3, 0x49, 0xbb, 0xe6, 0xc4, 0x41, 0x97, 0xc0, 0x7c,
+	0x98, 0xfe, 0x40, 0x10, 0xdf, 0xa2, 0x87, 0x2d, 0xb6, 0x92, 0xea, 0xae, 0x28, 0xf4, 0x45, 0x5d,
+	0x84, 0x5f, 0x40, 0xef, 0xc2, 0x72, 0x2b, 0x48, 0x94, 0xa1, 0xfc, 0xa4, 0x33, 0xc8, 0x4a, 0x2a,
+	0x1f, 0x60, 0x4d, 0x9c, 0xee, 0x20, 0x5e, 0xe8, 0xef, 0xc2, 0x7c, 0xaa, 0x2e, 0x8f, 0x0e, 0xf2,
+	0x14, 0x86, 0x3e, 0xef, 0xa3, 0xac, 0x2c, 0x09, 0xb2, 0x30, 0x1f, 0xb2, 0x03, 0xc0, 0xcf, 0xe1,
+	0x64, 0xc9, 0xd7, 0x3b, 0x71, 0x48, 0x09, 0x7d, 0xca, 0x3f, 0x94, 0xfe, 0x44, 0x90, 0x14, 0xa5,
+	0x30, 0xdc, 0x36, 0xab, 0x53, 0x48, 0xa7, 0x1b, 0x2b, 0x75, 0x3b, 0x78, 0xeb, 0x7a, 0x8f, 0xb9,
+	0x65, 0x67, 0xb5, 0x31, 0x42, 0xd9, 0x65, 0x6d, 0x94, 0x3f, 0x44, 0xc8, 0xba, 0x08, 0x3f, 0x81,
+	0x7e, 0x53, 0xe1, 0x2f, 0x31, 0x64, 0xad, 0x72, 0x95, 0xd6, 0x70, 0x55, 0x49, 0xa7, 0x2a, 0x12,
+	0xf9, 0x91, 0xba, 0x88, 0x96, 0x90, 0x36, 0x2e, 0x6d, 0xc5, 0xb1, 0x0b, 0x1c, 0x5c, 0x82, 0x7b,
+	0x2e, 0x04, 0x06, 0x85, 0xfd, 0xd6, 0x79, 0x88, 0x5b, 0x89, 0x31, 0x44, 0x33, 0x6e, 0xb6, 0xfe,
+	0x0d, 0x86, 0xcc, 0x7f, 0xbf, 0xcc, 0xa1, 0xef, 0x0e, 0x5f, 0x0b, 0x9c, 0x42, 0x5c, 0x7c, 0x5e,
+	0x7e, 0x99, 0x4d, 0xd9, 0xfb, 0xd1, 0x23, 0xdc, 0x87, 0xa0, 0x58, 0x8c, 0x10, 0x8e, 0x21, 0x5a,
+	0x4d, 0xe7, 0xcb, 0x51, 0xf0, 0x2e, 0xfd, 0xb5, 0x1f, 0xa3, 0xdf, 0xfb, 0x31, 0xfa, 0xb3, 0x1f,
+	0xa3, 0x75, 0xdf, 0xff, 0x22, 0xaf, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x24, 0xab, 0x69, 0x49,
+	0x46, 0x03, 0x00, 0x00,
 }
 
 func (m *Empty) Marshal() (dAtA []byte, err error) {
@@ -742,30 +808,25 @@ func (m *OperateInfo) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.OperaterId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintTruco(dAtA, i, uint64(m.OperaterId))
-	}
 	if m.ActionPlayer != 0 {
-		dAtA[i] = 0x10
+		dAtA[i] = 0x8
 		i++
 		i = encodeVarintTruco(dAtA, i, uint64(m.ActionPlayer))
 	}
 	if m.CurrentTurn != 0 {
-		dAtA[i] = 0x18
+		dAtA[i] = 0x10
 		i++
 		i = encodeVarintTruco(dAtA, i, uint64(m.CurrentTurn))
 	}
 	if len(m.Action) > 0 {
-		dAtA[i] = 0x22
+		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintTruco(dAtA, i, uint64(len(m.Action)))
 		i += copy(dAtA[i:], m.Action)
 	}
 	if len(m.Transitions) > 0 {
 		for _, s := range m.Transitions {
-			dAtA[i] = 0x2a
+			dAtA[i] = 0x22
 			i++
 			l = len(s)
 			for l >= 1<<7 {
@@ -777,6 +838,49 @@ func (m *OperateInfo) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *PlayerAction) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PlayerAction) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
+	}
+	if len(m.Action) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(len(m.Action)))
+		i += copy(dAtA[i:], m.Action)
+	}
+	if m.OtherId != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.OtherId))
+	}
+	if len(m.Card) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(len(m.Card)))
+		i += copy(dAtA[i:], m.Card)
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -919,9 +1023,6 @@ func (m *OperateInfo) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.OperaterId != 0 {
-		n += 1 + sovTruco(uint64(m.OperaterId))
-	}
 	if m.ActionPlayer != 0 {
 		n += 1 + sovTruco(uint64(m.ActionPlayer))
 	}
@@ -937,6 +1038,32 @@ func (m *OperateInfo) Size() (n int) {
 			l = len(s)
 			n += 1 + l + sovTruco(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *PlayerAction) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.PlayerId))
+	}
+	l = len(m.Action)
+	if l > 0 {
+		n += 1 + l + sovTruco(uint64(l))
+	}
+	if m.OtherId != 0 {
+		n += 1 + sovTruco(uint64(m.OtherId))
+	}
+	l = len(m.Card)
+	if l > 0 {
+		n += 1 + l + sovTruco(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1600,25 +1727,6 @@ func (m *OperateInfo) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OperaterId", wireType)
-			}
-			m.OperaterId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTruco
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.OperaterId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ActionPlayer", wireType)
 			}
 			m.ActionPlayer = 0
@@ -1636,7 +1744,7 @@ func (m *OperateInfo) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 3:
+		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CurrentTurn", wireType)
 			}
@@ -1655,7 +1763,7 @@ func (m *OperateInfo) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Action", wireType)
 			}
@@ -1687,7 +1795,7 @@ func (m *OperateInfo) Unmarshal(dAtA []byte) error {
 			}
 			m.Action = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Transitions", wireType)
 			}
@@ -1718,6 +1826,162 @@ func (m *OperateInfo) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Transitions = append(m.Transitions, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PlayerAction) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PlayerAction: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PlayerAction: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
+			}
+			m.PlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Action", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Action = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtherId", wireType)
+			}
+			m.OtherId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.OtherId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Card", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Card = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

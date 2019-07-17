@@ -31,7 +31,7 @@ type (
 		transitions  []string
 	}
 )
-
+var posiblesAction = []string{"envido","envido-envido","real-envido","envido-real","envido-envido-real","falta-envido","envido-falta","envido-envido-falta","envido-envido-real-falta","real-envido-falta","envido-real-falta"}
 //NewRoom return new room
 func NewRoom(rid string) *Room {
 	return &Room{
@@ -62,6 +62,7 @@ func (r *Room) playerJoin(s *session.Session,isReJoin bool){
 	if !exists {
 		p = s.Value("player").(*Player)
 		r.players = append(r.players,p)
+		p.setRoom(r)
 		r.group.Add(s)
 	}
 	p.logger.Infof("房间玩家数量 = %d",len(r.players))
@@ -211,8 +212,53 @@ func (r *Room) deal() {
 	r.players[1].setCards(cards2)
 }
 
-func (r *Room) onPlayerAction(s *session.Session, info []byte) error {
+func (r *Room) onPlayerAction(actPlayerId int64, action []byte) error {
 
+	actionData := &pbtruco.PlayerAction{}
+	err := actionData.Unmarshal(action)
+	if err != nil{
+		r.logger.Error("unpack playerAction faile")
+	}
+	var cantoEnvido bool = false
+	for _,posibleAct := range posiblesAction{
+		if posibleAct == actionData.Action {
+			cantoEnvido = true
+		}
+	}
+	if actionData.Action == "flod"{
+		r.currentRound.auxWin = true
+		var playerIndex = 0
+		if actPlayerId == r.currentRound.player2name {
+			playerIndex = 1
+		}
+		if !(r.currentRound.flagTruco || r.currentRound.flagRetruco || r.currentRound.flagValeCuatro){
+			var card1Count = len(r.currentRound.cartasp1)
+			var card2Count = len(r.currentRound.cartasp2)
+			if card1Count == 3 || card2Count == 3 {
+				if cantoEnvido{
+					r.currentRound.score[playerIndex] += 1
+				}else {
+					r.currentRound.score[playerIndex] += 2
+				}
+			}else {
+				r.currentRound.score[playerIndex] += 1
+			}
+		}else {
+			if r.currentRound.flagValeCuatro {
+				r.currentRound.score[playerIndex] += 4
+			}else{
+				if r.currentRound.flagRetruco {
+					r.currentRound.score[playerIndex] += 3
+				}else {
+					if r.currentRound.flagTruco {
+						r.currentRound.score[playerIndex] += 2
+					}
+				}
+			}
+		}
+	}else {
+		r.currentRound =
+	}
 }
 
 

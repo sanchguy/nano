@@ -2,6 +2,7 @@ package game
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/sanchguy/nano"
 	"github.com/sanchguy/nano/component"
 	pbtruco "github.com/sanchguy/nano/protocol/truco_pb"
@@ -181,6 +182,22 @@ func (m *Manager) onPlayerLoadingReq(s *session.Session,data []byte) error{
 	sendData,err := encodePbPacket(PktLoadingRsp,resData)
 
 	return s.Response(sendData)
+}
+
+func (m *Manager)onPlayerAction(s *session.Session,action []byte) error {
+	p,err := playerWithSession(s)
+	if err != nil{
+		logger.Info("玩家不存在或者已离线")
+	}
+	room := p.room
+	if room == nil || room.isDestroy(){
+		logger.Error("房间已销毁或者已经完结")
+		return errors.New("room is destroy")
+	}
+
+	room.onPlayerAction(p.id,action)
+
+	return nil
 }
 
 func (m *Manager) setPlayer(uid int64, p *Player) {

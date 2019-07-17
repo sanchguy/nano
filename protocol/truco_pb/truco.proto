@@ -41,9 +41,15 @@ message PokerMsg{
 }
 
 message OperateInfo{
-	int64 OperaterId = 1;//发起请求的玩家
-	int64 ActionPlayer = 2;//上一个操作的玩家
-	int64 CurrentTurn = 3;//当前操作玩家
-	string Action = 4;//指令
-	repeated string transitions = 5;//当前可用操作
+	int64 ActionPlayer = 1;//上一个操作的玩家
+	int64 CurrentTurn = 2;//当前操作玩家
+	string Action = 3;//指令
+	repeated string transitions = 4;//当前可用操作
+}
+
+message PlayerAction{
+	int64 PlayerId = 1;//操作的玩家
+	string Action = 2;//指令或出牌
+	int64 OtherId = 3;//当前回合对手
+	string Card	= 4;//如果是出牌，带上牌的信息
 }
