@@ -18,8 +18,8 @@ var tablep1 = []*Card{}
 var tablep2 = []*Card{}
 
 type (
-	//Round is one round in games object
-	Round struct {
+	//Round1 is one round in games object
+	Round1 struct {
 		player1name int64
 
 		player2name int64
@@ -63,8 +63,8 @@ type (
 )
 
 //NewRound return a round obj
-func NewRound(room *Room) *Round {
-	r := &Round{
+func NewRound(room *Room) *Round1 {
+	r := &Round1{
 		player1name: room.players[0].id,
 
 		player2name: room.players[1].id,
@@ -108,7 +108,7 @@ func NewRound(room *Room) *Round {
 	return r
 }
 
-func (r *Round) newTrucoFSM(state string) *fsm.FSM {
+func (r *Round1) newTrucoFSM(state string) *fsm.FSM {
 	initialState := ""
 	if state == "" {
 		initialState = "init"
@@ -151,7 +151,7 @@ func (r *Round) newTrucoFSM(state string) *fsm.FSM {
 	return trucoFsm
 }
 
-func (r *Round) switchPlayer(pname int64) int64 {
+func (r *Round1) switchPlayer(pname int64) int64 {
 	if r.player1name == pname {
 		return r.player2name
 	}
@@ -159,11 +159,11 @@ func (r *Round) switchPlayer(pname int64) int64 {
 
 }
 
-func (r *Round) returnSuit(value string) string {
+func (r *Round1) returnSuit(value string) string {
 	return strings.Split(value, "-")[1]
 }
 
-func (r *Round) returnNumber(value string) int {
+func (r *Round1) returnNumber(value string) int {
 	num, err := strconv.Atoi(strings.Split(value, "-")[0])
 	if err != nil {
 		fmt.Println(err)
@@ -171,22 +171,22 @@ func (r *Round) returnNumber(value string) int {
 	return num
 }
 
-func (r *Round) returnValueComplete(value string) string {
+func (r *Round1) returnValueComplete(value string) string {
 	s := ""
 	s += strconv.Itoa(r.returnNumber(value))
 	s += r.returnSuit(value)
 	return s
 }
 
-func (r *Round) actionCurrent() string {
+func (r *Round1) actionCurrent() string {
 	return r.FSM.Current()
 }
 
-func (r *Round) actionPrevious() string {
+func (r *Round1) actionPrevious() string {
 	return r.FSM.Current()
 }
 
-func (r *Round) distHamming(arr1 []int, arr2 []int) int {
+func (r *Round1) distHamming(arr1 []int, arr2 []int) int {
 	if len(arr1) != len(arr2) {
 		return -1
 	}
@@ -199,7 +199,7 @@ func (r *Round) distHamming(arr1 []int, arr2 []int) int {
 	return counter
 }
 
-func (r *Round) confrontScore() {
+func (r *Round1) confrontScore() {
 	switch len(r.turnWin) {
 	case 0:
 		if tablep1[0] != nil && tablep2[0] != nil {
@@ -216,7 +216,7 @@ func (r *Round) confrontScore() {
 	}
 }
 
-func (r *Round) selectWin(conf int) []int {
+func (r *Round1) selectWin(conf int) []int {
 	switch conf {
 	case -1:
 		r.turnWin = append(r.turnWin, 1)
@@ -231,7 +231,7 @@ func (r *Round) selectWin(conf int) []int {
 	return r.turnWin
 }
 
-func (r *Round) changeTurn() int64 {
+func (r *Round1) changeTurn() int64 {
 	if len(r.tablep1) != len(r.tablep2) || r.FSM.Current() == "truco" || r.FSM.Current() == "retruco" || r.FSM.Current() == "valecuatro" {
 		r.currentTrun = r.switchPlayer(r.currentTrun)
 		return r.currentTrun
@@ -253,7 +253,7 @@ func (r *Round) changeTurn() int64 {
 	return r.currentTrun
 }
 
-func (r *Round) findPosiblesE(p string, action string) bool {
+func (r *Round1) findPosiblesE(p string, action string) bool {
 	foundActon := false
 	for _, actionMap := range posiblesE {
 		for key, value := range actionMap {
@@ -268,7 +268,7 @@ func (r *Round) findPosiblesE(p string, action string) bool {
 	return foundActon
 }
 
-func (r *Round) calculateScore(action string, prev string, value string, playerid int64) {
+func (r *Round1) calculateScore(action string, prev string, value string, playerid int64) {
 	if (action == "played-card" || action == "playcard") && r.auxWin == false {
 		r.setTable(value, playerid)
 		r.confrontScore()
@@ -304,7 +304,7 @@ func (r *Round) calculateScore(action string, prev string, value string, playeri
 	}
 }
 
-func (r *Round) calculateScoreEnvido(action string, prev string, player int64) {
+func (r *Round1) calculateScoreEnvido(action string, prev string, player int64) {
 	var total int32 = 9
 	if action == "quiero" {
 		switch prev {
@@ -419,7 +419,7 @@ func (r *Round) calculateScoreEnvido(action string, prev string, player int64) {
 	}
 }
 
-func (r *Round) assignPoints(action string, num int32, playername int64) {
+func (r *Round1) assignPoints(action string, num int32, playername int64) {
 	if action == "quiero" {
 		if r.pointsEnvidoP1 > r.pointsEnvidoP2 {
 			if r.currentHand == r.player1name {
@@ -452,7 +452,7 @@ func (r *Round) assignPoints(action string, num int32, playername int64) {
 	}
 }
 
-func (r *Round) checkWinner(arr [][]int, num int) {
+func (r *Round1) checkWinner(arr [][]int, num int) {
 	i := 0
 	for {
 		if i > len(arr) {
@@ -483,7 +483,7 @@ func (r *Round) checkWinner(arr [][]int, num int) {
 	}
 }
 
-func (r *Round) calculateScoreTruco(action string, playerid int64, value string) {
+func (r *Round1) calculateScoreTruco(action string, playerid int64, value string) {
 	if (action == "quiero" || action == "playcard") && (r.auxWin == false) {
 		//posibilodades ganar player1
 		var fst = [][]int{{0, 0}, {-1, 0}, {1, 0, 0}, {0, -1}, {-1, -1, 0}, {0, 1, 0}, {0, 1, -1}}
@@ -533,7 +533,7 @@ func (r *Round) calculateScoreTruco(action string, playerid int64, value string)
 	}
 }
 
-func (r *Round) setTable(value string, player int64) {
+func (r *Round1) setTable(value string, player int64) {
 	// encontrado := false
 	if player == r.player1name {
 		card := NewCard(r.returnNumber(value), r.returnSuit(value))
@@ -582,9 +582,10 @@ func (r *Round) setTable(value string, player int64) {
 	}
 }
 
-func (r *Round) play(player int64, action string, value string) {
+func (r *Round1) play(player int64, action string, value string) *Round1{
 	prev := r.actionPrevious()
 	r.FSM.Event(action)
 	r.calculateScore(action, prev, value, player)
 	r.changeTurn()
+	return r
 }

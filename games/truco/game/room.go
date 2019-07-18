@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"github.com/pborman/uuid"
 	"github.com/sanchguy/nano"
 	"github.com/sanchguy/nano/constant"
@@ -23,15 +24,12 @@ type (
 		creator int64
 		logger *log.Entry
 
-		currentHand  int64
-		currentTurn  int64
-		currentState string
+		roundCount int
 		currentRound *Round
 		score        map[int64]int32
 		transitions  []string
 	}
 )
-var posiblesAction = []string{"envido","envido-envido","real-envido","envido-real","envido-envido-real","falta-envido","envido-falta","envido-envido-falta","envido-envido-real-falta","real-envido-falta","envido-real-falta"}
 //NewRoom return new room
 func NewRoom(rid string) *Room {
 	return &Room{
@@ -179,12 +177,8 @@ func (r *Room) checkStart() {
 		}
 	}
 	if isAllReady {
-		r.currentRound = r.newRound("init")
-		r.deal()
-		r.currentHand = r.players[0].id
-		r.currentTurn = r.currentHand
-		r.transitions = r.currentRound.FSM.AvailableTransitions()
-
+		r.currentRound = r.newRound()
+		r.roundCount = 1
 		r.syncRoomStatus()
 	}
 
@@ -194,23 +188,11 @@ func (r *Room)start() {
 
 }
 
-func (r *Room) newRound(state string) *Round {
-	round := NewRound(r)
-	round.FSM = round.newTrucoFSM(state)
+func (r *Room) newRound() *Round {
+	round := GetnewRound(r.players[0].id,r.players[1].id)
 	return round
 }
 
-func (r *Room) deal() {
-	deck := NewDeck().sorted()
-	cards1 := []*Card{deck[0], deck[2], deck[4]}
-	cards2 := []*Card{deck[1], deck[3], deck[5]}
-
-	r.logger.Info("room deal cards1 = ",cards1)
-	r.logger.Info("room deal cards2 = ",cards2)
-
-	r.players[0].setCards(cards1)
-	r.players[1].setCards(cards2)
-}
 
 func (r *Room) onPlayerAction(actPlayerId int64, action []byte) error {
 
@@ -225,40 +207,17 @@ func (r *Room) onPlayerAction(actPlayerId int64, action []byte) error {
 			cantoEnvido = true
 		}
 	}
-	if actionData.Action == "flod"{
-		r.currentRound.auxWin = true
-		var playerIndex = 0
-		if actPlayerId == r.currentRound.player2name {
-			playerIndex = 1
-		}
-		if !(r.currentRound.flagTruco || r.currentRound.flagRetruco || r.currentRound.flagValeCuatro){
-			var card1Count = len(r.currentRound.cartasp1)
-			var card2Count = len(r.currentRound.cartasp2)
-			if card1Count == 3 || card2Count == 3 {
-				if cantoEnvido{
-					r.currentRound.score[playerIndex] += 1
-				}else {
-					r.currentRound.score[playerIndex] += 2
-				}
-			}else {
-				r.currentRound.score[playerIndex] += 1
-			}
-		}else {
-			if r.currentRound.flagValeCuatro {
-				r.currentRound.score[playerIndex] += 4
-			}else{
-				if r.currentRound.flagRetruco {
-					r.currentRound.score[playerIndex] += 3
-				}else {
-					if r.currentRound.flagTruco {
-						r.currentRound.score[playerIndex] += 2
-					}
-				}
-			}
-		}
-	}else {
-		r.currentRound =
+	if actionData.Action == "flod" {
 	}
+	return nil
+}
+
+func (r *Room)checkRoundWin(actPlayer int64)  {
+
+}
+
+func (r *Room) checkActionAvailable(action string)  {
+
 }
 
 

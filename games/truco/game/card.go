@@ -27,10 +27,10 @@ import (
  */
 
 var weights = map[string][]int{
-	"oro":    {0, 7, 8, 9, 1, 2, 3, 10, 0, 0, 0, 5, 6},
-	"copa":   {0, 7, 8, 9, 1, 2, 3, 4, 0, 0, 0, 5, 6},
-	"espada": {0, 13, 8, 9, 1, 2, 3, 11, 0, 0, 0, 5, 6},
-	"basto":  {0, 12, 8, 9, 1, 2, 3, 4, 0, 0, 0, 5, 6},
+	"gold":    {0, 8, 9, 10, 1, 2, 3, 11, 0, 0, 5, 6, 7},
+	"cup":   {0, 8, 9, 10, 1, 2, 3, 4, 0, 0, 5, 6, 7},
+	"sword": {0, 14, 9, 10, 1, 2, 3, 12, 0, 0, 5, 6, 7},
+	"club":  {0, 13, 9, 10, 1, 2, 3, 4, 0, 0, 5, 6, 7},
 }
 
 type (
@@ -94,11 +94,11 @@ func (c *Card) confront(cc *Card) int {
  * Returns the envido points of two cards 'this' and 'card'
  */
 func (c *Card) envido(cc *Card) int32 {
-	cardValue := 0
+	cardValue := cc.number
 	if cc.isBlackCard() {
 		cardValue = 0
 	}
-	thisValue := 0
+	thisValue := c.number
 	if c.isBlackCard() {
 		thisValue = 0
 	}
@@ -113,7 +113,7 @@ func (c *Card) envido(cc *Card) int32 {
 }
 
 func (c *Card) isBlackCard() bool {
-	return c.number == 11 || c.number == 12
+	return c.number == 10 || c.number == 11 || c.number == 12
 }
 
 func (c *Card) isSameSuit(cc *Card) bool {
