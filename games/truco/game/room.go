@@ -15,7 +15,7 @@ type (
 	Room struct {
 		roomID  string
 		state	constant.RoomStatus
-		players []*Player
+		players map[int64]*Player
 		game	*Game
 		group *nano.Group
 		die	chan struct{}
@@ -35,7 +35,7 @@ func NewRoom(rid string) *Room {
 	return &Room{
 		roomID: rid,
 		state:constant.RoomStatusCreate,
-		players:[]*Player{},
+		players:map[int64]*Player{},
 		createdAt: time.Now().Unix(),
 		score : map[int64]int32{},
 		group:nano.NewGroup(uuid.New()),
@@ -59,7 +59,7 @@ func (r *Room) playerJoin(s *session.Session,isReJoin bool){
 	}
 	if !exists {
 		p = s.Value("player").(*Player)
-		r.players = append(r.players,p)
+		r.players[p.id] = p
 		p.setRoom(r)
 		r.group.Add(s)
 	}

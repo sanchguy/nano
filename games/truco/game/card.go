@@ -41,14 +41,14 @@ type (
 	 *   @suit: this is the card suit
 	 */
 	Card struct {
-		number int
+		number int32
 		suit   string
 		weight int
 	}
 )
 
 //NewCard create a card object
-func NewCard(num int, suit string) *Card {
+func NewCard(num int32, suit string) *Card {
 	return &Card{
 		number: num,
 		suit:   suit,
@@ -60,14 +60,14 @@ func NewCard(num int, suit string) *Card {
  *  Print a card
  */
 func (c *Card) show() string {
-	return strconv.Itoa(c.number) + "-" + c.suit
+	return strconv.Itoa(int(c.number)) + "-" + c.suit
 }
 
 /*
  *  get a card name
  */
 func (c *Card) getCardName() string {
-	return c.suit + "-" + strconv.Itoa(c.number)
+	return c.suit + "-" + strconv.Itoa(int(c.number))
 }
 
 /*
