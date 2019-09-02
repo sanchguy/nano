@@ -14,15 +14,20 @@ PktGameStartRsp int32 =7//游戏开始
 PktPlayerOutRsp int32 = 8//退出游戏
 PktGameWinRsp int32 = 9//游戏胜利信息
 PktGameSignError int32 = 10//鉴权失败
-PktGamePokerRsp int32 = 11//扑克信息
+
 PktPlayerReLoginRsp int32 = 12//断线重连
-PktPlayerAddPokerRsp int32 = 13//摸牌操作
-PktPlayerOutPokerRsp int32 = 14//出牌操作
+
 PktGameSuccessPokerRsp int32 = 15//本局结束
 PktGameTakePokerRsp int32 = 16//点牌返回
-PktGameHuPokerRsp int32 = 17//胡牌
-PktGameSetPointRsp int32 = 18//设置分数合押注
+PktGameRoundInfoRsp int32 = 17//回合信息
+PktGameAlertEnvidoPointRsp int32 = 18//设置分数合押注
 PktGameSetCardsRsp int32 = 19//设置牌局
+PktGameSyncScoreRsp int32 = 20//同步全局分数
+
+PktGameSyncActionRsp int32 = 21//同步玩家操作
+PktGameFlorInfoRsp int32 = 22//同步玩家flor信息
+PktGameOneRoundResult int32 = 23 //同步一局押注获得的分数
+PktGameAlertFlorPointRsp int32 = 24 //同步flor比拼分数
 
 // client to server
 PktLoginReq int32 = 999		//登录
@@ -31,9 +36,10 @@ PktLoadingReq int32 = 1001 // 客户端加载进度
 PktQuitReq int32 = 1002      // 客户端主动退出游戏
 PktEmojiReq int32 = 1003     // 发送表情
 PktGameOverReq int32 = 1004//每局游戏结束
-PktGameAddPokerReq int32 = 1005//摸牌操作
-PktGameOutPokterReq int32 = 1006//出牌操作
-PktGameSuccessPokerReq int32 = 1007//本局结束
-PktGameTakePokerReq int32 = 1008//点牌
-PktGameHuPokerReq int32 = 1009//胡牌
+PktGamePlayAction int32 = 1005//下注
+PktGameRoundBegin int32 = 1006//开始回合
+PktOneMoreGameReq int32 = 1007//再来一次
+PktEnvidoComfirmGameReq int32 = 1008//确认envido
+PktNoFlorGameReq int32 = 1009//回复没有flor
+PktFlodGameReq int32 = 1011//flod
 )

@@ -67,7 +67,7 @@ func (c *Card) show() string {
  *  get a card name
  */
 func (c *Card) getCardName() string {
-	return c.suit + "-" + strconv.Itoa(int(c.number))
+	return c.suit + "_" + strconv.Itoa(int(c.number))
 }
 
 /*

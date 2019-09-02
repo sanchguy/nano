@@ -1,0 +1,146 @@
+{
+  "play": [
+    {
+      "action": "playcard",
+      "rate": 60
+    },
+    {
+      "action": "truco",
+      "rate": 50
+    },
+    {
+      "action": "envido",
+      "rate": 50
+    },
+    {
+      "action": "real",
+      "rate": 50
+    },
+    {
+      "action": "falta",
+      "rate": 50
+    }
+  ],
+  "truco": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    },
+    {
+      "action": "retruco",
+      "rate": 50
+    }
+  ],
+  "retruco": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    },
+    {
+      "action": "valecuatro",
+      "rate": 50
+    }
+  ],
+  "valecuatro": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    }
+  ],
+  "envido": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    },
+    {
+      "action": "real",
+      "rate": 50
+    },
+    {
+      "action": "falta",
+      "rate": 50
+    }
+  ],
+  "real": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    },
+    {
+      "action": "falta",
+      "rate": 50
+    }
+  ],
+  "falta": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    }
+  ],
+  "flor": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    },
+    {
+      "action": "ContraFlor",
+      "rate": 30
+    },
+    {
+      "action": "ContraFlorAlResto",
+      "rate": 30
+    }
+  ],
+  "ContraFlor": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    },
+    {
+      "action": "ContraFlorAlResto",
+      "rate": 30
+    }
+  ],
+  "ContraFlorAlResto": [
+    {
+      "action": "quiero",
+      "rate": 50
+    },
+    {
+      "action": "no-quiero",
+      "rate": 50
+    }
+  ]
+}

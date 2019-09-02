@@ -206,6 +206,7 @@ func (h *handlerService) register(comp component.Component, opts []component.Opt
 	// register all handlers
 	h.services[s.Name] = s
 	for name, handler := range s.Handlers {
+		logger.Println(s.Name,name)
 		h.handlers[fmt.Sprintf("%s.%s", s.Name, name)] = handler
 	}
 	return nil

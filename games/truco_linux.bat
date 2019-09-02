@@ -1,14 +1,8 @@
 @echo off
-cd ginrummy
+cd truco
 set CGO_ENABLED=0
 set GOOS=linux
 set GOARCH=amd64
-go build -o "../ginrummyServer/rummy_bin"
-echo current path : %cd%
-cd ../ginrummyServer
-rd /q /s conf
-md conf
-cd ../ginrummy
-copy "./game_init.ini" "../ginrummyServer/conf/"
+go build -o "../truco_bin"
 echo "webserver build finish..."
 pause

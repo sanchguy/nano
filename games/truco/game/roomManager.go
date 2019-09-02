@@ -35,11 +35,14 @@ func (m *RoomManager) AfterInit() {
 	//每5分钟清空一次已摧毁的房间信息
 	nano.NewTimer(30*time.Second, func() {
 		roomDestroy := map[string]*Room{}
-		deadline := time.Now().Add(-24 * time.Hour).Unix()
+		//deadline := time.Now().Add(-24 * time.Hour).Unix()
+		var deadline int64 = 60 * 1000
+		logger.Info("每30秒清空一次已摧毁的房间信息",len(m.rooms))
 		for no, d := range m.rooms {
 			//清除创建超过24小时的房间
-			d.logger.Info("清楚房间条件",d.state,d.createdAt,deadline)
-			if d.state == constant.RoomStatusDestroy || d.createdAt < deadline {
+			logger.Info("清楚房间条件",d.state,d.createdAt,deadline)
+			if d.state == constant.RoomStatusDestroy || time.Now().Unix() - d.createdAt > deadline {
+				logger.Info("roomManager清楚房间",d.state,d.createdAt,deadline)
 				roomDestroy[no] = d
 			}
 		}
@@ -91,10 +94,10 @@ func (m *RoomManager) setDesk(number string, r *Room) {
 	}
 }
 
-func (m *RoomManager)CreateRoom(s *session.Session,roomId string)  {
+func (m *RoomManager)CreateRoom(s *session.Session,roomId string,isReconnect bool)  {
 	r,ok := m.desk(roomId)
 	if ok {
-		r.playerJoin(s,false)
+		r.playerJoin(s,isReconnect)
 		return
 	}
 	p , err := playerWithSession(s)
@@ -113,4 +116,12 @@ func (m *RoomManager)CreateRoom(s *session.Session,roomId string)  {
 
 	m.setDesk(roomId,room)
 
+}
+
+func (m *RoomManager)ReJoinRoom(s *session.Session,roomid string)  {
+	r,ok := m.desk(roomid)
+	if ok {
+		r.playerJoin(s,true)
+		return
+	}
 }

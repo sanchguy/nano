@@ -2,11 +2,23 @@ package game
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const total int32 = 30
+
+type TrucoCache struct {
+	playerId int64
+	trucoAction string
+}
+
+type EnvidoCache struct {
+	playerId int64
+	envidoAction string
+}
 
 type (
 	Round struct {
@@ -18,13 +30,35 @@ type (
 
 		tableCards map[int64][]*Card
 
+		envidoPoints map[int64]int32
+
+		florPoints map[int64]int32
+
+		trucoResult	 []int64
+
 		scores map[int64]int32
 
 		currentTurn int64 //当前回合轮到的玩家
 
-		currentHand int64 //首先发起赌注的玩家
+		currentHand int64 //手部玩家
 
-		currentAction string //当前押注到那一步了envido-envido-real
+		currentAction string //当前押注选项
+
+		betTrucoPlayer	int64	//第一个押truco的玩家
+
+		availeableAction []string//当前玩家能使用的押注
+
+		totalTrucoAction string
+
+		betTrucoActions []string
+
+		betEnvidoActions []string
+
+		betFlorActions []string
+
+		totalEnvidoAction string
+
+		totalFlorAction string
 
 		flagTruco bool
 
@@ -34,15 +68,72 @@ type (
 
 		flagFlor bool
 
+		flagContraFlor bool
+
+		flagContraFlorAlResto bool
+
+		hasFlor map[int64]bool
+
 		flagEnvido bool
 
 		flagRealEnvido bool
 
 		flagFaltaEnvido bool
 
-		envidoBets map[string][]string //envido各等级各玩家是否已经交过，2表示都叫了envido，只发送RealEnvido之后
+		isEnvidoFinish bool
+
+		isShowEnvidoPanel bool
+
+		isFlorFinish bool
+
+		isPlayingFlor bool
+
+		isTrucoFinish bool
+
+		isTrucoHasNotQuiero bool
+
+		isTrucoCompareBegin bool
 
 		pardas bool
+
+		roundStartTime int64
+
+		roundEndTime int64
+
+		winstate WinState
+
+		aiCacheAction string	//ai用的
+
+		trucoCache *TrucoCache
+
+		envidoCache *EnvidoCache
+
+		roundCount int32
+
+		envidoComfirm []int64
+
+		preActionPlayer int64
+
+		preActionPlayCard string
+
+		checkNewRoundState bool
+
+		foldPlayerId int64
+
+		winPlayerId int64
+
+		oneRoundTrucoTime int32
+
+		oneRoundEnvidoTime int32
+
+		oneRoundFlorTime int32
+
+		oneRoundTrucoWinScore map[int64]int32
+
+		oneRoundEnvidoWinScore map[int64]int32
+
+		oneRoundFlorWinScore map[int64]int32
+
 	}
 )
 
@@ -53,22 +144,80 @@ func GetnewRound(p1 int64,p2 int64) *Round {
 		handCards:		 map[int64][]*Card{},
 		tableCards:      map[int64][]*Card{},
 		scores:          map[int64]int32{},
-		currentTurn:     p1,
-		currentHand:     p1,
+		envidoPoints: map[int64]int32{},
+		florPoints : map[int64]int32{},
+		trucoResult	:[]int64{},
 		currentAction:	 "init",
+		aiCacheAction:	 "init",
+		availeableAction:[]string{},
 		flagTruco:       false,
+		flagRealEnvido:	 false,
+		isEnvidoFinish:	 false,
+		isFlorFinish:	 false,
+		isPlayingFlor : false,
+		isTrucoFinish : false,
+		isTrucoHasNotQuiero:true,
+		isTrucoCompareBegin:false,
+		isShowEnvidoPanel:false,
+		pardas:          false,
+
 		flagRetruco:     false,
 		flagValeCuatro:  false,
 		flagFlor:        false,
+		flagContraFlor:false,
+		flagContraFlorAlResto:false,
 		flagEnvido:      false,
 		flagFaltaEnvido: false,
-		flagRealEnvido:	 false,
-		pardas:          false,
+		hasFlor : map[int64]bool{},
+		roundStartTime:time.Now().Unix(),
+		roundEndTime:0,
+		roundCount:0,
+		totalTrucoAction:"",
+		totalEnvidoAction:"",
+		totalFlorAction:"",
+		betTrucoActions:[]string{},
+		betEnvidoActions : []string{},
+
+		betFlorActions : []string{},
+
+		envidoComfirm : []int64{},
+
+		checkNewRoundState:false,
+		foldPlayerId : 0,
+
+		preActionPlayCard : "",
+
+		oneRoundTrucoTime : 0,
+
+		oneRoundEnvidoTime : 0,
+
+		oneRoundFlorTime : 0,
+
+		oneRoundTrucoWinScore : map[int64]int32{},
+
+		oneRoundEnvidoWinScore : map[int64]int32{},
+
+		oneRoundFlorWinScore :map[int64]int32{},
+
 	}
+
+	randCurrentHand := rand.Intn(2)
+	if randCurrentHand == 2 {
+		r.currentHand = p2
+	}else {
+		r.currentHand = p1
+	}
+	r.currentTurn = r.currentHand
+	r.betTrucoPlayer = r.currentHand
+	r.preActionPlayer = r.currentHand
+	r.winPlayerId = r.currentHand
 
 	deck := NewDeck().sorted()
 	r.handCards[r.player1] = []*Card{deck[0], deck[2], deck[4]}
 	r.handCards[r.player2] = []*Card{deck[1], deck[3], deck[5]}
+
+	r.hasFlor[r.player1] = r.checkHasFlor(r.player1)
+	r.hasFlor[r.player2] = r.checkHasFlor(r.player2)
 
 	return r
 }
@@ -84,144 +233,707 @@ func (r *Round) switchPlayer(pid int64) int64 {
 }
 
 func (r *Round) returnSuit(value string) string {
-	return strings.Split(value, "-")[1]
+	return strings.Split(value, "_")[0]
 }
 
-func (r *Round) returnNumber(value string) int {
-	num, err := strconv.Atoi(strings.Split(value, "-")[0])
+func (r *Round) returnNumber(value string) int32 {
+	num, err := strconv.Atoi(strings.Split(value, "_")[1])
 	if err != nil {
 		fmt.Println(err)
 	}
-	return num
+	return int32(num)
 }
 
 func (r *Round) returnValueComplete(value string) string {
 	s := ""
-	s += strconv.Itoa(r.returnNumber(value))
+	s += strconv.Itoa(int(r.returnNumber(value)))
 	s += r.returnSuit(value)
 	return s
 }
 
+func (r *Round)reSetForNewRound(oneMoreGame bool)  {
+
+	r.tableCards=      map[int64][]*Card{}
+	r.envidoPoints=  map[int64]int32{}
+	r.florPoints = map[int64]int32{}
+	r.trucoResult	= []int64{}
+	r.currentAction= 	 "init"
+	r.aiCacheAction=	"init"
+	r.availeableAction= []string{}
+	r.flagTruco=        false
+	r.flagRetruco=      false
+	r.flagValeCuatro=   false
+	r.flagFlor=        false
+	r.flagContraFlor = false
+	r.flagContraFlorAlResto = false
+	r.flagEnvido=     false
+	r.flagFaltaEnvido=  false
+	r.flagRealEnvido= 	 false
+	r.pardas=        false
+	r.isShowEnvidoPanel = false
+	r.isEnvidoFinish = false
+	r.isFlorFinish = false
+	r.isTrucoFinish = false
+	r.isTrucoHasNotQuiero = true
+	r.isTrucoCompareBegin = false
+	r.isPlayingFlor = false
+	r.hasFlor = map[int64]bool{}
+	r.roundCount += 1
+	r.totalTrucoAction = ""
+	r.totalEnvidoAction = ""
+	r.totalFlorAction = ""
+	r.betTrucoActions = []string{}
+	r.betEnvidoActions = []string{}
+	r.betFlorActions = []string{}
+	r.envidoComfirm = []int64{}
+	r.checkNewRoundState = false
+	r.preActionPlayCard = ""
+
+	r.oneRoundTrucoTime = 0
+
+	r.oneRoundEnvidoTime = 0
+
+	r.oneRoundFlorTime = 0
+
+	r.oneRoundTrucoWinScore = map[int64]int32{}
+
+	r.oneRoundEnvidoWinScore = map[int64]int32{}
+
+	r.oneRoundFlorWinScore = map[int64]int32{}
+
+	if r.foldPlayerId != 0 {
+		r.currentHand = r.getOtherPlayer(r.foldPlayerId)
+		r.currentTurn = r.currentHand
+		r.foldPlayerId = 0
+	}else {
+
+		r.currentTurn = r.winPlayerId
+	}
+
+	r.betTrucoPlayer = r.currentHand
+	r.preActionPlayer = r.currentHand
+
+	if oneMoreGame{
+		r.scores = map[int64]int32{}
+		r.roundStartTime = time.Now().Unix()
+	}
+
+	r.availeableAction = r.calculateAvailableAction(r.currentAction)
+
+	deck := NewDeck().sorted()
+	r.handCards[r.player1] = []*Card{deck[0], deck[2], deck[4]}
+	r.handCards[r.player2] = []*Card{deck[1], deck[3], deck[5]}
+
+	r.hasFlor[r.player1] = r.checkHasFlor(r.player1)
+	r.hasFlor[r.player2] = r.checkHasFlor(r.player2)
+}
+
+func (r *Round)checkNewRound() bool {
+	if len(r.tableCards[r.player1]) == 3 && len(r.tableCards[r.player1]) == len(r.tableCards[r.player2]){
+		//r.reSetForNewRound(false)
+		return true
+	}
+	if r.checkNewRoundState{
+		//r.reSetForNewRound(false)
+		return true
+	}
+	return false
+
+}
+
 func (r *Round)play(playerid int64,action string,value string)  {
-
+	logger.Info("newRound play~~~~",playerid,action,value)
+	r.aiCacheAction = action
+	r.preActionPlayer = playerid
+	r.setActionState(action,playerid)
 	if action == "playcard"{
+		r.preActionPlayCard = value
+		r.setTable(value,playerid)
+		cardWin := r.compareTable()
 
-	}else if action == "follow"{
+		winplayer := r.checkTrucoResult(action)
+		if winplayer != 0{
+			r.winPlayerId = winplayer
+			r.checkNewRoundState = true
+			return
+		}
 
-	}else if action == "notfollow"{
+		if cardWin != 0{
+			r.currentTurn = cardWin
+			if r.flagTruco || r.flagRetruco || r.flagValeCuatro {
+				r.isTrucoCompareBegin = false
+			}
+		}else {
+			r.switchPlayer(playerid)
+		}
+
+	}else if action == "quiero"{
+		if r.flagEnvido || r.flagRealEnvido || r.flagFaltaEnvido{
+			winPlayer := r.compareEnvido(playerid,r.getOtherPlayer(playerid))
+			r.winPlayerId = winPlayer
+			r.calculateScoreEnvido(action,winPlayer)
+			r.flagEnvido = false
+			r.flagRealEnvido = false
+			r.flagFaltaEnvido = false
+			r.isEnvidoFinish = true
+			r.currentAction = "init"
+			r.aiCacheAction = "init"
+
+			r.changeCurrentTurn(playerid)
+
+			r.reSetTrucoFlag()
+
+		}else if r.flagTruco  || r.flagRetruco || r.flagValeCuatro{
+			r.isTrucoHasNotQuiero = true
+			if r.flagValeCuatro{
+				r.isTrucoFinish = true
+			}
+			r.isTrucoCompareBegin = true
+			if len(r.tableCards[playerid]) < len(r.tableCards[r.getOtherPlayer(playerid)]){
+				r.currentTurn = playerid
+
+			}else if len(r.tableCards[playerid]) > len(r.tableCards[r.getOtherPlayer(playerid)]){
+				r.currentTurn = r.getOtherPlayer(playerid)
+
+			}else {
+				r.currentTurn = r.betTrucoPlayer
+			}
+
+		}else if r.flagFlor || r.flagContraFlor || r.flagContraFlorAlResto{
+			logger.Error("quiero is in flor##################")
+			r.comprareFlor(action)
+			//r.currentTurn = winplayer
+			r.isPlayingFlor = false
+			r.isFlorFinish = true
+			r.reSetTrucoFlag()
+			r.reSetEnvidoFlag()
+
+			r.changeCurrentTurn(playerid)
+		}
+
+	}else if action == "no-quiero"{
+		if r.flagEnvido || r.flagRealEnvido || r.flagFaltaEnvido{
+			r.calculateScoreEnvido(action,playerid)
+			r.flagEnvido = false
+			r.flagRealEnvido = false
+			r.flagFaltaEnvido = false
+			r.isEnvidoFinish = true
+			r.isShowEnvidoPanel = true
+			r.currentAction = "init"
+			r.aiCacheAction = "init"
+			r.changeCurrentTurn(playerid)
+			r.reSetTrucoFlag()
+		}else if r.flagTruco || r.flagRetruco || r.flagValeCuatro{
+			//start new Round
+			r.calculateScoreTruco(action,r.getOtherPlayer(playerid))
+			r.winPlayerId = r.getOtherPlayer(playerid)
+			r.checkNewRoundState = true
+			return
+		}else if r.flagFlor || r.flagContraFlor || r.flagContraFlorAlResto{
+			r.comprareFlor(action)
+			r.isFlorFinish = true
+			r.isPlayingFlor = false
+			r.reSetTrucoFlag()
+			r.reSetEnvidoFlag()
+			r.changeCurrentTurn(playerid)
+		}
+		//r.switchPlayer(playerid)
+	}else {
+		r.currentAction = action
+		r.switchPlayer(playerid)
+	}
+
+	r.availeableAction = r.calculateAvailableAction(action)
+}
+
+func (r *Round)changeCurrentTurn(playerid int64){
+	if len(r.tableCards[playerid]) < len(r.tableCards[r.getOtherPlayer(playerid)]){
+		r.currentTurn = playerid
+
+	}else if len(r.tableCards[playerid]) > len(r.tableCards[r.getOtherPlayer(playerid)]){
+		r.currentTurn = r.getOtherPlayer(playerid)
 
 	}else {
-		r.checkBet(playerid,action)
+		r.currentTurn = r.currentHand
 	}
 }
 
-func (r *Round)checkBet(playerid int64,action string)  {
-	switch action {
-	case "truco":
-		break
-	case "retruco":
-		break
-	case "valetruco":
-		break
-	case "envido":
-		break
-	case "realenvido":
-		break
-	case "faltaenvido":
-		break
+func (r *Round)playerNoFlor(playerid int64)  {
+
+	r.assignPoints(3,r.getOtherPlayer(playerid),"flor")
+	r.currentTurn = r.getOtherPlayer(playerid)
+	r.isFlorFinish = true
+	r.isPlayingFlor = false
+
+}
+
+func (r *Round)reSetTrucoFlag()  {
+	r.flagTruco = false
+	r.flagRetruco = false
+	r.flagValeCuatro = false
+	r.betTrucoActions = []string{}
+}
+
+func (r *Round)reSetEnvidoFlag()  {
+	r.flagEnvido = false
+	r.flagRealEnvido = false
+	r.flagFaltaEnvido = false
+	r.betEnvidoActions = []string{}
+}
+
+func (r *Round)setActionState(action string,playerId int64)  {
+
+	if action == "envido"{
+		r.flagEnvido = true
+		r.betEnvidoActions = append(r.betEnvidoActions,"envido")
+	}else if action == "real"{
+		r.flagRealEnvido = true
+		r.reSetTrucoFlag()
+		r.betEnvidoActions = append(r.betEnvidoActions,"real")
+	}else if action == "falta"{
+		r.flagFaltaEnvido = true
+		r.reSetTrucoFlag()
+		r.betEnvidoActions = append(r.betEnvidoActions,"falta")
+	}else if action == "truco"{
+		r.flagTruco = true
+		r.isTrucoHasNotQuiero = false
+		r.betTrucoPlayer = playerId
+		r.betTrucoActions = append(r.betTrucoActions,"truco")
+	}else if action == "retruco" {
+		if !r.isTrucoCompareBegin{
+			r.betTrucoPlayer = playerId
+		}
+		r.flagTruco = false
+		r.flagRetruco = true
+		r.isTrucoHasNotQuiero = false
+		r.betTrucoActions = append(r.betTrucoActions, "retruco")
+	}else if action == "valecuatro"{
+		if !r.isTrucoCompareBegin{
+			r.betTrucoPlayer = playerId
+		}
+		r.flagTruco = false
+		r.flagRetruco = false
+		r.flagValeCuatro = true
+		r.isTrucoHasNotQuiero = false
+		r.betTrucoActions = append(r.betTrucoActions,"valecuatro")
+	}else if action == "flor"{
+		r.flagFlor = true
+		r.isPlayingFlor = true
+		r.reSetTrucoFlag()
+		r.reSetEnvidoFlag()
+		r.betFlorActions = append(r.betFlorActions,"flor")
+	}else if action == "ContraFlor" {
+		r.flagContraFlor = true
+		r.isPlayingFlor = true
+		r.reSetTrucoFlag()
+		r.reSetEnvidoFlag()
+		r.betFlorActions = append(r.betFlorActions, "ContraFlor")
+	}else if action == "ContraFlorAlResto"{
+		r.flagContraFlorAlResto = true
+		r.isPlayingFlor = true
+		r.reSetTrucoFlag()
+		r.reSetEnvidoFlag()
+		r.betFlorActions = append(r.betFlorActions,"ContraFlorAlResto")
 	}
+}
+
+func (r *Round) getCurrentBetState() string {
+	currentBet := ""
+	if(r.flagTruco || r.flagRetruco || r.flagValeCuatro){
+		currentBet = "truco"
+	}else if(r.flagEnvido || r.flagRealEnvido || r.flagFaltaEnvido){
+		currentBet = "envido"
+	}else if(r.flagFlor || r.flagContraFlor || r.flagContraFlorAlResto){
+		currentBet = "flor"
+	}
+	return currentBet
+}
+
+
+func (r *Round)calculateAvailableAction(action string) []string {
+
+	var availableActions = []string{}
+
+	if !r.isEnvidoFinish{
+		if r.flagFaltaEnvido{
+			//availableActions = append(availableActions,"falta")
+		}else if r.flagRealEnvido{
+			availableActions = append(availableActions,"falta")
+		}else if r.flagEnvido{
+			availableActions = append(availableActions,"real","falta")
+		}else {
+			availableActions = append(availableActions,"envido","real","falta")
+		}
+	}
+
+	if !r.isTrucoFinish{
+		logger.Info("calculateAvailableAction trucoopthion")
+		if r.flagValeCuatro{
+			availableActions = append(availableActions,"topTruco")
+		}else if r.flagRetruco{
+			availableActions = append(availableActions,"valecuatro")
+		}else if r.flagTruco {
+			availableActions = append(availableActions,"retruco")
+		}else{
+			availableActions = append(availableActions,"truco")
+		}
+	}
+
+	if r.hasFlor[r.currentTurn] && !r.isFlorFinish{
+		if r.flagContraFlorAlResto{
+			//availableActions = append(availableActions,"ContraFlorAlResto")
+		}else if r.flagContraFlor{
+			availableActions = append(availableActions,"ContraFlorAlResto")
+		}else if r.flagFlor{
+			availableActions = append(availableActions,"ContraFlor","ContraFlorAlResto")
+		}else {
+			availableActions = append(availableActions,"flor","ContraFlor","ContraFlorAlResto")
+		}
+	}
+
+
+	return availableActions
 }
 
 func (r *Round) calculateScoreEnvido(action string, player int64) {
-	var total int32 = 9
+
+	var envidoActions string = ""
+	for _,a := range r.betEnvidoActions{
+		envidoActions = envidoActions + "-" + a
+	}
+	envidoActions = strings.TrimSuffix(envidoActions,"-")
+	envidoActions = strings.TrimPrefix(envidoActions,"-")
+
+	logger.Info("calculateScoreEnvido~~~~~ envidoActions = ",envidoActions)
 	if action == "quiero" {
-		switch r.currentAction {
+		switch envidoActions {
 		case "envido":
-			r.assignPoints(2, player)
+			r.assignPoints(2, player,"envido")
 			break
-		case "envido-envido":
-			r.assignPoints(4, player)
+		case "real":
+			r.assignPoints(3, player,"envido")
+			break
+		case "falta":
+			r.assignPoints(total-r.getHigherScore(), player,"envido")
 			break
 		case "envido-real":
-			r.assignPoints(5, player)
+			r.assignPoints(4, player,"envido")
 			break
-		case "envido-envido-real":
-			r.assignPoints(7, player)
-			break
-
 		case "envido-falta":
-
+			r.assignPoints(total-r.getHigherScore(), player,"envido")
+			break
+		case "real-falta":
+			r.assignPoints(total-r.getHigherScore(), player,"envido")
 			break
 		case "envido-real-falta":
-
+			r.assignPoints(total-r.getHigherScore(), player,"envido")
 			break
-		case "envido-envido-falta":
 
-			break
-		case "envido-envido-real-falta":
-
-			break
 		}
 	}
 
 	if action == "no-quiero" {
 		//不跟就是对手加
 		otherPlayer := r.getOtherPlayer(player)
-
-		switch r.currentAction {
+		switch envidoActions {
 		case "envido":
-			r.assignPoints(1, otherPlayer)
+			r.assignPoints(1, otherPlayer,"envido")
 			break
-		case "envido-envido":
-			r.assignPoints(2, otherPlayer)
+		case "real":
+			r.assignPoints(1, otherPlayer,"envido")
+			break
+		case "falta":
+			r.assignPoints(1, otherPlayer,"envido")
 			break
 		case "envido-real":
-			r.assignPoints(2, otherPlayer)
-			break
-		case "envido-envido-real":
-			r.assignPoints(4, otherPlayer)
+			r.assignPoints(2, otherPlayer,"envido")
 			break
 		case "envido-falta":
-			r.assignPoints(2, otherPlayer)
+			r.assignPoints(2, otherPlayer,"envido")
+			break
+		case "real-falta":
+			r.assignPoints(3, otherPlayer,"envido")
 			break
 		case "envido-real-falta":
-			r.assignPoints(5, otherPlayer)
-			break
-		case "envido-envido-falta":
-			r.assignPoints(4, otherPlayer)
-			break
-		case "envido-envido-real-falta":
-			r.assignPoints(7, otherPlayer)
+			r.assignPoints(4, otherPlayer,"envido")
 			break
 		}
+	}
+}
+//检查truco下是否有玩家连输两回合，是就重新发牌
+func (r *Round)checkTrucoResult(action string) int64 {
+	var winplayer int64 = 0
+	if len(r.trucoResult) == 2 {
+		if r.trucoResult[0] != 0 && r.trucoResult[1] != 0 && r.trucoResult[0] == r.trucoResult[1] {
+			winplayer = r.trucoResult[0]
+		} else if r.trucoResult[0] == 0 {
+			winplayer = r.trucoResult[1]
+		}
+	}else if len(r.trucoResult) == 3{
+		if r.trucoResult[0] != 0 && r.trucoResult[1] != 0 && r.trucoResult[2] == 0{
+			winplayer =  r.trucoResult[0]
+		}else if r.trucoResult[0] == 0 && r.trucoResult[1] == 0 && r.trucoResult[2] != 0{
+			winplayer =  r.trucoResult[2]
+		}else if r.trucoResult[0] == 0 && r.trucoResult[1] == 0 && r.trucoResult[2] == 0{
+			winplayer =  r.currentHand
+		}else if r.trucoResult[0] != 0 && r.trucoResult[1] != 0 && r.trucoResult[2] != 0{
+			if r.trucoResult[0] == r.trucoResult[2]{
+				winplayer = r.trucoResult[0]
+			}
+			if r.trucoResult[1] == r.trucoResult[2]{
+				winplayer = r.trucoResult[1]
+			}
+		}
+	}
+	logger.Info("checkTrucoResult############",r.trucoResult,winplayer)
+	if winplayer != 0 {
+		r.calculateScoreTruco(action,winplayer)
+	}
+	return winplayer
+}
+
+func (r *Round)calculateScoreTruco(action string,player int64) {
+	logger.Info("calculateScoreTruco############ = ",action,r.betTrucoActions)
+	var trucoActions string = ""
+	for _,a := range r.betTrucoActions{
+		trucoActions = trucoActions + "-" + a
+	}
+	trucoActions = strings.TrimSuffix(trucoActions,"-")
+	trucoActions = strings.TrimPrefix(trucoActions,"-")
+
+	switch action {
+	case "playcard":
+		if trucoActions == "truco" {
+			r.assignPoints(2,player,"truco")
+		}else if  trucoActions == "truco-retruco" {
+			r.assignPoints(3,player,"truco")
+		}else if  trucoActions == "truco-valecuatro" {
+			r.assignPoints(4,player,"truco")
+		}else if trucoActions == "truco-retruco-valecuatro"{
+			r.assignPoints(5,player,"truco")
+		}else {
+			r.assignPoints(1,player,"truco")
+		}
+		break
+	case "no-quiero":
+		if trucoActions == "truco" {
+			r.assignPoints(1,player,"truco")
+		}else if  trucoActions == "truco-retruco" {
+			r.assignPoints(2,player,"truco")
+		}else if  trucoActions == "truco-valecuatro" {
+			r.assignPoints(2,player,"truco")
+		}else if trucoActions == "truco-retruco-valecuatro"{
+			r.assignPoints(3,player,"truco")
+		}
+		break
+	}
+
+}
+
+func (r *Round)compareTable() int64 {
+	p1table := r.tableCards[r.player1]
+	p2table := r.tableCards[r.player2]
+
+	compareIndex := -1
+	logger.Info("compareTable~~~~~",len(p1table),len(p2table))
+	if len(p1table) == 1 && len(p2table) == 1{
+		compareIndex = 0
+	}else if len(p1table) == 2 && len(p2table) == 2{
+		compareIndex = 1
+	}else if len(p1table) == 3 && len(p2table) == 3 {
+		compareIndex = 2
+	}
+	if compareIndex == -1{
+		logger.Error("compareTable~~~~ index = -1")
+		return 0
+	}
+	card1 := p1table[compareIndex]
+	card2 := p2table[compareIndex]
+	state := card1.confront(card2)
+
+	switch state {
+	case 1:
+		r.trucoResult = append(r.trucoResult,r.player1)
+		return r.player1
+		break
+	case 0:
+		r.trucoResult = append(r.trucoResult,0)
+		return r.currentHand
+		break
+	case -1:
+		r.trucoResult = append(r.trucoResult,r.player2)
+		return r.player2
+		break
+	}
+	return 0
+}
+
+
+func (r *Round)compareEnvido(pid int64, oid int64) int64 {
+
+	var iAllCards []*Card
+	var oAllCards = []*Card{}
+	iAllCards = append(iAllCards,r.handCards[pid]...)
+	iAllCards = append(iAllCards,r.tableCards[pid]...)
+
+	oAllCards = append(oAllCards,r.handCards[oid]...)
+	oAllCards = append(oAllCards,r.tableCards[oid]...)
+
+	logger.Info("compareEnvido~~~~iAllCards = ",iAllCards)
+	logger.Info("compareEnvido~~~~oAllCards = ",oAllCards)
+
+	ienvido := r.calculateEnvido(pid,iAllCards)
+	otherEnvido := r.calculateEnvido(oid,oAllCards)
+
+	//r.envidoPoints[pid] = ienvido
+	//r.envidoPoints[oid] = otherEnvido
+
+	if ienvido > otherEnvido{
+		return pid
+	}else if ienvido < otherEnvido{
+		return oid
+	}else {
+		logger.Info("compareEnvido~~~~~ envido equip return currentHand")
+		return r.currentHand
 	}
 }
 
 func (r *Round)calculateScoreFaltaEnvido()  {
 
-	player1Envido := r.calculateEnvido(r.handCards[r.player1])
+	player1Envido := r.calculateEnvido(r.player1,r.handCards[r.player1])
 
-	player2Envido := r.calculateEnvido(r.handCards[r.player2])
+	player2Envido := r.calculateEnvido(r.player2,r.handCards[r.player2])
 
 	if player1Envido > player2Envido{
-		r.assignPoints(total-(r.scores[r.player2]), r.player1)
+		r.assignPoints(total-(r.scores[r.player2]), r.player1,"envido")
 	}else if player1Envido < player2Envido{
-		r.assignPoints(total-(r.scores[r.player1]), r.player2)
+		r.assignPoints(total-(r.scores[r.player1]), r.player2,"envido")
 	}else {
-		
+		if r.currentHand == r.player1{
+
+		}
 	}
 }
 
-func (r *Round)calculateEnvido(cards []*Card) int32 {
-	var player1Envido int32 = 0
-	player1Card1 := cards[0]
-	var player1SameSuits []*Card
-	player1SameSuits = append(player1SameSuits, player1Card1)
-	for i := 1 ;i < len(cards);i++ {
-		if player1Card1.suit == cards[i].suit{
-			player1SameSuits = append(player1SameSuits, cards[i])
+func (r *Round)comprareFlor(action string) int64 {
+	var iflor int32 = 0
+	var oflor int32 = 0
+	if r.hasFlor[r.player1] == true {
+		iflor = r.calculateFlor(r.handCards[r.player1])
+
+	}
+	if r.hasFlor[r.player2] == true{
+		oflor = r.calculateFlor(r.handCards[r.player2])
+
+	}
+
+	var winPlayer int64 = r.currentHand
+	if iflor > oflor{
+		winPlayer = r.player1
+	}else if iflor < oflor{
+		winPlayer =  r.player2
+	}
+	var florAction string = ""
+	for _,a := range r.betFlorActions{
+		florAction = florAction + "-" + a
+	}
+	florAction = strings.TrimSuffix(florAction,"-")
+	florAction = strings.TrimPrefix(florAction,"-")
+	logger.Info("compareFlor~~~~~~~~~~~~~ florAction = ",florAction,action)
+	if action == "quiero"{
+		switch florAction {
+		case "flor":
+			r.assignPoints(4,winPlayer,"flor")
+			break
+		case "ContraFlor":
+			r.assignPoints(5,winPlayer,"flor")
+			break
+		case "ContraFlorAlResto":
+			r.assignPoints(total-r.getHigherScore(),winPlayer,"flor")
+			break
+		case "flor-ContraFlor":
+			r.assignPoints(6,winPlayer,"flor")
+			break
+		case "flor-ContraFlorAlResto":
+			r.assignPoints(total-r.getHigherScore(),winPlayer,"flor")
+			break
+		case "ContraFlor-ContraFlorAlResto":
+			r.assignPoints(total-r.getHigherScore(),winPlayer,"flor")
+			break
+		case "flor-ContraFlor-ContraFlorAlResto":
+			r.assignPoints(total-r.getHigherScore(),winPlayer,"flor")
+			break
 		}
 	}
+
+	if action == "no-quiero"{
+		switch florAction {
+		case "flor":
+			r.assignPoints(3,winPlayer,"flor")
+			break
+		case "ContraFlor":
+			r.assignPoints(3,winPlayer,"flor")
+			break
+		case "ContraFlorAlResto":
+			r.assignPoints(3,winPlayer,"flor")
+			break
+		case "flor-ContraFlor":
+			r.assignPoints(4,winPlayer,"flor")
+			break
+		case "flor-ContraFlorAlResto":
+			r.assignPoints(4,winPlayer,"flor")
+			break
+		case "ContraFlor-ContraFlorAlResto":
+			r.assignPoints(5,winPlayer,"flor")
+			break
+		case "flor-ContraFlor-ContraFlorAlResto":
+			r.assignPoints(6,winPlayer,"flor")
+			break
+		}
+	}
+
+	r.isFlorFinish = true
+	return winPlayer
+}
+
+func (r *Round)calculateEnvido(playerid int64,cards []*Card) int32 {
+	var player1Envido int32 = 20
+
+	var player1SameSuits []*Card
+
+	if r.hasFlor[playerid]{
+		var biggerNum []int32
+		for _,card := range cards{
+			biggerNum = append(biggerNum,card.number)
+		}
+		for i := 0; i < len(biggerNum)-1; i++ {
+			for j := i+1; j < len(biggerNum); j++ {
+				if  biggerNum[i]<biggerNum[j]{
+					biggerNum[i],biggerNum[j] = biggerNum[j],biggerNum[i]
+				}
+			}
+		}
+		for _,card := range cards{
+			for i := 0;i<len(biggerNum);i++{
+				if card.number == biggerNum[i]{
+					player1SameSuits = append(player1SameSuits, card)
+				}
+			}
+
+		}
+	}else {
+		for j:=0 ; j < len(cards); j++{
+			for i := j+1 ;i < len(cards);i++ {
+				logger.Info("envido calculateEnvido",cards[j].suit,cards[i].suit)
+				if cards[j].suit == cards[i].suit{
+					player1SameSuits = append(player1SameSuits, cards[j])
+					player1SameSuits = append(player1SameSuits, cards[i])
+					break
+				}
+			}
+		}
+	}
+
 	if len(player1SameSuits) >= 2 {
 		for _,card := range player1SameSuits{
 			if !card.isBlackCard() {
@@ -243,9 +955,9 @@ func (r *Round)calculateEnvido(cards []*Card) int32 {
 		}
 		logger.Info("envido biggertwo",biggerNum)
 
-		for i := 0;i < len(biggerNum);i++{
+		for i := 0;i<len(biggerNum);i++{
 			if !r.isEmptyCard(biggerNum[i]){
-				player1Envido += biggerNum[i]
+				player1Envido = biggerNum[i]
 				break
 			}
 		}
@@ -253,32 +965,81 @@ func (r *Round)calculateEnvido(cards []*Card) int32 {
 	return player1Envido
 }
 
-func (r *Round)assignPoints(point int32,playerid int64)  {
+func (r *Round)playerFold(playerid int64){
+	if r.flagTruco || r.flagRetruco || r.flagValeCuatro{
+		r.calculateScoreTruco("no-quiero",playerid)
+	}else {
+		r.assignPoints(1,r.getOtherPlayer(playerid),"fold")
+	}
+	r.foldPlayerId = playerid
+}
+
+func (r *Round)calculateFlor(cards []*Card) int32 {
+	var florPoint int32 = 20
+	for _,card := range cards{
+		if card.isBlackCard(){
+			continue
+		}
+		florPoint += card.number
+	}
+	return florPoint
+}
+
+func (r *Round)assignPoints(point int32,playerid int64,winAction string)  {
 	r.scores[playerid] += point
+	switch winAction {
+	case "truco":
+		r.oneRoundTrucoWinScore[playerid] += point
+		break;
+	case "envido":
+		r.oneRoundEnvidoWinScore[playerid] += point
+		r.envidoPoints[playerid] = point
+		r.envidoPoints[r.getOtherPlayer(playerid)] = 0
+		break
+	case "flor":
+		r.oneRoundFlorWinScore[playerid] += point
+		r.florPoints[playerid] = point
+		r.florPoints[r.getOtherPlayer(playerid)] = 0
+		break
+	}
 }
 
 func (r *Round) setTable(value string, player int64) {
-
-
-		card := NewCard(r.returnNumber(value), r.returnSuit(value))
-		aux := -1
-		i := 0
-		for {
-			if i > len(r.handCards[player]) {
-				break
-			} else {
-				if i < len(r.handCards[player]) {
-					if r.handCards[player][i].number == card.number && r.handCards[player][i].suit == card.suit {
-						aux = i
-						r.tableCards[player] = append(r.tableCards[player], card)
-					}
-					i++
-				}
-			}
+	index := -1
+	for i,card := range r.handCards[player]{
+		if card.suit == r.returnSuit(value) && card.number == r.returnNumber(value){
+			index = i
+			r.tableCards[player] = append(r.tableCards[player], card)
+			break
 		}
-		if aux != -1 {
-			r.handCards[player] = append(r.handCards[player][:i], r.handCards[player][i+1:]...)
+	}
+	if index != -1 {
+		if len(r.handCards[player]) == 1{
+			r.handCards[player] = []*Card{}
+		}else {
+			r.handCards[player] = append(r.handCards[player][:index], r.handCards[player][index+1:]...)
 		}
+
+	}
+}
+
+func (r *Round)checkHasFlor(playerId int64) bool {
+	card1 := r.handCards[playerId][0]
+	hasFlor := true
+	for _,card := range r.handCards[playerId]{
+		if card1.suit != card.suit{
+			hasFlor = false
+		}
+	}
+	return hasFlor
+}
+
+func (r *Round)getHigherScore() int32 {
+	if r.scores[r.player1] > r.scores[r.player2]{
+		return r.scores[r.player1]
+	}else {
+		return r.scores[r.player2]
+	}
 }
 
 func (r *Round)getOtherPlayer(curPlayer int64) int64 {

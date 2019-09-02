@@ -10,12 +10,12 @@ import (
 /*
 * Suit of Spanish deck
  */
-var suits = []string{"oro", "copa", "espada", "basto"}
+var suits = []string{"gold", "cup", "sword", "club"}
 
 /*
 * Number of cards used in Truco games
  */
-var carNumbers = []int{1, 2, 3, 4, 5, 6, 7, 11, 12}
+var carNumbers = []int{1, 2, 3, 4, 5, 6, 7, 10,11, 12}
 
 type (
 	//Deck constructor
@@ -32,12 +32,12 @@ func (d *Deck) sorted() []*Card {
 	var deck []*Card
 	for _, suit := range suits {
 		for _, cardNumber := range carNumbers {
-			deck = append(deck, NewCard(cardNumber, suit))
+			deck = append(deck, NewCard(int32(cardNumber), suit))
 		}
 	}
 	fmt.Print(deck)
 	rand.Seed(time.Now().Unix())
-	d.random(deck, 18)
+	d.random(deck, 40)
 	fmt.Print("random cards", deck)
 	return deck
 }

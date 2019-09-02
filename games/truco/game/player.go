@@ -24,15 +24,39 @@ type (
 		room 		*Room
 		session		*session.Session
 		chOperation chan string
+		isReconnect bool
 	}
 )
 
 //NewPlayer return a new player object
-func NewPlayer(s *session.Session,playerId int64, name string,isAi bool) *Player {
+func NewPlayer(s *session.Session,playerId int64, name string,isAi bool,sex int32,avatarUrl string) *Player {
 	p := &Player{
 		id:       playerId,
 		nickname: name,
 		isAi:isAi,
+		sex:sex,
+		AvatarUrl:avatarUrl,
+		envidoPoints:0,
+		cards:[]*Card{},
+		tableCards:[]*Card{},
+		logger:log.WithField("player",playerId),
+		isReady:false,
+		offLine:false,
+		chOperation:make(chan string),
+		isReconnect : false,
+	}
+	p.bindSession(s)
+	return p
+}
+
+//NewPlayer return a new player object
+func NewAiPlayer(playerId int64, name string,isAi bool,sex int32,avatarUrl string) *Player {
+	p := &Player{
+		id:       playerId,
+		nickname: name,
+		isAi:isAi,
+		sex:sex,
+		AvatarUrl:avatarUrl,
 		envidoPoints:0,
 		cards:[]*Card{},
 		tableCards:[]*Card{},
@@ -41,7 +65,6 @@ func NewPlayer(s *session.Session,playerId int64, name string,isAi bool) *Player
 		offLine:false,
 		chOperation:make(chan string),
 	}
-	p.bindSession(s)
 	return p
 }
 
@@ -58,6 +81,9 @@ func (p *Player)setReady(ready bool)  {
 	p.isReady = ready
 }
 
+func (p *Player)setIsReconnect(reconnect bool)  {
+	p.isReconnect = reconnect
+}
 
 func (p *Player) setCards(initCard []*Card) {
 	p.cards = initCard
@@ -88,6 +114,7 @@ func (p *Player) removeSession() {
 }
 
 func (p *Player)reSet()	 {
+	p.room = nil
 	p.envidoPoints = 0
 	p.cards = []*Card{}
 	close(p.chOperation)

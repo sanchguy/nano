@@ -49,24 +49,25 @@ func (Statue) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_2e54be1aa9105a3e, []int{0}
 }
 
-type Empty struct {
+type EnvidoComfirmReq struct {
+	ReqPlayerId          int64    `protobuf:"varint,1,opt,name=reqPlayerId,proto3" json:"reqPlayerId,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Empty) Reset()         { *m = Empty{} }
-func (m *Empty) String() string { return proto.CompactTextString(m) }
-func (*Empty) ProtoMessage()    {}
-func (*Empty) Descriptor() ([]byte, []int) {
+func (m *EnvidoComfirmReq) Reset()         { *m = EnvidoComfirmReq{} }
+func (m *EnvidoComfirmReq) String() string { return proto.CompactTextString(m) }
+func (*EnvidoComfirmReq) ProtoMessage()    {}
+func (*EnvidoComfirmReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_2e54be1aa9105a3e, []int{0}
 }
-func (m *Empty) XXX_Unmarshal(b []byte) error {
+func (m *EnvidoComfirmReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *EnvidoComfirmReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Empty.Marshal(b, m, deterministic)
+		return xxx_messageInfo_EnvidoComfirmReq.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalTo(b)
@@ -76,39 +77,44 @@ func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *Empty) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Empty.Merge(m, src)
+func (m *EnvidoComfirmReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EnvidoComfirmReq.Merge(m, src)
 }
-func (m *Empty) XXX_Size() int {
+func (m *EnvidoComfirmReq) XXX_Size() int {
 	return m.Size()
 }
-func (m *Empty) XXX_DiscardUnknown() {
-	xxx_messageInfo_Empty.DiscardUnknown(m)
+func (m *EnvidoComfirmReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_EnvidoComfirmReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Empty proto.InternalMessageInfo
+var xxx_messageInfo_EnvidoComfirmReq proto.InternalMessageInfo
 
-type RoundEnvidoPoints struct {
-	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
-	Score                int32    `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`
-	EnvidoPoint          int32    `protobuf:"varint,3,opt,name=envidoPoint,proto3" json:"envidoPoint,omitempty"`
+func (m *EnvidoComfirmReq) GetReqPlayerId() int64 {
+	if m != nil {
+		return m.ReqPlayerId
+	}
+	return 0
+}
+
+type OneMoreReq struct {
+	ReqPlayerId          int64    `protobuf:"varint,1,opt,name=reqPlayerId,proto3" json:"reqPlayerId,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RoundEnvidoPoints) Reset()         { *m = RoundEnvidoPoints{} }
-func (m *RoundEnvidoPoints) String() string { return proto.CompactTextString(m) }
-func (*RoundEnvidoPoints) ProtoMessage()    {}
-func (*RoundEnvidoPoints) Descriptor() ([]byte, []int) {
+func (m *OneMoreReq) Reset()         { *m = OneMoreReq{} }
+func (m *OneMoreReq) String() string { return proto.CompactTextString(m) }
+func (*OneMoreReq) ProtoMessage()    {}
+func (*OneMoreReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_2e54be1aa9105a3e, []int{1}
 }
-func (m *RoundEnvidoPoints) XXX_Unmarshal(b []byte) error {
+func (m *OneMoreReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *RoundEnvidoPoints) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *OneMoreReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_RoundEnvidoPoints.Marshal(b, m, deterministic)
+		return xxx_messageInfo_OneMoreReq.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalTo(b)
@@ -118,37 +124,376 @@ func (m *RoundEnvidoPoints) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *RoundEnvidoPoints) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RoundEnvidoPoints.Merge(m, src)
+func (m *OneMoreReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OneMoreReq.Merge(m, src)
 }
-func (m *RoundEnvidoPoints) XXX_Size() int {
+func (m *OneMoreReq) XXX_Size() int {
 	return m.Size()
 }
-func (m *RoundEnvidoPoints) XXX_DiscardUnknown() {
-	xxx_messageInfo_RoundEnvidoPoints.DiscardUnknown(m)
+func (m *OneMoreReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_OneMoreReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RoundEnvidoPoints proto.InternalMessageInfo
+var xxx_messageInfo_OneMoreReq proto.InternalMessageInfo
 
-func (m *RoundEnvidoPoints) GetPlayerId() int64 {
+func (m *OneMoreReq) GetReqPlayerId() int64 {
+	if m != nil {
+		return m.ReqPlayerId
+	}
+	return 0
+}
+
+type FlodReq struct {
+	ReqPlayerId          int64    `protobuf:"varint,1,opt,name=reqPlayerId,proto3" json:"reqPlayerId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *FlodReq) Reset()         { *m = FlodReq{} }
+func (m *FlodReq) String() string { return proto.CompactTextString(m) }
+func (*FlodReq) ProtoMessage()    {}
+func (*FlodReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{2}
+}
+func (m *FlodReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FlodReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FlodReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FlodReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FlodReq.Merge(m, src)
+}
+func (m *FlodReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *FlodReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_FlodReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FlodReq proto.InternalMessageInfo
+
+func (m *FlodReq) GetReqPlayerId() int64 {
+	if m != nil {
+		return m.ReqPlayerId
+	}
+	return 0
+}
+
+type Score struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
+	Score                int32    `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Score) Reset()         { *m = Score{} }
+func (m *Score) String() string { return proto.CompactTextString(m) }
+func (*Score) ProtoMessage()    {}
+func (*Score) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{3}
+}
+func (m *Score) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Score) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Score.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Score) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Score.Merge(m, src)
+}
+func (m *Score) XXX_Size() int {
+	return m.Size()
+}
+func (m *Score) XXX_DiscardUnknown() {
+	xxx_messageInfo_Score.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Score proto.InternalMessageInfo
+
+func (m *Score) GetPlayerId() int64 {
 	if m != nil {
 		return m.PlayerId
 	}
 	return 0
 }
 
-func (m *RoundEnvidoPoints) GetScore() int32 {
+func (m *Score) GetScore() int32 {
 	if m != nil {
 		return m.Score
 	}
 	return 0
 }
 
-func (m *RoundEnvidoPoints) GetEnvidoPoint() int32 {
+type ScoreInfo struct {
+	Scores               []*Score `protobuf:"bytes,1,rep,name=scores,proto3" json:"scores,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ScoreInfo) Reset()         { *m = ScoreInfo{} }
+func (m *ScoreInfo) String() string { return proto.CompactTextString(m) }
+func (*ScoreInfo) ProtoMessage()    {}
+func (*ScoreInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{4}
+}
+func (m *ScoreInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ScoreInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ScoreInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ScoreInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ScoreInfo.Merge(m, src)
+}
+func (m *ScoreInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *ScoreInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_ScoreInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ScoreInfo proto.InternalMessageInfo
+
+func (m *ScoreInfo) GetScores() []*Score {
 	if m != nil {
-		return m.EnvidoPoint
+		return m.Scores
+	}
+	return nil
+}
+
+type EnvidoPoint struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
+	Envido               int32    `protobuf:"varint,2,opt,name=envido,proto3" json:"envido,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *EnvidoPoint) Reset()         { *m = EnvidoPoint{} }
+func (m *EnvidoPoint) String() string { return proto.CompactTextString(m) }
+func (*EnvidoPoint) ProtoMessage()    {}
+func (*EnvidoPoint) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{5}
+}
+func (m *EnvidoPoint) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EnvidoPoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EnvidoPoint.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EnvidoPoint) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EnvidoPoint.Merge(m, src)
+}
+func (m *EnvidoPoint) XXX_Size() int {
+	return m.Size()
+}
+func (m *EnvidoPoint) XXX_DiscardUnknown() {
+	xxx_messageInfo_EnvidoPoint.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EnvidoPoint proto.InternalMessageInfo
+
+func (m *EnvidoPoint) GetPlayerId() int64 {
+	if m != nil {
+		return m.PlayerId
 	}
 	return 0
+}
+
+func (m *EnvidoPoint) GetEnvido() int32 {
+	if m != nil {
+		return m.Envido
+	}
+	return 0
+}
+
+type FlorPoint struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
+	FlorPoint            int32    `protobuf:"varint,2,opt,name=florPoint,proto3" json:"florPoint,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *FlorPoint) Reset()         { *m = FlorPoint{} }
+func (m *FlorPoint) String() string { return proto.CompactTextString(m) }
+func (*FlorPoint) ProtoMessage()    {}
+func (*FlorPoint) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{6}
+}
+func (m *FlorPoint) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FlorPoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FlorPoint.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FlorPoint) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FlorPoint.Merge(m, src)
+}
+func (m *FlorPoint) XXX_Size() int {
+	return m.Size()
+}
+func (m *FlorPoint) XXX_DiscardUnknown() {
+	xxx_messageInfo_FlorPoint.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FlorPoint proto.InternalMessageInfo
+
+func (m *FlorPoint) GetPlayerId() int64 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
+func (m *FlorPoint) GetFlorPoint() int32 {
+	if m != nil {
+		return m.FlorPoint
+	}
+	return 0
+}
+
+type EnvidoPointsInfo struct {
+	Envidos              []*EnvidoPoint `protobuf:"bytes,1,rep,name=envidos,proto3" json:"envidos,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *EnvidoPointsInfo) Reset()         { *m = EnvidoPointsInfo{} }
+func (m *EnvidoPointsInfo) String() string { return proto.CompactTextString(m) }
+func (*EnvidoPointsInfo) ProtoMessage()    {}
+func (*EnvidoPointsInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{7}
+}
+func (m *EnvidoPointsInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EnvidoPointsInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EnvidoPointsInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EnvidoPointsInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EnvidoPointsInfo.Merge(m, src)
+}
+func (m *EnvidoPointsInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *EnvidoPointsInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_EnvidoPointsInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EnvidoPointsInfo proto.InternalMessageInfo
+
+func (m *EnvidoPointsInfo) GetEnvidos() []*EnvidoPoint {
+	if m != nil {
+		return m.Envidos
+	}
+	return nil
+}
+
+type FlorPointsInfo struct {
+	Flors                []*FlorPoint `protobuf:"bytes,1,rep,name=flors,proto3" json:"flors,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *FlorPointsInfo) Reset()         { *m = FlorPointsInfo{} }
+func (m *FlorPointsInfo) String() string { return proto.CompactTextString(m) }
+func (*FlorPointsInfo) ProtoMessage()    {}
+func (*FlorPointsInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{8}
+}
+func (m *FlorPointsInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FlorPointsInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FlorPointsInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FlorPointsInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FlorPointsInfo.Merge(m, src)
+}
+func (m *FlorPointsInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *FlorPointsInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_FlorPointsInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FlorPointsInfo proto.InternalMessageInfo
+
+func (m *FlorPointsInfo) GetFlors() []*FlorPoint {
+	if m != nil {
+		return m.Flors
+	}
+	return nil
 }
 
 type GameOverInfo struct {
@@ -163,7 +508,7 @@ func (m *GameOverInfo) Reset()         { *m = GameOverInfo{} }
 func (m *GameOverInfo) String() string { return proto.CompactTextString(m) }
 func (*GameOverInfo) ProtoMessage()    {}
 func (*GameOverInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2e54be1aa9105a3e, []int{2}
+	return fileDescriptor_2e54be1aa9105a3e, []int{9}
 }
 func (m *GameOverInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -207,17 +552,18 @@ func (m *GameOverInfo) GetScore() int32 {
 }
 
 type GameWinInfo struct {
-	Game                 []*GameInfo `protobuf:"bytes,1,rep,name=Game,proto3" json:"Game,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
+	WinPlayerId          int64    `protobuf:"varint,1,opt,name=WinPlayerId,proto3" json:"WinPlayerId,omitempty"`
+	WinState             int32    `protobuf:"varint,2,opt,name=WinState,proto3" json:"WinState,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *GameWinInfo) Reset()         { *m = GameWinInfo{} }
 func (m *GameWinInfo) String() string { return proto.CompactTextString(m) }
 func (*GameWinInfo) ProtoMessage()    {}
 func (*GameWinInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2e54be1aa9105a3e, []int{3}
+	return fileDescriptor_2e54be1aa9105a3e, []int{10}
 }
 func (m *GameWinInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -246,82 +592,18 @@ func (m *GameWinInfo) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GameWinInfo proto.InternalMessageInfo
 
-func (m *GameWinInfo) GetGame() []*GameInfo {
-	if m != nil {
-		return m.Game
-	}
-	return nil
-}
-
-type GameInfo struct {
-	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
-	Score                int32    `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`
-	WinPlayerId          int64    `protobuf:"varint,3,opt,name=WinPlayerId,proto3" json:"WinPlayerId,omitempty"`
-	State                WinState `protobuf:"varint,4,opt,name=State,proto3,enum=pbtruco.WinState" json:"State,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GameInfo) Reset()         { *m = GameInfo{} }
-func (m *GameInfo) String() string { return proto.CompactTextString(m) }
-func (*GameInfo) ProtoMessage()    {}
-func (*GameInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2e54be1aa9105a3e, []int{4}
-}
-func (m *GameInfo) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *GameInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_GameInfo.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *GameInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GameInfo.Merge(m, src)
-}
-func (m *GameInfo) XXX_Size() int {
-	return m.Size()
-}
-func (m *GameInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_GameInfo.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GameInfo proto.InternalMessageInfo
-
-func (m *GameInfo) GetPlayerId() int64 {
-	if m != nil {
-		return m.PlayerId
-	}
-	return 0
-}
-
-func (m *GameInfo) GetScore() int32 {
-	if m != nil {
-		return m.Score
-	}
-	return 0
-}
-
-func (m *GameInfo) GetWinPlayerId() int64 {
+func (m *GameWinInfo) GetWinPlayerId() int64 {
 	if m != nil {
 		return m.WinPlayerId
 	}
 	return 0
 }
 
-func (m *GameInfo) GetState() WinState {
+func (m *GameWinInfo) GetWinState() int32 {
 	if m != nil {
-		return m.State
+		return m.WinState
 	}
-	return WinState_NormalFinish
+	return 0
 }
 
 type PokerMsg struct {
@@ -337,7 +619,7 @@ func (m *PokerMsg) Reset()         { *m = PokerMsg{} }
 func (m *PokerMsg) String() string { return proto.CompactTextString(m) }
 func (*PokerMsg) ProtoMessage()    {}
 func (*PokerMsg) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2e54be1aa9105a3e, []int{5}
+	return fileDescriptor_2e54be1aa9105a3e, []int{11}
 }
 func (m *PokerMsg) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -387,11 +669,359 @@ func (m *PokerMsg) GetTablePokerList() []string {
 	return nil
 }
 
+type TableInfo struct {
+	CurrentTurn          int64       `protobuf:"varint,1,opt,name=CurrentTurn,proto3" json:"CurrentTurn,omitempty"`
+	CurrentActionPlayer  int64       `protobuf:"varint,2,opt,name=CurrentActionPlayer,proto3" json:"CurrentActionPlayer,omitempty"`
+	PlayerPoker          []*PokerMsg `protobuf:"bytes,3,rep,name=playerPoker,proto3" json:"playerPoker,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *TableInfo) Reset()         { *m = TableInfo{} }
+func (m *TableInfo) String() string { return proto.CompactTextString(m) }
+func (*TableInfo) ProtoMessage()    {}
+func (*TableInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{12}
+}
+func (m *TableInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TableInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TableInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TableInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TableInfo.Merge(m, src)
+}
+func (m *TableInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *TableInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_TableInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TableInfo proto.InternalMessageInfo
+
+func (m *TableInfo) GetCurrentTurn() int64 {
+	if m != nil {
+		return m.CurrentTurn
+	}
+	return 0
+}
+
+func (m *TableInfo) GetCurrentActionPlayer() int64 {
+	if m != nil {
+		return m.CurrentActionPlayer
+	}
+	return 0
+}
+
+func (m *TableInfo) GetPlayerPoker() []*PokerMsg {
+	if m != nil {
+		return m.PlayerPoker
+	}
+	return nil
+}
+
+type RoundInfo struct {
+	CurrentTurn          int64    `protobuf:"varint,1,opt,name=CurrentTurn,proto3" json:"CurrentTurn,omitempty"`
+	HasFlagEnvido        bool     `protobuf:"varint,2,opt,name=hasFlagEnvido,proto3" json:"hasFlagEnvido,omitempty"`
+	IsEnvidoFinish       bool     `protobuf:"varint,3,opt,name=isEnvidoFinish,proto3" json:"isEnvidoFinish,omitempty"`
+	IsPlayingFlor        bool     `protobuf:"varint,4,opt,name=isPlayingFlor,proto3" json:"isPlayingFlor,omitempty"`
+	IsFlorFinish         bool     `protobuf:"varint,5,opt,name=isFlorFinish,proto3" json:"isFlorFinish,omitempty"`
+	IsPlayingTruco       bool     `protobuf:"varint,6,opt,name=isPlayingTruco,proto3" json:"isPlayingTruco,omitempty"`
+	RoundCount           int32    `protobuf:"varint,7,opt,name=roundCount,proto3" json:"roundCount,omitempty"`
+	BetTrucoPlayer       int64    `protobuf:"varint,8,opt,name=betTrucoPlayer,proto3" json:"betTrucoPlayer,omitempty"`
+	IsTrucoFinish        bool     `protobuf:"varint,9,opt,name=isTrucoFinish,proto3" json:"isTrucoFinish,omitempty"`
+	IsTrucoHasNotQuiero  bool     `protobuf:"varint,10,opt,name=isTrucoHasNotQuiero,proto3" json:"isTrucoHasNotQuiero,omitempty"`
+	IsTrucoBeginCompare  bool     `protobuf:"varint,11,opt,name=isTrucoBeginCompare,proto3" json:"isTrucoBeginCompare,omitempty"`
+	Transitions          []string `protobuf:"bytes,12,rep,name=transitions,proto3" json:"transitions,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RoundInfo) Reset()         { *m = RoundInfo{} }
+func (m *RoundInfo) String() string { return proto.CompactTextString(m) }
+func (*RoundInfo) ProtoMessage()    {}
+func (*RoundInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{13}
+}
+func (m *RoundInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RoundInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RoundInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RoundInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RoundInfo.Merge(m, src)
+}
+func (m *RoundInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *RoundInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_RoundInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RoundInfo proto.InternalMessageInfo
+
+func (m *RoundInfo) GetCurrentTurn() int64 {
+	if m != nil {
+		return m.CurrentTurn
+	}
+	return 0
+}
+
+func (m *RoundInfo) GetHasFlagEnvido() bool {
+	if m != nil {
+		return m.HasFlagEnvido
+	}
+	return false
+}
+
+func (m *RoundInfo) GetIsEnvidoFinish() bool {
+	if m != nil {
+		return m.IsEnvidoFinish
+	}
+	return false
+}
+
+func (m *RoundInfo) GetIsPlayingFlor() bool {
+	if m != nil {
+		return m.IsPlayingFlor
+	}
+	return false
+}
+
+func (m *RoundInfo) GetIsFlorFinish() bool {
+	if m != nil {
+		return m.IsFlorFinish
+	}
+	return false
+}
+
+func (m *RoundInfo) GetIsPlayingTruco() bool {
+	if m != nil {
+		return m.IsPlayingTruco
+	}
+	return false
+}
+
+func (m *RoundInfo) GetRoundCount() int32 {
+	if m != nil {
+		return m.RoundCount
+	}
+	return 0
+}
+
+func (m *RoundInfo) GetBetTrucoPlayer() int64 {
+	if m != nil {
+		return m.BetTrucoPlayer
+	}
+	return 0
+}
+
+func (m *RoundInfo) GetIsTrucoFinish() bool {
+	if m != nil {
+		return m.IsTrucoFinish
+	}
+	return false
+}
+
+func (m *RoundInfo) GetIsTrucoHasNotQuiero() bool {
+	if m != nil {
+		return m.IsTrucoHasNotQuiero
+	}
+	return false
+}
+
+func (m *RoundInfo) GetIsTrucoBeginCompare() bool {
+	if m != nil {
+		return m.IsTrucoBeginCompare
+	}
+	return false
+}
+
+func (m *RoundInfo) GetTransitions() []string {
+	if m != nil {
+		return m.Transitions
+	}
+	return nil
+}
+
+type PlayerFlor struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=playerId,proto3" json:"playerId,omitempty"`
+	HasFlor              bool     `protobuf:"varint,2,opt,name=hasFlor,proto3" json:"hasFlor,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PlayerFlor) Reset()         { *m = PlayerFlor{} }
+func (m *PlayerFlor) String() string { return proto.CompactTextString(m) }
+func (*PlayerFlor) ProtoMessage()    {}
+func (*PlayerFlor) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{14}
+}
+func (m *PlayerFlor) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PlayerFlor) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PlayerFlor.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PlayerFlor) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerFlor.Merge(m, src)
+}
+func (m *PlayerFlor) XXX_Size() int {
+	return m.Size()
+}
+func (m *PlayerFlor) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerFlor.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayerFlor proto.InternalMessageInfo
+
+func (m *PlayerFlor) GetPlayerId() int64 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
+func (m *PlayerFlor) GetHasFlor() bool {
+	if m != nil {
+		return m.HasFlor
+	}
+	return false
+}
+
+type FlorInfo struct {
+	FlorInfo             []*PlayerFlor `protobuf:"bytes,1,rep,name=florInfo,proto3" json:"florInfo,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *FlorInfo) Reset()         { *m = FlorInfo{} }
+func (m *FlorInfo) String() string { return proto.CompactTextString(m) }
+func (*FlorInfo) ProtoMessage()    {}
+func (*FlorInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{15}
+}
+func (m *FlorInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FlorInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FlorInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FlorInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FlorInfo.Merge(m, src)
+}
+func (m *FlorInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *FlorInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_FlorInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FlorInfo proto.InternalMessageInfo
+
+func (m *FlorInfo) GetFlorInfo() []*PlayerFlor {
+	if m != nil {
+		return m.FlorInfo
+	}
+	return nil
+}
+
+type NoFlorReq struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=playerId,proto3" json:"playerId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *NoFlorReq) Reset()         { *m = NoFlorReq{} }
+func (m *NoFlorReq) String() string { return proto.CompactTextString(m) }
+func (*NoFlorReq) ProtoMessage()    {}
+func (*NoFlorReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{16}
+}
+func (m *NoFlorReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *NoFlorReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_NoFlorReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *NoFlorReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NoFlorReq.Merge(m, src)
+}
+func (m *NoFlorReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *NoFlorReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_NoFlorReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NoFlorReq proto.InternalMessageInfo
+
+func (m *NoFlorReq) GetPlayerId() int64 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
 type OperateInfo struct {
 	ActionPlayer         int64    `protobuf:"varint,1,opt,name=ActionPlayer,proto3" json:"ActionPlayer,omitempty"`
 	CurrentTurn          int64    `protobuf:"varint,2,opt,name=CurrentTurn,proto3" json:"CurrentTurn,omitempty"`
 	Action               string   `protobuf:"bytes,3,opt,name=Action,proto3" json:"Action,omitempty"`
 	Transitions          []string `protobuf:"bytes,4,rep,name=transitions,proto3" json:"transitions,omitempty"`
+	CurrentState         string   `protobuf:"bytes,5,opt,name=CurrentState,proto3" json:"CurrentState,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -401,7 +1031,7 @@ func (m *OperateInfo) Reset()         { *m = OperateInfo{} }
 func (m *OperateInfo) String() string { return proto.CompactTextString(m) }
 func (*OperateInfo) ProtoMessage()    {}
 func (*OperateInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2e54be1aa9105a3e, []int{6}
+	return fileDescriptor_2e54be1aa9105a3e, []int{17}
 }
 func (m *OperateInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -458,6 +1088,13 @@ func (m *OperateInfo) GetTransitions() []string {
 	return nil
 }
 
+func (m *OperateInfo) GetCurrentState() string {
+	if m != nil {
+		return m.CurrentState
+	}
+	return ""
+}
+
 type PlayerAction struct {
 	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
 	Action               string   `protobuf:"bytes,2,opt,name=Action,proto3" json:"Action,omitempty"`
@@ -472,7 +1109,7 @@ func (m *PlayerAction) Reset()         { *m = PlayerAction{} }
 func (m *PlayerAction) String() string { return proto.CompactTextString(m) }
 func (*PlayerAction) ProtoMessage()    {}
 func (*PlayerAction) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2e54be1aa9105a3e, []int{7}
+	return fileDescriptor_2e54be1aa9105a3e, []int{18}
 }
 func (m *PlayerAction) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -529,53 +1166,266 @@ func (m *PlayerAction) GetCard() string {
 	return ""
 }
 
+type BeginRoundReq struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=PlayerId,proto3" json:"PlayerId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *BeginRoundReq) Reset()         { *m = BeginRoundReq{} }
+func (m *BeginRoundReq) String() string { return proto.CompactTextString(m) }
+func (*BeginRoundReq) ProtoMessage()    {}
+func (*BeginRoundReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{19}
+}
+func (m *BeginRoundReq) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *BeginRoundReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_BeginRoundReq.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *BeginRoundReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BeginRoundReq.Merge(m, src)
+}
+func (m *BeginRoundReq) XXX_Size() int {
+	return m.Size()
+}
+func (m *BeginRoundReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_BeginRoundReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BeginRoundReq proto.InternalMessageInfo
+
+func (m *BeginRoundReq) GetPlayerId() int64 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
+type BetResult struct {
+	PlayerId             int64    `protobuf:"varint,1,opt,name=playerId,proto3" json:"playerId,omitempty"`
+	TrucoScore           int32    `protobuf:"varint,2,opt,name=trucoScore,proto3" json:"trucoScore,omitempty"`
+	EnvidoScore          int32    `protobuf:"varint,3,opt,name=envidoScore,proto3" json:"envidoScore,omitempty"`
+	FlorScore            int32    `protobuf:"varint,4,opt,name=florScore,proto3" json:"florScore,omitempty"`
+	TotalScore           int32    `protobuf:"varint,5,opt,name=totalScore,proto3" json:"totalScore,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *BetResult) Reset()         { *m = BetResult{} }
+func (m *BetResult) String() string { return proto.CompactTextString(m) }
+func (*BetResult) ProtoMessage()    {}
+func (*BetResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{20}
+}
+func (m *BetResult) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *BetResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_BetResult.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *BetResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BetResult.Merge(m, src)
+}
+func (m *BetResult) XXX_Size() int {
+	return m.Size()
+}
+func (m *BetResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_BetResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BetResult proto.InternalMessageInfo
+
+func (m *BetResult) GetPlayerId() int64 {
+	if m != nil {
+		return m.PlayerId
+	}
+	return 0
+}
+
+func (m *BetResult) GetTrucoScore() int32 {
+	if m != nil {
+		return m.TrucoScore
+	}
+	return 0
+}
+
+func (m *BetResult) GetEnvidoScore() int32 {
+	if m != nil {
+		return m.EnvidoScore
+	}
+	return 0
+}
+
+func (m *BetResult) GetFlorScore() int32 {
+	if m != nil {
+		return m.FlorScore
+	}
+	return 0
+}
+
+func (m *BetResult) GetTotalScore() int32 {
+	if m != nil {
+		return m.TotalScore
+	}
+	return 0
+}
+
+type OneRoundBetResult struct {
+	OneRoundBet          []*BetResult `protobuf:"bytes,1,rep,name=OneRoundBet,proto3" json:"OneRoundBet,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *OneRoundBetResult) Reset()         { *m = OneRoundBetResult{} }
+func (m *OneRoundBetResult) String() string { return proto.CompactTextString(m) }
+func (*OneRoundBetResult) ProtoMessage()    {}
+func (*OneRoundBetResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2e54be1aa9105a3e, []int{21}
+}
+func (m *OneRoundBetResult) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *OneRoundBetResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_OneRoundBetResult.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *OneRoundBetResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OneRoundBetResult.Merge(m, src)
+}
+func (m *OneRoundBetResult) XXX_Size() int {
+	return m.Size()
+}
+func (m *OneRoundBetResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_OneRoundBetResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OneRoundBetResult proto.InternalMessageInfo
+
+func (m *OneRoundBetResult) GetOneRoundBet() []*BetResult {
+	if m != nil {
+		return m.OneRoundBet
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("pbtruco.Statue", Statue_name, Statue_value)
-	proto.RegisterType((*Empty)(nil), "pbtruco.Empty")
-	proto.RegisterType((*RoundEnvidoPoints)(nil), "pbtruco.RoundEnvidoPoints")
+	proto.RegisterType((*EnvidoComfirmReq)(nil), "pbtruco.EnvidoComfirmReq")
+	proto.RegisterType((*OneMoreReq)(nil), "pbtruco.OneMoreReq")
+	proto.RegisterType((*FlodReq)(nil), "pbtruco.FlodReq")
+	proto.RegisterType((*Score)(nil), "pbtruco.Score")
+	proto.RegisterType((*ScoreInfo)(nil), "pbtruco.ScoreInfo")
+	proto.RegisterType((*EnvidoPoint)(nil), "pbtruco.envidoPoint")
+	proto.RegisterType((*FlorPoint)(nil), "pbtruco.florPoint")
+	proto.RegisterType((*EnvidoPointsInfo)(nil), "pbtruco.envidoPointsInfo")
+	proto.RegisterType((*FlorPointsInfo)(nil), "pbtruco.florPointsInfo")
 	proto.RegisterType((*GameOverInfo)(nil), "pbtruco.GameOverInfo")
 	proto.RegisterType((*GameWinInfo)(nil), "pbtruco.GameWinInfo")
-	proto.RegisterType((*GameInfo)(nil), "pbtruco.GameInfo")
 	proto.RegisterType((*PokerMsg)(nil), "pbtruco.PokerMsg")
+	proto.RegisterType((*TableInfo)(nil), "pbtruco.TableInfo")
+	proto.RegisterType((*RoundInfo)(nil), "pbtruco.RoundInfo")
+	proto.RegisterType((*PlayerFlor)(nil), "pbtruco.PlayerFlor")
+	proto.RegisterType((*FlorInfo)(nil), "pbtruco.FlorInfo")
+	proto.RegisterType((*NoFlorReq)(nil), "pbtruco.NoFlorReq")
 	proto.RegisterType((*OperateInfo)(nil), "pbtruco.OperateInfo")
 	proto.RegisterType((*PlayerAction)(nil), "pbtruco.PlayerAction")
+	proto.RegisterType((*BeginRoundReq)(nil), "pbtruco.BeginRoundReq")
+	proto.RegisterType((*BetResult)(nil), "pbtruco.BetResult")
+	proto.RegisterType((*OneRoundBetResult)(nil), "pbtruco.OneRoundBetResult")
 }
 
 func init() { proto.RegisterFile("truco.proto", fileDescriptor_2e54be1aa9105a3e) }
 
 var fileDescriptor_2e54be1aa9105a3e = []byte{
-	// 436 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0xdf, 0x8a, 0xd3, 0x40,
-	0x14, 0xc6, 0x9d, 0x24, 0x6d, 0xd3, 0x93, 0xb0, 0x74, 0x07, 0x91, 0x61, 0x91, 0x12, 0x06, 0xd4,
-	0xe0, 0x45, 0x2f, 0xd4, 0x07, 0xb0, 0xd6, 0x45, 0x0a, 0x4a, 0xca, 0x6c, 0xa5, 0x97, 0x32, 0x6d,
-	0xc7, 0x75, 0xb0, 0x3b, 0x13, 0x26, 0x93, 0x85, 0x7d, 0x02, 0xaf, 0x7c, 0x2f, 0x2f, 0x7d, 0x04,
-	0xe9, 0x93, 0xc8, 0x4c, 0xb2, 0xdb, 0xac, 0x17, 0x15, 0xf6, 0x2e, 0xdf, 0xef, 0xfc, 0xf9, 0xce,
-	0x39, 0x43, 0x20, 0xb1, 0xa6, 0xde, 0xe8, 0x49, 0x69, 0xb4, 0xd5, 0x78, 0x50, 0xae, 0xbd, 0x3c,
-	0x83, 0x35, 0xaf, 0x44, 0x03, 0xe9, 0x00, 0x7a, 0xe7, 0x57, 0xa5, 0xbd, 0xa1, 0x97, 0x70, 0xca,
-	0x74, 0xad, 0xb6, 0xe7, 0xea, 0x5a, 0x6e, 0xf5, 0x42, 0x4b, 0x65, 0x2b, 0x7c, 0x06, 0xf1, 0x62,
-	0xc7, 0x6f, 0x84, 0x99, 0x6f, 0x09, 0xca, 0x50, 0x1e, 0xb2, 0x3b, 0x8d, 0x1f, 0x43, 0xaf, 0xda,
-	0x68, 0x23, 0x48, 0x90, 0xa1, 0xbc, 0xc7, 0x1a, 0x81, 0x33, 0x48, 0xc4, 0xa1, 0x03, 0x09, 0x7d,
-	0xac, 0x8b, 0xe8, 0x5b, 0x48, 0x3f, 0xf0, 0x2b, 0x51, 0x5c, 0x0b, 0x33, 0x57, 0x5f, 0xf5, 0xff,
-	0x3c, 0x2e, 0xba, 0x1e, 0x5e, 0xd0, 0x37, 0x90, 0xb8, 0x0e, 0x2b, 0xa9, 0x7c, 0x83, 0x67, 0x10,
-	0x39, 0x49, 0x50, 0x16, 0xe6, 0xc9, 0xab, 0xd3, 0x49, 0xbb, 0xe6, 0xc4, 0x41, 0x97, 0xc0, 0x7c,
-	0x98, 0xfe, 0x40, 0x10, 0xdf, 0xa2, 0x87, 0x2d, 0xb6, 0x92, 0xea, 0xae, 0x28, 0xf4, 0x45, 0x5d,
-	0x84, 0x5f, 0x40, 0xef, 0xc2, 0x72, 0x2b, 0x48, 0x94, 0xa1, 0xfc, 0xa4, 0x33, 0xc8, 0x4a, 0x2a,
-	0x1f, 0x60, 0x4d, 0x9c, 0xee, 0x20, 0x5e, 0xe8, 0xef, 0xc2, 0x7c, 0xaa, 0x2e, 0x8f, 0x0e, 0xf2,
-	0x14, 0x86, 0x3e, 0xef, 0xa3, 0xac, 0x2c, 0x09, 0xb2, 0x30, 0x1f, 0xb2, 0x03, 0xc0, 0xcf, 0xe1,
-	0x64, 0xc9, 0xd7, 0x3b, 0x71, 0x48, 0x09, 0x7d, 0xca, 0x3f, 0x94, 0xfe, 0x44, 0x90, 0x14, 0xa5,
-	0x30, 0xdc, 0x36, 0xab, 0x53, 0x48, 0xa7, 0x1b, 0x2b, 0x75, 0x3b, 0x78, 0xeb, 0x7a, 0x8f, 0xb9,
-	0x65, 0x67, 0xb5, 0x31, 0x42, 0xd9, 0x65, 0x6d, 0x94, 0x3f, 0x44, 0xc8, 0xba, 0x08, 0x3f, 0x81,
-	0x7e, 0x53, 0xe1, 0x2f, 0x31, 0x64, 0xad, 0x72, 0x95, 0xd6, 0x70, 0x55, 0x49, 0xa7, 0x2a, 0x12,
-	0xf9, 0x91, 0xba, 0x88, 0x96, 0x90, 0x36, 0x2e, 0x6d, 0xc5, 0xb1, 0x0b, 0x1c, 0x5c, 0x82, 0x7b,
-	0x2e, 0x04, 0x06, 0x85, 0xfd, 0xd6, 0x79, 0x88, 0x5b, 0x89, 0x31, 0x44, 0x33, 0x6e, 0xb6, 0xfe,
-	0x0d, 0x86, 0xcc, 0x7f, 0xbf, 0xcc, 0xa1, 0xef, 0x0e, 0x5f, 0x0b, 0x9c, 0x42, 0x5c, 0x7c, 0x5e,
-	0x7e, 0x99, 0x4d, 0xd9, 0xfb, 0xd1, 0x23, 0xdc, 0x87, 0xa0, 0x58, 0x8c, 0x10, 0x8e, 0x21, 0x5a,
-	0x4d, 0xe7, 0xcb, 0x51, 0xf0, 0x2e, 0xfd, 0xb5, 0x1f, 0xa3, 0xdf, 0xfb, 0x31, 0xfa, 0xb3, 0x1f,
-	0xa3, 0x75, 0xdf, 0xff, 0x22, 0xaf, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x24, 0xab, 0x69, 0x49,
-	0x46, 0x03, 0x00, 0x00,
+	// 861 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x56, 0xdd, 0x6e, 0xe3, 0x44,
+	0x14, 0xc6, 0x71, 0x7e, 0xec, 0xe3, 0x6c, 0x95, 0x9d, 0x5d, 0xad, 0xac, 0x15, 0x8a, 0xa2, 0x11,
+	0x5a, 0x22, 0x56, 0x0a, 0x68, 0xbb, 0x37, 0xc0, 0x0d, 0x4d, 0x68, 0xa1, 0x82, 0xdd, 0x94, 0x69,
+	0x50, 0x2f, 0x91, 0xdb, 0x4c, 0xdb, 0x11, 0xae, 0x27, 0x1d, 0x4f, 0x56, 0xe2, 0x3d, 0x78, 0x07,
+	0xae, 0x79, 0x0b, 0x2e, 0x79, 0x04, 0xe8, 0x93, 0xa0, 0x39, 0x33, 0x76, 0x26, 0x6e, 0x69, 0x7b,
+	0x95, 0x39, 0xdf, 0x7c, 0xe7, 0x3b, 0xbf, 0xb6, 0x03, 0x89, 0x56, 0xeb, 0x33, 0x39, 0x59, 0x29,
+	0xa9, 0x25, 0xe9, 0xad, 0x4e, 0xd1, 0xa4, 0x6f, 0x61, 0xb0, 0x5f, 0x7c, 0x10, 0x4b, 0x39, 0x93,
+	0x57, 0xe7, 0x42, 0x5d, 0x31, 0x7e, 0x4d, 0x46, 0x90, 0x28, 0x7e, 0x7d, 0x94, 0x67, 0xbf, 0x71,
+	0x75, 0xb8, 0x4c, 0x83, 0x51, 0x30, 0x0e, 0x99, 0x0f, 0xd1, 0x09, 0xc0, 0xbc, 0xe0, 0xef, 0xa4,
+	0xe2, 0x8f, 0xe3, 0xbf, 0x86, 0xde, 0x41, 0x2e, 0x97, 0x8f, 0x23, 0x7f, 0x09, 0x9d, 0xe3, 0x33,
+	0xa9, 0x38, 0x79, 0x09, 0x51, 0x83, 0x57, 0xdb, 0xe4, 0x39, 0x74, 0x4a, 0x43, 0x4a, 0x5b, 0xa3,
+	0x60, 0xdc, 0x61, 0xd6, 0xa0, 0xbb, 0x10, 0xa3, 0xeb, 0x61, 0x71, 0x2e, 0xc9, 0x2b, 0xe8, 0x22,
+	0x5a, 0xa6, 0xc1, 0x28, 0x1c, 0x27, 0x6f, 0x76, 0x26, 0xae, 0xe8, 0x09, 0x72, 0x98, 0xbb, 0xa5,
+	0x7b, 0x90, 0x70, 0x6c, 0xc1, 0x91, 0x14, 0x85, 0xbe, 0x37, 0xea, 0x0b, 0xe8, 0x5a, 0xaa, 0x0b,
+	0xeb, 0x2c, 0xba, 0x0f, 0xf1, 0x79, 0x2e, 0xd5, 0xc3, 0x02, 0x1f, 0x7b, 0x44, 0xa7, 0xb1, 0x01,
+	0xe8, 0x14, 0x06, 0x5e, 0x26, 0x25, 0x56, 0x31, 0x81, 0x9e, 0xc5, 0xaa, 0x32, 0x9e, 0xd7, 0x65,
+	0x78, 0x5c, 0x56, 0x91, 0xe8, 0x57, 0xb0, 0x53, 0x0b, 0x5a, 0x85, 0x31, 0x74, 0x0c, 0x52, 0xf9,
+	0x93, 0xda, 0xbf, 0xe6, 0x31, 0x4b, 0xa0, 0xdf, 0x40, 0xff, 0xbb, 0xec, 0x8a, 0xcf, 0x3f, 0x70,
+	0x85, 0x9e, 0x0f, 0x0c, 0xe0, 0xd8, 0x1f, 0x00, 0x1a, 0xf4, 0x07, 0x48, 0x8c, 0xc2, 0x89, 0x28,
+	0x50, 0x60, 0x04, 0xc9, 0x89, 0x28, 0x9a, 0xc3, 0xf6, 0x20, 0x13, 0xe2, 0x44, 0x14, 0xc7, 0x3a,
+	0xd3, 0x95, 0x52, 0x6d, 0xd3, 0x1c, 0xa2, 0x23, 0xf9, 0x2b, 0x57, 0xef, 0xca, 0x8b, 0x87, 0x9a,
+	0x8a, 0xbc, 0x1f, 0x45, 0x69, 0x9a, 0x1a, 0x8e, 0x63, 0xb6, 0x01, 0xc8, 0x2b, 0xd8, 0x59, 0x64,
+	0xa7, 0x39, 0xdf, 0x50, 0x42, 0xa4, 0x34, 0x50, 0xfa, 0x7b, 0x00, 0x31, 0x42, 0x55, 0xe6, 0xb3,
+	0xb5, 0x52, 0xbc, 0xd0, 0x8b, 0xb5, 0x2a, 0xaa, 0xcc, 0x3d, 0x88, 0x7c, 0x01, 0xcf, 0x9c, 0xb9,
+	0x77, 0xa6, 0x85, 0x74, 0x25, 0x61, 0x11, 0x21, 0xbb, 0xeb, 0x8a, 0xec, 0x42, 0xb2, 0xc2, 0x13,
+	0x06, 0xc5, 0x34, 0x92, 0x37, 0x4f, 0xeb, 0x71, 0x54, 0xb5, 0x32, 0x9f, 0x45, 0xff, 0x0d, 0x21,
+	0x66, 0x72, 0x5d, 0x2c, 0x1f, 0x99, 0xd6, 0x27, 0xf0, 0xe4, 0x32, 0x2b, 0x0f, 0xf2, 0xec, 0x62,
+	0x7f, 0xb3, 0xa9, 0x11, 0xdb, 0x06, 0x4d, 0x53, 0x44, 0x69, 0xcf, 0x07, 0xa2, 0x10, 0xe5, 0x65,
+	0x1a, 0x22, 0xad, 0x81, 0x1a, 0x35, 0x51, 0x9a, 0xf4, 0x45, 0x71, 0x71, 0x90, 0x4b, 0x95, 0xb6,
+	0xad, 0xda, 0x16, 0x48, 0x28, 0xf4, 0x45, 0x69, 0x4e, 0x4e, 0xab, 0x83, 0xa4, 0x2d, 0xcc, 0x46,
+	0x74, 0x4e, 0x0b, 0x53, 0x6f, 0xda, 0xad, 0x22, 0xfa, 0x28, 0x19, 0x02, 0x28, 0x53, 0xee, 0x4c,
+	0xae, 0x0b, 0x9d, 0xf6, 0x70, 0x25, 0x3c, 0xc4, 0xe8, 0x9c, 0x72, 0x8d, 0x5c, 0xd7, 0xf1, 0x08,
+	0x9b, 0xd0, 0x40, 0x6d, 0xe6, 0x08, 0xb8, 0xa4, 0xe2, 0x2a, 0x73, 0x0f, 0x34, 0x43, 0x74, 0xc0,
+	0xf7, 0x59, 0xf9, 0x5e, 0xea, 0x9f, 0xd6, 0x82, 0x2b, 0x99, 0x02, 0x72, 0xef, 0xba, 0xf2, 0x3c,
+	0xa6, 0xfc, 0x42, 0x14, 0x33, 0x79, 0xb5, 0xca, 0x14, 0x4f, 0x93, 0x2d, 0x0f, 0xff, 0xca, 0xcc,
+	0x4c, 0xab, 0xac, 0x28, 0x85, 0x59, 0x85, 0x32, 0xed, 0xe3, 0xf6, 0xf9, 0x10, 0x9d, 0x02, 0xd8,
+	0xac, 0xb1, 0x9b, 0x2f, 0x21, 0x5a, 0x35, 0x56, 0xbd, 0xb2, 0x49, 0x0a, 0x3d, 0x1c, 0xa4, 0x54,
+	0x6e, 0xae, 0x95, 0x49, 0xbf, 0x86, 0xc8, 0xfc, 0xe2, 0x96, 0x7c, 0x0e, 0xd1, 0xb9, 0x3b, 0xbb,
+	0x87, 0xfe, 0xd9, 0x66, 0xcb, 0xea, 0x40, 0xac, 0x26, 0xd1, 0x4f, 0x21, 0x7e, 0x2f, 0x11, 0xe3,
+	0xd7, 0xf7, 0xc5, 0xa7, 0x7f, 0x06, 0x90, 0xcc, 0x57, 0x5c, 0x65, 0xda, 0x3e, 0x26, 0x14, 0xfa,
+	0x5b, 0xdb, 0x6f, 0xf9, 0x5b, 0x58, 0x73, 0x67, 0x5b, 0xb7, 0x77, 0xf6, 0x05, 0x74, 0xad, 0x07,
+	0x6e, 0x61, 0xcc, 0x9c, 0xd5, 0xec, 0x5c, 0xfb, 0x56, 0xe7, 0x4c, 0x7c, 0x27, 0x64, 0x5f, 0x21,
+	0x1d, 0xf4, 0xdf, 0xc2, 0xe8, 0x0a, 0xfa, 0x36, 0x13, 0xa7, 0xfa, 0xc0, 0x0b, 0xde, 0x65, 0xd2,
+	0xda, 0xca, 0x24, 0x85, 0xde, 0x5c, 0x5f, 0xa2, 0x4b, 0x88, 0x2e, 0x95, 0x49, 0x08, 0xb4, 0x67,
+	0x99, 0x5a, 0xe2, 0x83, 0x11, 0x33, 0x3c, 0xd3, 0xd7, 0xf0, 0x04, 0x37, 0x00, 0x9f, 0x5b, 0xd7,
+	0xd2, 0xff, 0x0b, 0x49, 0xff, 0x08, 0x20, 0x9e, 0x72, 0xcd, 0x78, 0xb9, 0xce, 0xf5, 0xbd, 0xc3,
+	0x1f, 0x02, 0xe0, 0x0c, 0xfd, 0xf7, 0xae, 0x87, 0x98, 0x76, 0xd9, 0xaf, 0x80, 0x25, 0x84, 0x48,
+	0xf0, 0xa1, 0xea, 0xf3, 0x63, 0xef, 0xdb, 0x9b, 0xcf, 0x8f, 0xbd, 0x35, 0xfa, 0x52, 0x67, 0xb9,
+	0xbd, 0xee, 0x38, 0xfd, 0x1a, 0xa1, 0x87, 0xf0, 0x74, 0x5e, 0x70, 0x2c, 0x6a, 0x93, 0xf0, 0x5b,
+	0x48, 0x3c, 0xf0, 0xd6, 0x37, 0xa6, 0x26, 0x32, 0x9f, 0xf6, 0xd9, 0x18, 0xba, 0x66, 0x38, 0x6b,
+	0x4e, 0xfa, 0x10, 0xcd, 0x7f, 0x5e, 0xfc, 0x32, 0xdb, 0x63, 0xdf, 0x0e, 0x3e, 0x22, 0x5d, 0x68,
+	0xcd, 0x8f, 0x06, 0x01, 0x89, 0xa0, 0x7d, 0xb2, 0x77, 0xb8, 0x18, 0xb4, 0xa6, 0xfd, 0xbf, 0x6e,
+	0x86, 0xc1, 0xdf, 0x37, 0xc3, 0xe0, 0x9f, 0x9b, 0x61, 0x70, 0xda, 0xc5, 0xbf, 0x2f, 0xbb, 0xff,
+	0x05, 0x00, 0x00, 0xff, 0xff, 0xe1, 0xeb, 0x2f, 0x59, 0xcd, 0x08, 0x00, 0x00,
 }
 
-func (m *Empty) Marshal() (dAtA []byte, err error) {
+func (m *EnvidoComfirmReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -585,18 +1435,23 @@ func (m *Empty) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Empty) MarshalTo(dAtA []byte) (int, error) {
+func (m *EnvidoComfirmReq) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
+	if m.ReqPlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.ReqPlayerId))
+	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
 
-func (m *RoundEnvidoPoints) Marshal() (dAtA []byte, err error) {
+func (m *OneMoreReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -606,7 +1461,59 @@ func (m *RoundEnvidoPoints) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *RoundEnvidoPoints) MarshalTo(dAtA []byte) (int, error) {
+func (m *OneMoreReq) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.ReqPlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.ReqPlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *FlodReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *FlodReq) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.ReqPlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.ReqPlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *Score) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Score) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -621,10 +1528,166 @@ func (m *RoundEnvidoPoints) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintTruco(dAtA, i, uint64(m.Score))
 	}
-	if m.EnvidoPoint != 0 {
-		dAtA[i] = 0x18
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *ScoreInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ScoreInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Scores) > 0 {
+		for _, msg := range m.Scores {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintTruco(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *EnvidoPoint) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EnvidoPoint) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		dAtA[i] = 0x8
 		i++
-		i = encodeVarintTruco(dAtA, i, uint64(m.EnvidoPoint))
+		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
+	}
+	if m.Envido != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.Envido))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *FlorPoint) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *FlorPoint) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
+	}
+	if m.FlorPoint != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.FlorPoint))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *EnvidoPointsInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EnvidoPointsInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Envidos) > 0 {
+		for _, msg := range m.Envidos {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintTruco(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *FlorPointsInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *FlorPointsInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Flors) > 0 {
+		for _, msg := range m.Flors {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintTruco(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -678,58 +1741,15 @@ func (m *GameWinInfo) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Game) > 0 {
-		for _, msg := range m.Game {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintTruco(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
-}
-
-func (m *GameInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *GameInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.PlayerId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
-	}
-	if m.Score != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintTruco(dAtA, i, uint64(m.Score))
-	}
 	if m.WinPlayerId != 0 {
-		dAtA[i] = 0x18
+		dAtA[i] = 0x8
 		i++
 		i = encodeVarintTruco(dAtA, i, uint64(m.WinPlayerId))
 	}
-	if m.State != 0 {
-		dAtA[i] = 0x20
+	if m.WinState != 0 {
+		dAtA[i] = 0x10
 		i++
-		i = encodeVarintTruco(dAtA, i, uint64(m.State))
+		i = encodeVarintTruco(dAtA, i, uint64(m.WinState))
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -793,6 +1813,275 @@ func (m *PokerMsg) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *TableInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TableInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.CurrentTurn != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.CurrentTurn))
+	}
+	if m.CurrentActionPlayer != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.CurrentActionPlayer))
+	}
+	if len(m.PlayerPoker) > 0 {
+		for _, msg := range m.PlayerPoker {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintTruco(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *RoundInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RoundInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.CurrentTurn != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.CurrentTurn))
+	}
+	if m.HasFlagEnvido {
+		dAtA[i] = 0x10
+		i++
+		if m.HasFlagEnvido {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.IsEnvidoFinish {
+		dAtA[i] = 0x18
+		i++
+		if m.IsEnvidoFinish {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.IsPlayingFlor {
+		dAtA[i] = 0x20
+		i++
+		if m.IsPlayingFlor {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.IsFlorFinish {
+		dAtA[i] = 0x28
+		i++
+		if m.IsFlorFinish {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.IsPlayingTruco {
+		dAtA[i] = 0x30
+		i++
+		if m.IsPlayingTruco {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.RoundCount != 0 {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.RoundCount))
+	}
+	if m.BetTrucoPlayer != 0 {
+		dAtA[i] = 0x40
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.BetTrucoPlayer))
+	}
+	if m.IsTrucoFinish {
+		dAtA[i] = 0x48
+		i++
+		if m.IsTrucoFinish {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.IsTrucoHasNotQuiero {
+		dAtA[i] = 0x50
+		i++
+		if m.IsTrucoHasNotQuiero {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.IsTrucoBeginCompare {
+		dAtA[i] = 0x58
+		i++
+		if m.IsTrucoBeginCompare {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Transitions) > 0 {
+		for _, s := range m.Transitions {
+			dAtA[i] = 0x62
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *PlayerFlor) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PlayerFlor) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
+	}
+	if m.HasFlor {
+		dAtA[i] = 0x10
+		i++
+		if m.HasFlor {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *FlorInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *FlorInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.FlorInfo) > 0 {
+		for _, msg := range m.FlorInfo {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintTruco(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *NoFlorReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *NoFlorReq) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func (m *OperateInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -838,6 +2127,12 @@ func (m *OperateInfo) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if len(m.CurrentState) > 0 {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(len(m.CurrentState)))
+		i += copy(dAtA[i:], m.CurrentState)
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -888,6 +2183,111 @@ func (m *PlayerAction) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *BeginRoundReq) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *BeginRoundReq) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *BetResult) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *BetResult) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.PlayerId))
+	}
+	if m.TrucoScore != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.TrucoScore))
+	}
+	if m.EnvidoScore != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.EnvidoScore))
+	}
+	if m.FlorScore != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.FlorScore))
+	}
+	if m.TotalScore != 0 {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintTruco(dAtA, i, uint64(m.TotalScore))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *OneRoundBetResult) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *OneRoundBetResult) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.OneRoundBet) > 0 {
+		for _, msg := range m.OneRoundBet {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintTruco(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func encodeVarintTruco(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -897,19 +2297,52 @@ func encodeVarintTruco(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
-func (m *Empty) Size() (n int) {
+func (m *EnvidoComfirmReq) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
+	if m.ReqPlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.ReqPlayerId))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
 
-func (m *RoundEnvidoPoints) Size() (n int) {
+func (m *OneMoreReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ReqPlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.ReqPlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *FlodReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ReqPlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.ReqPlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Score) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -921,8 +2354,95 @@ func (m *RoundEnvidoPoints) Size() (n int) {
 	if m.Score != 0 {
 		n += 1 + sovTruco(uint64(m.Score))
 	}
-	if m.EnvidoPoint != 0 {
-		n += 1 + sovTruco(uint64(m.EnvidoPoint))
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ScoreInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Scores) > 0 {
+		for _, e := range m.Scores {
+			l = e.Size()
+			n += 1 + l + sovTruco(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *EnvidoPoint) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.PlayerId))
+	}
+	if m.Envido != 0 {
+		n += 1 + sovTruco(uint64(m.Envido))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *FlorPoint) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.PlayerId))
+	}
+	if m.FlorPoint != 0 {
+		n += 1 + sovTruco(uint64(m.FlorPoint))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *EnvidoPointsInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Envidos) > 0 {
+		for _, e := range m.Envidos {
+			l = e.Size()
+			n += 1 + l + sovTruco(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *FlorPointsInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Flors) > 0 {
+		for _, e := range m.Flors {
+			l = e.Size()
+			n += 1 + l + sovTruco(uint64(l))
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -954,35 +2474,11 @@ func (m *GameWinInfo) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if len(m.Game) > 0 {
-		for _, e := range m.Game {
-			l = e.Size()
-			n += 1 + l + sovTruco(uint64(l))
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *GameInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.PlayerId != 0 {
-		n += 1 + sovTruco(uint64(m.PlayerId))
-	}
-	if m.Score != 0 {
-		n += 1 + sovTruco(uint64(m.Score))
-	}
 	if m.WinPlayerId != 0 {
 		n += 1 + sovTruco(uint64(m.WinPlayerId))
 	}
-	if m.State != 0 {
-		n += 1 + sovTruco(uint64(m.State))
+	if m.WinState != 0 {
+		n += 1 + sovTruco(uint64(m.WinState))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1017,6 +2513,132 @@ func (m *PokerMsg) Size() (n int) {
 	return n
 }
 
+func (m *TableInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.CurrentTurn != 0 {
+		n += 1 + sovTruco(uint64(m.CurrentTurn))
+	}
+	if m.CurrentActionPlayer != 0 {
+		n += 1 + sovTruco(uint64(m.CurrentActionPlayer))
+	}
+	if len(m.PlayerPoker) > 0 {
+		for _, e := range m.PlayerPoker {
+			l = e.Size()
+			n += 1 + l + sovTruco(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *RoundInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.CurrentTurn != 0 {
+		n += 1 + sovTruco(uint64(m.CurrentTurn))
+	}
+	if m.HasFlagEnvido {
+		n += 2
+	}
+	if m.IsEnvidoFinish {
+		n += 2
+	}
+	if m.IsPlayingFlor {
+		n += 2
+	}
+	if m.IsFlorFinish {
+		n += 2
+	}
+	if m.IsPlayingTruco {
+		n += 2
+	}
+	if m.RoundCount != 0 {
+		n += 1 + sovTruco(uint64(m.RoundCount))
+	}
+	if m.BetTrucoPlayer != 0 {
+		n += 1 + sovTruco(uint64(m.BetTrucoPlayer))
+	}
+	if m.IsTrucoFinish {
+		n += 2
+	}
+	if m.IsTrucoHasNotQuiero {
+		n += 2
+	}
+	if m.IsTrucoBeginCompare {
+		n += 2
+	}
+	if len(m.Transitions) > 0 {
+		for _, s := range m.Transitions {
+			l = len(s)
+			n += 1 + l + sovTruco(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *PlayerFlor) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.PlayerId))
+	}
+	if m.HasFlor {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *FlorInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.FlorInfo) > 0 {
+		for _, e := range m.FlorInfo {
+			l = e.Size()
+			n += 1 + l + sovTruco(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *NoFlorReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.PlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *OperateInfo) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1038,6 +2660,10 @@ func (m *OperateInfo) Size() (n int) {
 			l = len(s)
 			n += 1 + l + sovTruco(uint64(l))
 		}
+	}
+	l = len(m.CurrentState)
+	if l > 0 {
+		n += 1 + l + sovTruco(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1071,6 +2697,66 @@ func (m *PlayerAction) Size() (n int) {
 	return n
 }
 
+func (m *BeginRoundReq) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.PlayerId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *BetResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.PlayerId != 0 {
+		n += 1 + sovTruco(uint64(m.PlayerId))
+	}
+	if m.TrucoScore != 0 {
+		n += 1 + sovTruco(uint64(m.TrucoScore))
+	}
+	if m.EnvidoScore != 0 {
+		n += 1 + sovTruco(uint64(m.EnvidoScore))
+	}
+	if m.FlorScore != 0 {
+		n += 1 + sovTruco(uint64(m.FlorScore))
+	}
+	if m.TotalScore != 0 {
+		n += 1 + sovTruco(uint64(m.TotalScore))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *OneRoundBetResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.OneRoundBet) > 0 {
+		for _, e := range m.OneRoundBet {
+			l = e.Size()
+			n += 1 + l + sovTruco(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func sovTruco(x uint64) (n int) {
 	for {
 		n++
@@ -1084,7 +2770,7 @@ func sovTruco(x uint64) (n int) {
 func sozTruco(x uint64) (n int) {
 	return sovTruco(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *Empty) Unmarshal(dAtA []byte) error {
+func (m *EnvidoComfirmReq) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1107,12 +2793,31 @@ func (m *Empty) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: Empty: wiretype end group for non-group")
+			return fmt.Errorf("proto: EnvidoComfirmReq: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Empty: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: EnvidoComfirmReq: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReqPlayerId", wireType)
+			}
+			m.ReqPlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ReqPlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTruco(dAtA[iNdEx:])
@@ -1138,7 +2843,7 @@ func (m *Empty) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *RoundEnvidoPoints) Unmarshal(dAtA []byte) error {
+func (m *OneMoreReq) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1161,10 +2866,156 @@ func (m *RoundEnvidoPoints) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: RoundEnvidoPoints: wiretype end group for non-group")
+			return fmt.Errorf("proto: OneMoreReq: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: RoundEnvidoPoints: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: OneMoreReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReqPlayerId", wireType)
+			}
+			m.ReqPlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ReqPlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *FlodReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: FlodReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: FlodReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReqPlayerId", wireType)
+			}
+			m.ReqPlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ReqPlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Score) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Score: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Score: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1205,11 +3056,65 @@ func (m *RoundEnvidoPoints) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field EnvidoPoint", wireType)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
 			}
-			m.EnvidoPoint = 0
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ScoreInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ScoreInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ScoreInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Scores", wireType)
+			}
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTruco
@@ -1219,11 +3124,386 @@ func (m *RoundEnvidoPoints) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.EnvidoPoint |= int32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Scores = append(m.Scores, &Score{})
+			if err := m.Scores[len(m.Scores)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EnvidoPoint) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: envidoPoint: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: envidoPoint: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
+			}
+			m.PlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Envido", wireType)
+			}
+			m.Envido = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Envido |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *FlorPoint) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: florPoint: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: florPoint: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
+			}
+			m.PlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FlorPoint", wireType)
+			}
+			m.FlorPoint = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FlorPoint |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EnvidoPointsInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: envidoPointsInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: envidoPointsInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Envidos", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Envidos = append(m.Envidos, &EnvidoPoint{})
+			if err := m.Envidos[len(m.Envidos)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *FlorPointsInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: florPointsInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: florPointsInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Flors", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Flors = append(m.Flors, &FlorPoint{})
+			if err := m.Flors[len(m.Flors)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTruco(dAtA[iNdEx:])
@@ -1371,132 +3651,6 @@ func (m *GameWinInfo) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Game", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTruco
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTruco
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTruco
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Game = append(m.Game, &GameInfo{})
-			if err := m.Game[len(m.Game)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTruco(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTruco
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTruco
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *GameInfo) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTruco
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: GameInfo: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GameInfo: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
-			}
-			m.PlayerId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTruco
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PlayerId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Score", wireType)
-			}
-			m.Score = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTruco
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Score |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field WinPlayerId", wireType)
 			}
@@ -1515,11 +3669,11 @@ func (m *GameInfo) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field State", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field WinState", wireType)
 			}
-			m.State = 0
+			m.WinState = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTruco
@@ -1529,7 +3683,7 @@ func (m *GameInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.State |= WinState(b&0x7F) << shift
+				m.WinState |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1696,6 +3850,689 @@ func (m *PokerMsg) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *TableInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TableInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TableInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentTurn", wireType)
+			}
+			m.CurrentTurn = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrentTurn |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentActionPlayer", wireType)
+			}
+			m.CurrentActionPlayer = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrentActionPlayer |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerPoker", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PlayerPoker = append(m.PlayerPoker, &PokerMsg{})
+			if err := m.PlayerPoker[len(m.PlayerPoker)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RoundInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RoundInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RoundInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentTurn", wireType)
+			}
+			m.CurrentTurn = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrentTurn |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HasFlagEnvido", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.HasFlagEnvido = bool(v != 0)
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsEnvidoFinish", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsEnvidoFinish = bool(v != 0)
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsPlayingFlor", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsPlayingFlor = bool(v != 0)
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsFlorFinish", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsFlorFinish = bool(v != 0)
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsPlayingTruco", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsPlayingTruco = bool(v != 0)
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RoundCount", wireType)
+			}
+			m.RoundCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RoundCount |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BetTrucoPlayer", wireType)
+			}
+			m.BetTrucoPlayer = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.BetTrucoPlayer |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsTrucoFinish", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsTrucoFinish = bool(v != 0)
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsTrucoHasNotQuiero", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsTrucoHasNotQuiero = bool(v != 0)
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsTrucoBeginCompare", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsTrucoBeginCompare = bool(v != 0)
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Transitions", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Transitions = append(m.Transitions, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PlayerFlor) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PlayerFlor: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PlayerFlor: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
+			}
+			m.PlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HasFlor", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.HasFlor = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *FlorInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: FlorInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: FlorInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FlorInfo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FlorInfo = append(m.FlorInfo, &PlayerFlor{})
+			if err := m.FlorInfo[len(m.FlorInfo)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *NoFlorReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: NoFlorReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: NoFlorReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
+			}
+			m.PlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *OperateInfo) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1826,6 +4663,38 @@ func (m *OperateInfo) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Transitions = append(m.Transitions, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentState", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CurrentState = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1982,6 +4851,316 @@ func (m *PlayerAction) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Card = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *BeginRoundReq) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: BeginRoundReq: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: BeginRoundReq: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
+			}
+			m.PlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *BetResult) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: BetResult: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: BetResult: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerId", wireType)
+			}
+			m.PlayerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TrucoScore", wireType)
+			}
+			m.TrucoScore = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TrucoScore |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EnvidoScore", wireType)
+			}
+			m.EnvidoScore = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EnvidoScore |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FlorScore", wireType)
+			}
+			m.FlorScore = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FlorScore |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TotalScore", wireType)
+			}
+			m.TotalScore = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TotalScore |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTruco(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *OneRoundBetResult) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTruco
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: OneRoundBetResult: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: OneRoundBetResult: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OneRoundBet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTruco
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTruco
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTruco
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OneRoundBet = append(m.OneRoundBet, &BetResult{})
+			if err := m.OneRoundBet[len(m.OneRoundBet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

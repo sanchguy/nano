@@ -25,8 +25,6 @@ type Data struct {
 	RoomId *string   `json:"roomId"`
 	Player *roleinfo `json:"player"`
 	Other  *roleinfo `json:"other"`
-	Other1 *roleinfo `json:"other1"`
-	Other2 *roleinfo `json:"other2"`
 }
 
 var defaultManager = NewManager()
@@ -47,12 +45,26 @@ func NewManager() *Manager {
 		chReset:make(chan int64,kickResetBacklog),
 	}
 }
-
+/**
+此处就是注册对应协议好跟处理方法。协议号客户端跟服务端都定义到一个单独的文件，没用base.proto里面的
+服务端定义的协议号在proto_common.go文件
+例如：
+nano.ServiceHandler[PktLoadingReq] = "Manager.PlayerLoadingReq"
+PktLoadingReq 定义的协议
+"Manager.PlayerLoadingReq" 类名.方法名（不能在方法名前加on,类似onXXX会找不到）
+ */
 func (m *Manager) registerHandler(){
 	logger.Println("manager registerHandler~~~~~")
+	nano.ServiceHandler[PktLoadingReq] = "Manager.PlayerLoadingReq"
 	nano.ServiceHandler[PktHeartbeatReq] = "Manager.HeartbeatReq"
 	nano.ServiceHandler[PktLoginReq] = "Manager.Login"
-	nano.ServiceHandler[PktLoadingReq] = "Manager.onPlayerLoadingReq"
+	nano.ServiceHandler[PktGameRoundBegin] = "Manager.PlayerBeginRoundReq"
+	nano.ServiceHandler[PktGamePlayAction] = "Manager.PlayerAction"
+	nano.ServiceHandler[PktOneMoreGameReq] = "Manager.PlayerOneMoreTimeReq"
+	nano.ServiceHandler[PktEnvidoComfirmGameReq] = "Manager.EnvidoComfirmGameReq"
+	nano.ServiceHandler[PktNoFlorGameReq] = "Manager.PktNoFlorGameReq"
+	nano.ServiceHandler[PktFlodGameReq] = "Manager.PktFlodGameReq"
+	nano.ServiceHandler[PktEmojiReq] = "Manager.PktEmojiReq"
 }
 
 func (m *Manager) AfterInit() {
@@ -81,27 +93,22 @@ func (m *Manager) AfterInit() {
 			}
 	})
 }
-
+//客户端请求心跳包，这里就记录下时间，马上返回
 func (m *Manager) HeartbeatReq(s *session.Session, data []byte) error {
-	//logger.Println("manager HeratbeatReq~~~~~~")
-	req := &pbtruco.HeartbeatReq{}
-	err := req.Unmarshal(data)
-	if err != nil {
-		logger.Error(err.Error())
-	}
-	//logger.Println("manager HeratbeatReq~~~~~~ get timestamp = ",req.Timestamp)
 
-	//response
-	res := &pbtruco.HeartbeatRsp{
-		Timestamp: time.Now().Unix(),
-	}
-	resData ,err := res.Marshal()
+	p,err := playerWithSession(s)
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Error("玩家不存在或者session过期",err.Error())
+		return errors.New("玩家不存在或者session过期")
 	}
-	sendData,err := encodePbPacket(PktHeartbeatRsp,resData)
-	//logger.Println("sendHeartbeat dada = ",sendData)
-	return s.Response(sendData)
+
+	room := p.room
+	if room == nil{
+		logger.Info("HeartbeatReq~~~~ room not exits")
+		return errors.New("HeartbeatReq~~~~ room not exits")
+	}
+	room.doHeartbeat(s,p.UID(),data)
+	return nil
 }
 
 func (m *Manager) player(uid int64) (*Player, bool) {
@@ -121,20 +128,24 @@ func (m *Manager)Login(s *session.Session,userInfo []byte) error {
 	uid := *p1.Uid
 	name := *p1.Name
 	ai := *p1.Ai
+	avatarUrl := *p1.AvatarUrl
+	sex := *p1.Sex
+
+	p2 := str.Other
 
 	s.Bind(uid)
 
 	log.Infof("玩家:%d登录： %v",uid)
 	if p,ok := m.player(uid); !ok{
 		log.Infof("玩家：%d不在线，创建新玩家",uid)
-		p = NewPlayer(s,uid,name,ai)
+		p = NewPlayer(s,uid,name,ai,sex,avatarUrl)
 		m.setPlayer(uid,p)
 
 		//第一个登录的玩家创建房间
 		rid := *str.RoomId
-		defaultRoomManager.CreateRoom(s,rid)
+		defaultRoomManager.CreateRoom(s,rid,false)
 	}else {
-		log.Infof("玩家:%d已经在线",uid)
+		log.Infof("玩家:%d之前登录过",uid)
 		//移除广播频道
 		m.group.Leave(s)
 
@@ -150,12 +161,29 @@ func (m *Manager)Login(s *session.Session,userInfo []byte) error {
 
 		//绑定新session
 		p.bindSession(s)
+		p.setIsReconnect(true)
+		rid := *str.RoomId
+		defaultRoomManager.CreateRoom(s,rid,true)
 	}
 	m.group.Add(s)
+
+
+	if *p2.Ai {
+		otherPlayer := NewAiPlayer(*p2.Uid,*p2.Name,*p2.Ai,*p2.Sex,*p2.AvatarUrl)
+		m.setPlayer(*p2.Uid,otherPlayer)
+
+		rid := *str.RoomId
+		room,ok := defaultRoomManager.desk(rid)
+		if !ok {
+			panic("ai can't found room")
+		}
+		room.aiPlayerJoin(otherPlayer)
+	}
+
 	return nil//s.Response(res)
 }
 
-func (m *Manager) onPlayerLoadingReq(s *session.Session,data []byte) error{
+func (m *Manager) PlayerLoadingReq(s *session.Session,data []byte) error{
 	p,err := playerWithSession(s)
 	if err != nil {
 		logger.Error("玩家不存在或者session过期",err.Error())
@@ -184,7 +212,23 @@ func (m *Manager) onPlayerLoadingReq(s *session.Session,data []byte) error{
 	return s.Response(sendData)
 }
 
-func (m *Manager)onPlayerAction(s *session.Session,action []byte) error {
+func (m *Manager)PlayerBeginRoundReq(s *session.Session,data []byte) error {
+	p,err := playerWithSession(s)
+	if err != nil{
+		logger.Info("玩家不存在或者已离线")
+	}
+	room := p.room
+	if room == nil || room.isDestroy(){
+		logger.Error("房间已销毁或者已经完结")
+		return errors.New("room is destroy")
+	}
+	if !p.isReconnect{
+		room.checkStart()
+	}
+	return nil
+}
+
+func (m *Manager)PlayerAction(s *session.Session,action []byte) error {
 	p,err := playerWithSession(s)
 	if err != nil{
 		logger.Info("玩家不存在或者已离线")
@@ -197,6 +241,92 @@ func (m *Manager)onPlayerAction(s *session.Session,action []byte) error {
 
 	room.onPlayerAction(p.id,action)
 
+	return nil
+}
+
+func (m *Manager)PlayerOneMoreTimeReq(s *session.Session,data []byte) error {
+	p,err := playerWithSession(s)
+	if err != nil{
+		logger.Info("玩家不存在或者已离线")
+	}
+	room := p.room
+	if room == nil || room.isDestroy(){
+		logger.Error("房间已销毁或者已经完结")
+		return errors.New("room is destroy")
+	}
+
+	room.playerOneMoreTimeReq(p.UID())
+	return nil
+}
+
+func (m *Manager)EnvidoComfirmGameReq(s *session.Session,data []byte) error {
+	p,err := playerWithSession(s)
+	if err != nil{
+		logger.Info("玩家不存在或者已离线")
+	}
+	room := p.room
+	if room == nil || room.isDestroy(){
+		logger.Error("房间已销毁或者已经完结")
+		return errors.New("room is destroy")
+	}
+
+	room.playerEnvidoComfirm(p.UID())
+	return nil
+}
+
+func (m *Manager)PktNoFlorGameReq(s *session.Session,data []byte) error {
+	p,err := playerWithSession(s)
+	if err != nil{
+		logger.Info("玩家不存在或者已离线")
+	}
+	room := p.room
+	if room == nil || room.isDestroy(){
+		logger.Error("房间已销毁或者已经完结")
+		return errors.New("room is destroy")
+	}
+
+	room.noFlorReq(p.UID())
+	return nil
+}
+
+
+func (m *Manager)PktFlodGameReq(s *session.Session,data []byte) error {
+
+	p,err := playerWithSession(s)
+	if err != nil{
+		logger.Info("玩家不存在或者已离线")
+	}
+	room := p.room
+	room.playerFlod(p.UID())
+	return nil
+
+}
+
+func (m *Manager)PktEmojiReq(s *session.Session,data []byte) error{
+	p,err := playerWithSession(s)
+	if err != nil{
+		logger.Info("玩家不存在或者已离线")
+	}
+
+	mojiInfo := &pbtruco.EmojiInfo{}
+	err = mojiInfo.Unmarshal(data)
+	if err != nil{
+		logger.Error("unpack emojiinfo error",err)
+	}
+
+	emojiRes := &pbtruco.EmojiInfo{}
+	emojiRes.Uid = p.UID()
+	emojiRes.EmojiId = mojiInfo.EmojiId
+	emojiRes.EmojiText = mojiInfo.EmojiText
+	emojiRes.EmojiType = mojiInfo.EmojiType
+
+	emojiResData,err := emojiRes.Marshal()
+	if err != nil{
+		logger.Error("包装emoji出错")
+	}
+
+	emojiPacket,err := encodePbPacket(PktEmojiRsp,emojiResData)
+	p.room.group.Broadcast("PktEmojiReq",emojiPacket)
 	return nil
 }
 
