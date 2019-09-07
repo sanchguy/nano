@@ -18,8 +18,8 @@ type (
 	Room struct {
 		roomID  string
 		state	constant.RoomStatus
-		players map[int64]*Player
-		leavePlayers map[int64]*Player
+		players map[int64]*Player	//玩家列表
+		leavePlayers map[int64]*Player //离线玩家列表
 		aiPlayer *Player
 		aiPlayerId int64
 		group *nano.Group
@@ -29,30 +29,28 @@ type (
 		creator int64
 		logger *log.Entry
 
-		roundCount int32
-		currentRound *Round
-		score        map[int64]int32
-		transitions  []string
+		roundCount int32 //回合数
+		currentRound *Round //回合对象
 
 		oneMoreTime []int64
 
 		winPlayerId int64
 
-		isNewChartper bool
+		aiTimer *nano.Timer //ai玩家定时器
 
-		aiTimer *nano.Timer
+		actionTimer *nano.Timer //定时检查玩家有没操作
 
-		actionTimer *nano.Timer
+		lostConnectTimer *nano.Timer //玩家断线时间记录
 
-		lostConnectTimer *nano.Timer
+		notActionCount map[int64]int //玩家没操作次数记录
 
-		notActionCount map[int64]int
-
-		playerActionTime map[int64]int64
+		playerActionTime map[int64]int64 //玩家操作时间记录
 
 		heartbeatTime map[int64]int64
 
 		lostConnectCount map[int64]int
+
+		isRoundFinish bool //一回合结束，等待客户端动画播完，防止ai玩家继续操作
 	}
 )
 //NewRoom return new room
@@ -64,7 +62,7 @@ func NewRoom(rid string) *Room {
 		players:map[int64]*Player{},
 		leavePlayers:map[int64]*Player{},
 		createdAt: time.Now().Unix(),
-		score : map[int64]int32{},
+
 		group:nano.NewGroup(uuid.New()),
 		die:make(chan struct{}),
 		logger:log.WithField("room",rid),
@@ -72,10 +70,11 @@ func NewRoom(rid string) *Room {
 		actionTimer:nil,
 		notActionCount:map[int64]int{},
 		playerActionTime: map[int64]int64{},
-		isNewChartper:false,
+
 		aiPlayerId:0,
 		heartbeatTime:map[int64]int64{},
 		lostConnectCount: map[int64]int{},
+		isRoundFinish : false,
 	}
 	r.lostConnectTimer = nano.NewTimer(2,r.checkIsLostConnect)
 	return r
@@ -456,7 +455,7 @@ func (r *Room) newRound() *Round {
 	}
 	r.logger.Infof("playerid1 = %d,playerid2 = %d",playerids[0],playerids[1])
 	round := GetnewRound(playerids[0],playerids[1])
-	r.isNewChartper = true
+
 	return round
 }
 
@@ -523,15 +522,14 @@ func (r *Room) onPlayerAction(actPlayerId int64, action []byte) error {
 		}
 
 		if !r.checkGameWin(){
-			if r.currentRound.checkNewRound() {
+			if r.currentRound.checkNewRound() && !r.isRoundFinish{
+				r.isRoundFinish = true
 				r.syncOneRoundBetResult()
 				time.AfterFunc(5* time.Second, func() {
-					r.currentRound.reSetForNewRound(false)
 					for id := range r.players{
 						r.playerActionTime[id] = time.Now().Unix()
 					}
-					r.syncPlayerFlorInfo(nil)
-					r.syncRoomStatus(nil)
+					r.beginNewRound()
 				})
 
 			}
@@ -558,14 +556,17 @@ func (r *Room)onAiPlayerAction(aiId int64,action string,cardName string)  {
 		r.currentRound.isShowEnvidoPanel = true
 	}
 
-	if !r.checkGameWin(){
-		if r.currentRound.checkNewRound() {
+	if r.currentRound.isFlorFinish && !r.currentRound.isShowFlorPanel{
+		r.syncFlorCompareData()
+		r.currentRound.isShowFlorPanel = true
+	}
 
+	if !r.checkGameWin(){
+		if r.currentRound.checkNewRound() && !r.isRoundFinish{
+			r.isRoundFinish = true
 			r.syncOneRoundBetResult()
 			time.AfterFunc(5* time.Second, func() {
-				r.currentRound.reSetForNewRound(false)
-				r.syncPlayerFlorInfo(nil)
-				r.syncRoomStatus(nil)
+				r.beginNewRound()
 			})
 
 		}
@@ -695,9 +696,13 @@ func (r *Room)checkGameWin() bool {
 			r.logger.Error("wininfo error")
 		}
 		wininfoDataPacket,err := encodePbPacket(PktGameWinRsp,wininfoData)
-		r.group.Broadcast("onWinInfo",wininfoDataPacket)
 
-		r.reportGameResult(Roundwinner)
+		time.AfterFunc(2*time.Second, func() {
+			r.group.Broadcast("onWinInfo",wininfoDataPacket)
+
+			r.reportGameResult(Roundwinner)
+		})
+
 
 		return true
 	}
@@ -734,12 +739,11 @@ func (r *Room)noFlorReq(reqId int64)  {
 		r.syncRoomStatus(nil)
 
 		if !r.checkGameWin(){
-			if r.currentRound.checkNewRound() {
+			if r.currentRound.checkNewRound() && !r.isRoundFinish{
+				r.isRoundFinish = true
 				r.syncOneRoundBetResult()
 				time.AfterFunc(3 * time.Second, func() {
-					r.currentRound.reSetForNewRound(false)
-					r.syncPlayerFlorInfo(nil)
-					r.syncRoomStatus(nil)
+					r.beginNewRound()
 				})
 			}
 		}else {
@@ -750,6 +754,12 @@ func (r *Room)noFlorReq(reqId int64)  {
 		}
 	})
 
+}
+func (r *Room) beginNewRound()  {
+	r.currentRound.reSetForNewRound(false)
+	r.syncPlayerFlorInfo(nil)
+	r.syncRoomStatus(nil)
+	r.isRoundFinish = false
 }
 
 func (r *Room)aiPlay()  {
@@ -922,14 +932,13 @@ func (r *Room)playerFlod(reqId int64){
 	r.syncPlayAction(reqId,"fold")
 	r.syncScore()
 	if !r.checkGameWin(){
+		r.isRoundFinish = true
 		r.syncOneRoundBetResult()
 		time.AfterFunc(5 * time.Second, func() {
-			r.currentRound.reSetForNewRound(false)
 			for id := range r.players{
 				r.playerActionTime[id] = time.Now().Unix()
 			}
-			r.syncPlayerFlorInfo(nil)
-			r.syncRoomStatus(nil)
+			r.beginNewRound()
 		})
 	}else {
 		r.aiTimer.Stop()

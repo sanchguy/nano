@@ -26,9 +26,9 @@ type (
 
 		player2 int64
 
-		handCards map[int64][]*Card
+		handCards map[int64][]*Card //玩家手牌
 
-		tableCards map[int64][]*Card
+		tableCards map[int64][]*Card //玩家桌面的牌
 
 		envidoPoints map[int64]int32
 
@@ -36,7 +36,7 @@ type (
 
 		trucoResult	 []int64
 
-		scores map[int64]int32
+		scores map[int64]int32 //玩家总分数
 
 		currentTurn int64 //当前回合轮到的玩家
 
@@ -48,23 +48,17 @@ type (
 
 		availeableAction []string//当前玩家能使用的押注
 
-		totalTrucoAction string
+		betTrucoActions []string //记录叫过的truco及其高级，后面计算分数用
 
-		betTrucoActions []string
+		betEnvidoActions []string//记录叫过的envido及其高级，后面计算分数用
 
-		betEnvidoActions []string
+		betFlorActions []string //记录叫过的flor及其高级，后面计算分数用
 
-		betFlorActions []string
+		flagTruco bool		//玩家叫了truco（truco玩法状态只有一个为true，而且只能叫下个等级高的）
 
-		totalEnvidoAction string
+		flagRetruco bool    //玩家叫了Retruco，flagTruco会置false
 
-		totalFlorAction string
-
-		flagTruco bool
-
-		flagRetruco bool
-
-		flagValeCuatro bool
+		flagValeCuatro bool	//玩家叫了ValeCuatro，flagRetruco，flagTruco会置false
 
 		flagFlor bool
 
@@ -72,7 +66,7 @@ type (
 
 		flagContraFlorAlResto bool
 
-		hasFlor map[int64]bool
+		hasFlor map[int64]bool	//记录玩家是否上手就有三个相同花色的牌
 
 		flagEnvido bool
 
@@ -80,21 +74,21 @@ type (
 
 		flagFaltaEnvido bool
 
-		isEnvidoFinish bool
+		isEnvidoFinish bool		//envido是否已经玩过
 
-		isShowEnvidoPanel bool
+		isShowEnvidoPanel bool	//是否已经同步过envido的比牌
 
-		isFlorFinish bool
+		isShowFlorPanel bool //是否已经同步过flor的比牌
 
-		isPlayingFlor bool
+		isFlorFinish bool	//flor是否已经玩过
 
-		isTrucoFinish bool
+		isPlayingFlor bool //正在玩flor
 
-		isTrucoHasNotQuiero bool
+		isTrucoFinish bool //truco玩到最高级了
 
-		isTrucoCompareBegin bool
+		isTrucoHasNotQuiero bool	//在玩truco，但是玩家还没操作
 
-		pardas bool
+		isTrucoCompareBegin bool	//在玩truco，玩家选择了跟，开始比牌阶段
 
 		roundStartTime int64
 
@@ -110,7 +104,7 @@ type (
 
 		roundCount int32
 
-		envidoComfirm []int64
+		envidoComfirm []int64 //同步了envido的比牌信息，等待玩家点确认按钮
 
 		preActionPlayer int64
 
@@ -118,21 +112,17 @@ type (
 
 		checkNewRoundState bool
 
-		foldPlayerId int64
+		foldPlayerId int64	//谁选择了弃牌
 
-		winPlayerId int64
+		winPlayerId int64	//比牌赢的玩家id
 
-		oneRoundTrucoTime int32
-
-		oneRoundEnvidoTime int32
-
-		oneRoundFlorTime int32
-
-		oneRoundTrucoWinScore map[int64]int32
+		oneRoundTrucoWinScore map[int64]int32	//记录玩家玩truco各自赢得的分数
 
 		oneRoundEnvidoWinScore map[int64]int32
 
 		oneRoundFlorWinScore map[int64]int32
+
+		betStateInNoWant string
 
 	}
 )
@@ -144,9 +134,9 @@ func GetnewRound(p1 int64,p2 int64) *Round {
 		handCards:		 map[int64][]*Card{},
 		tableCards:      map[int64][]*Card{},
 		scores:          map[int64]int32{},
+		trucoResult	:[]int64{},
 		envidoPoints: map[int64]int32{},
 		florPoints : map[int64]int32{},
-		trucoResult	:[]int64{},
 		currentAction:	 "init",
 		aiCacheAction:	 "init",
 		availeableAction:[]string{},
@@ -159,8 +149,7 @@ func GetnewRound(p1 int64,p2 int64) *Round {
 		isTrucoHasNotQuiero:true,
 		isTrucoCompareBegin:false,
 		isShowEnvidoPanel:false,
-		pardas:          false,
-
+		isShowFlorPanel:false,
 		flagRetruco:     false,
 		flagValeCuatro:  false,
 		flagFlor:        false,
@@ -172,9 +161,6 @@ func GetnewRound(p1 int64,p2 int64) *Round {
 		roundStartTime:time.Now().Unix(),
 		roundEndTime:0,
 		roundCount:0,
-		totalTrucoAction:"",
-		totalEnvidoAction:"",
-		totalFlorAction:"",
 		betTrucoActions:[]string{},
 		betEnvidoActions : []string{},
 
@@ -187,17 +173,13 @@ func GetnewRound(p1 int64,p2 int64) *Round {
 
 		preActionPlayCard : "",
 
-		oneRoundTrucoTime : 0,
-
-		oneRoundEnvidoTime : 0,
-
-		oneRoundFlorTime : 0,
-
 		oneRoundTrucoWinScore : map[int64]int32{},
 
 		oneRoundEnvidoWinScore : map[int64]int32{},
 
 		oneRoundFlorWinScore :map[int64]int32{},
+
+		betStateInNoWant : "",
 
 	}
 
@@ -254,9 +236,9 @@ func (r *Round) returnValueComplete(value string) string {
 func (r *Round)reSetForNewRound(oneMoreGame bool)  {
 
 	r.tableCards=      map[int64][]*Card{}
+	r.trucoResult	= []int64{}
 	r.envidoPoints=  map[int64]int32{}
 	r.florPoints = map[int64]int32{}
-	r.trucoResult	= []int64{}
 	r.currentAction= 	 "init"
 	r.aiCacheAction=	"init"
 	r.availeableAction= []string{}
@@ -269,8 +251,8 @@ func (r *Round)reSetForNewRound(oneMoreGame bool)  {
 	r.flagEnvido=     false
 	r.flagFaltaEnvido=  false
 	r.flagRealEnvido= 	 false
-	r.pardas=        false
 	r.isShowEnvidoPanel = false
+	r.isShowFlorPanel = false
 	r.isEnvidoFinish = false
 	r.isFlorFinish = false
 	r.isTrucoFinish = false
@@ -279,21 +261,13 @@ func (r *Round)reSetForNewRound(oneMoreGame bool)  {
 	r.isPlayingFlor = false
 	r.hasFlor = map[int64]bool{}
 	r.roundCount += 1
-	r.totalTrucoAction = ""
-	r.totalEnvidoAction = ""
-	r.totalFlorAction = ""
 	r.betTrucoActions = []string{}
 	r.betEnvidoActions = []string{}
 	r.betFlorActions = []string{}
 	r.envidoComfirm = []int64{}
 	r.checkNewRoundState = false
 	r.preActionPlayCard = ""
-
-	r.oneRoundTrucoTime = 0
-
-	r.oneRoundEnvidoTime = 0
-
-	r.oneRoundFlorTime = 0
+	r.betStateInNoWant = ""
 
 	r.oneRoundTrucoWinScore = map[int64]int32{}
 
@@ -405,6 +379,7 @@ func (r *Round)play(playerid int64,action string,value string)  {
 			//r.currentTurn = winplayer
 			r.isPlayingFlor = false
 			r.isFlorFinish = true
+			r.isShowFlorPanel = true
 			r.reSetTrucoFlag()
 			r.reSetEnvidoFlag()
 
@@ -418,16 +393,18 @@ func (r *Round)play(playerid int64,action string,value string)  {
 			r.flagRealEnvido = false
 			r.flagFaltaEnvido = false
 			r.isEnvidoFinish = true
-			r.isShowEnvidoPanel = true
+			//r.isShowEnvidoPanel = true
 			r.currentAction = "init"
 			r.aiCacheAction = "init"
 			r.changeCurrentTurn(playerid)
 			r.reSetTrucoFlag()
+			r.setCurrentBetStateInNoWant("envido")
 		}else if r.flagTruco || r.flagRetruco || r.flagValeCuatro{
 			//start new Round
 			r.calculateScoreTruco(action,r.getOtherPlayer(playerid))
 			r.winPlayerId = r.getOtherPlayer(playerid)
 			r.checkNewRoundState = true
+			r.setCurrentBetStateInNoWant("truco")
 			return
 		}else if r.flagFlor || r.flagContraFlor || r.flagContraFlorAlResto{
 			r.comprareFlor(action)
@@ -436,6 +413,7 @@ func (r *Round)play(playerid int64,action string,value string)  {
 			r.reSetTrucoFlag()
 			r.reSetEnvidoFlag()
 			r.changeCurrentTurn(playerid)
+			r.setCurrentBetStateInNoWant("flor")
 		}
 		//r.switchPlayer(playerid)
 	}else {
@@ -538,15 +516,19 @@ func (r *Round)setActionState(action string,playerId int64)  {
 }
 
 func (r *Round) getCurrentBetState() string {
-	currentBet := ""
+
 	if(r.flagTruco || r.flagRetruco || r.flagValeCuatro){
-		currentBet = "truco"
+		r.betStateInNoWant = "truco"
 	}else if(r.flagEnvido || r.flagRealEnvido || r.flagFaltaEnvido){
-		currentBet = "envido"
+		r.betStateInNoWant = "envido"
 	}else if(r.flagFlor || r.flagContraFlor || r.flagContraFlorAlResto){
-		currentBet = "flor"
+		r.betStateInNoWant = "flor"
 	}
-	return currentBet
+	return r.betStateInNoWant
+}
+func (r *Round) setCurrentBetStateInNoWant(bet string)  {
+	r.betStateInNoWant = bet;
+
 }
 
 
@@ -784,9 +766,6 @@ func (r *Round)compareEnvido(pid int64, oid int64) int64 {
 
 	ienvido := r.calculateEnvido(pid,iAllCards)
 	otherEnvido := r.calculateEnvido(oid,oAllCards)
-
-	//r.envidoPoints[pid] = ienvido
-	//r.envidoPoints[oid] = otherEnvido
 
 	if ienvido > otherEnvido{
 		return pid
