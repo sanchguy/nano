@@ -517,17 +517,17 @@ func (r *Round)setActionState(action string,playerId int64)  {
 
 func (r *Round) getCurrentBetState() string {
 
-	if(r.flagTruco){
+	if r.flagTruco{
 		r.betStateInNoWant = "truco"
-	}else if(r.flagRetruco){
+	}else if r.flagRetruco {
 		r.betStateInNoWant = "retruco"
-	}else if(r.flagValeCuatro){
+	}else if r.flagValeCuatro {
 		r.betStateInNoWant = "valecuatro"
 	}
 
-	if(r.flagEnvido || r.flagRealEnvido || r.flagFaltaEnvido){
+	if r.flagEnvido || r.flagRealEnvido || r.flagFaltaEnvido{
 		r.betStateInNoWant = "envido"
-	}else if(r.flagFlor || r.flagContraFlor || r.flagContraFlorAlResto){
+	}else if r.flagFlor || r.flagContraFlor || r.flagContraFlorAlResto{
 		r.betStateInNoWant = "flor"
 	}
 	return r.betStateInNoWant
