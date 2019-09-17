@@ -183,6 +183,7 @@ func GetAiPathSystem() string {
 	system := runtime.GOOS
 	var path string
 	if system == "windows" {
+		//path = "C:\\conf\\trucoAI.json"
 		path = ".\\conf\\trucoAI.json"
 	} else {
 		path = "./conf/trucoAI.json"

@@ -51,6 +51,8 @@ type (
 		lostConnectCount map[int64]int
 
 		isRoundFinish bool //一回合结束，等待客户端动画播完，防止ai玩家继续操作
+
+		isPlayEnvidoOrFlorPoint bool //是否要播放envido或者flor的比点窗口，是就延迟AI出牌
 	}
 )
 //NewRoom return new room
@@ -79,7 +81,7 @@ func NewRoom(rid string) *Room {
 	r.lostConnectTimer = nano.NewTimer(2,r.checkIsLostConnect)
 	return r
 }
-
+//处理心跳函数
 func (r *Room)doHeartbeat(s *session.Session,playerId int64,data []byte) error {
 	req := &pbtruco.HeartbeatReq{}
 	err := req.Unmarshal(data)
@@ -101,7 +103,7 @@ func (r *Room)doHeartbeat(s *session.Session,playerId int64,data []byte) error {
 
 	return s.Response(sendData)
 }
-
+//坚持玩家是否离线（15秒没心跳就判断为离线）
 func (r *Room)checkIsLostConnect()  {
 	for id,heartbeattime := range r.heartbeatTime{
 		if time.Now().Unix() - heartbeattime > 15 * 1000 {
@@ -134,7 +136,9 @@ func (r *Room)checkIsLostConnect()  {
 		}
 	}
 }
-
+/**
+*玩家登录 第一个登录玩家创建房间
+*/
 func (r *Room) playerJoin(s *session.Session,isReJoin bool){
 	uid := s.UID()
 	var(
@@ -207,10 +211,10 @@ func (r *Room)aiPlayerJoin(ai *Player)  {
 	r.checkStartRoom()
 
 	//time.AfterFunc(3 * time.Second,r.aiPlay)
-	r.aiTimer = nano.NewTimer(3*time.Second,r.aiPlay)
+	r.aiTimer = nano.NewTimer(1 * time.Second,r.aiPlay)
 
 }
-
+//断线重连同步房间状态
 func (r *Room)checkResetRoom(s *session.Session)  {
 	//response
 	res := &pbtruco.PlayerInfoRsp{}
@@ -243,7 +247,7 @@ func (r *Room)checkResetRoom(s *session.Session)  {
 	r.syncRoomStatus(s)
 
 }
-
+//创建房间
 func (r *Room)checkStartRoom()  {
 	logger.Infof("房间玩家数量 = %d",len(r.players))
 	if len(r.players) == 2 {
@@ -279,12 +283,12 @@ func (r *Room)checkStartRoom()  {
 
 	}
 }
-
+//同步房间信息，各种系统，基本玩家每个操作都要同步一次
 func (r *Room) syncRoomStatus(s *session.Session)  {
 
 	r.logger.Info("syncRoomStatus~~~~~~~~~~~")
-	var tableScore = &pbtruco.ScoreInfo{}
-	var tablePoker = &pbtruco.TableInfo{}
+	var tableScore = &pbtruco.ScoreInfo{}	//分数
+	var tablePoker = &pbtruco.TableInfo{}	//桌面的牌，就是打出去的牌
 	for _,p := range r.players{
 		//cards
 		var cards []string
@@ -385,7 +389,7 @@ func (r *Room) syncScore()  {
 	tableScoreDataPacket,err := encodePbPacket(PktGameSyncScoreRsp,tableScoreData)
 	r.group.Broadcast("onPktGameSetPointRsp",tableScoreDataPacket)
 }
-
+//游戏开始同步玩家是否有flor，上手三张同花色的牌
 func (r *Room)syncPlayerFlorInfo(s *session.Session)  {
 	var flors = &pbtruco.FlorInfo{}
 	for id,flor := range r.currentRound.hasFlor{
@@ -407,7 +411,7 @@ func (r *Room)syncPlayerFlorInfo(s *session.Session)  {
 	}
 
 }
-
+//检测玩家是否都准备完毕，开始发牌
 func (r *Room) checkStart() {
 	s := r.state
 	if s == constant.RoomStatusPlaying{
@@ -458,7 +462,7 @@ func (r *Room) newRound() *Round {
 
 	return round
 }
-
+//玩家多久没出牌帮他出一张(当成AI，玩家如果自己操作了，把ai的状态去掉)
 func (r *Room)checkNotAction()  {
 	if r.aiPlayer != nil{
 		return
@@ -492,9 +496,10 @@ func (r *Room)checkNotAction()  {
 		}
 	}
 }
-
+//玩家每个操作发的协议会来到这里
 func (r *Room) onPlayerAction(actPlayerId int64, action []byte) error {
 
+	//如果之前帮玩家用ai出牌，玩家自己操作回来清楚AI状态
 	r.playerActionTime[actPlayerId] = time.Now().Unix()
 	if r.aiPlayerId == actPlayerId{
 		r.aiPlayerId = 0
@@ -509,23 +514,47 @@ func (r *Room) onPlayerAction(actPlayerId int64, action []byte) error {
 		//这里暂时没来到
 		//r.currentRound.reSetForNewRound(false)
 	}else {
-
+		//游戏主逻辑，回合逻辑都在这里面
 		r.currentRound.play(actPlayerId,actionData.Action,actionData.Card)
-
+		//处理完回合，同步玩家的操作
 		r.syncPlayAction(actPlayerId,actionData.Action)
-
+		//同步房间信息，里面包含回合里玩法的状态切换
 		r.syncRoomStatus(nil)
 
+		if r.checkFirstGameWin(){
+			//同步一回合各自玩法的分数
+			r.syncOneRoundBetResult()
+			time.AfterFunc(3 * time.Second, func() {
+				r.checkGameWin()
+			})
+			return nil
+		}
+		//是不是在玩Envido，是就要同步envido输赢的分数
 		if r.currentRound.isEnvidoFinish && !r.currentRound.isShowEnvidoPanel{
+			r.isPlayEnvidoOrFlorPoint = true
 			r.syncEnvidoFinishData()
 			r.currentRound.isShowEnvidoPanel = true
 		}
-
+		//是不是在玩flor，是就要同步flor输赢的分数
+		if r.currentRound.isFlorFinish && !r.currentRound.isShowFlorPanel{
+			r.isPlayEnvidoOrFlorPoint = true
+			r.syncFlorCompareData()
+			r.currentRound.isShowFlorPanel = true
+		}
+		//先判断是否有玩家赢了
 		if !r.checkGameWin(){
+			//再判断是否可以开始新局
 			if r.currentRound.checkNewRound() && !r.isRoundFinish{
 				r.isRoundFinish = true
+				timeDelay  := 5 * time.Second
+				//之前玩过envido或者flor，时间延迟一点
+				if r.currentRound.isEnvidoFinish || r.currentRound.isFlorFinish {
+					timeDelay = 10 * time.Second
+				}
+				r.isPlayEnvidoOrFlorPoint = true
+				//同步一回合各自玩法的分数
 				r.syncOneRoundBetResult()
-				time.AfterFunc(5* time.Second, func() {
+				time.AfterFunc(timeDelay, func() {
 					for id := range r.players{
 						r.playerActionTime[id] = time.Now().Unix()
 					}
@@ -543,20 +572,33 @@ func (r *Room) onPlayerAction(actPlayerId int64, action []byte) error {
 	}
 	return nil
 }
-
+//AI出牌逻辑，跟玩家一样的同步协议
 func (r *Room)onAiPlayerAction(aiId int64,action string,cardName string)  {
+	r.playerActionTime[aiId] = time.Now().Unix()
+
 	r.currentRound.play(aiId,action,cardName)
 
 	r.syncPlayAction(aiId,action)
 
 	r.syncRoomStatus(nil)
 
+	if r.checkFirstGameWin(){
+		//同步一回合各自玩法的分数
+		r.syncOneRoundBetResult()
+		time.AfterFunc(3 * time.Second, func() {
+			r.checkGameWin()
+		})
+		return
+	}
+
 	if r.currentRound.isEnvidoFinish && !r.currentRound.isShowEnvidoPanel{
+		r.isPlayEnvidoOrFlorPoint = true
 		r.syncEnvidoFinishData()
 		r.currentRound.isShowEnvidoPanel = true
 	}
 
 	if r.currentRound.isFlorFinish && !r.currentRound.isShowFlorPanel{
+		r.isPlayEnvidoOrFlorPoint = true
 		r.syncFlorCompareData()
 		r.currentRound.isShowFlorPanel = true
 	}
@@ -564,8 +606,13 @@ func (r *Room)onAiPlayerAction(aiId int64,action string,cardName string)  {
 	if !r.checkGameWin(){
 		if r.currentRound.checkNewRound() && !r.isRoundFinish{
 			r.isRoundFinish = true
+			timeDelay  := 5 * time.Second
+			if r.currentRound.isEnvidoFinish || r.currentRound.isFlorFinish {
+				timeDelay = 10 * time.Second
+			}
+			r.isPlayEnvidoOrFlorPoint = true
 			r.syncOneRoundBetResult()
-			time.AfterFunc(5* time.Second, func() {
+			time.AfterFunc(timeDelay , func() {
 				r.beginNewRound()
 			})
 
@@ -604,7 +651,7 @@ func (r *Room)syncPlayAction(actId int64,action string)  {
 	}
 }
 
-
+//同步envido的输赢分数
 func (r *Room) syncEnvidoFinishData()  {
 	envidoPoints := &pbtruco.EnvidoPointsInfo{}
 	for pid,envidoPoint := range r.currentRound.envidoPoints{
@@ -622,9 +669,13 @@ func (r *Room) syncEnvidoFinishData()  {
 	if err != nil{
 		r.logger.Error("sendEnvidoPacket err")
 	}
-	r.group.Broadcast("onAlertEnvidoPoints",envidoPointsDataPacket)
-}
+	time.AfterFunc(2*time.Second, func() {
+		r.group.Broadcast("onAlertEnvidoPoints",envidoPointsDataPacket)
+		r.isPlayEnvidoOrFlorPoint = false
+	})
 
+}
+//同步flor的输赢分数
 func (r *Room) syncFlorCompareData()  {
 	florPoints := &pbtruco.FlorPointsInfo{}
 	for pid,florPoint := range r.currentRound.florPoints{
@@ -642,18 +693,22 @@ func (r *Room) syncFlorCompareData()  {
 	if err != nil{
 		r.logger.Error("florPointsDataPacket err")
 	}
-	r.group.Broadcast("onAlertFlorPoints",florPointsDataPacket)
-}
 
+	time.AfterFunc(2*time.Second, func() {
+		r.group.Broadcast("onAlertFlorPoints", florPointsDataPacket)
+		r.isPlayEnvidoOrFlorPoint = false
+	})
+}
+//同步一局完成后各自玩法的分数
 func (r *Room)syncOneRoundBetResult()  {
 	oneRoundBetResult := &pbtruco.OneRoundBetResult{}
 	for playerid := range r.players{
 		playerBetResult := &pbtruco.BetResult{
 			PlayerId:playerid,
-			TrucoScore:r.currentRound.oneRoundTrucoWinScore[playerid],
-			EnvidoScore:r.currentRound.oneRoundEnvidoWinScore[playerid],
-			FlorScore:r.currentRound.oneRoundFlorWinScore[playerid],
-			TotalScore:r.currentRound.scores[playerid],
+			TrucoScore:r.currentRound.oneRoundTrucoWinScore[playerid],			//玩truco各自输赢的分数
+			EnvidoScore:r.currentRound.oneRoundEnvidoWinScore[playerid],		//玩envido各自输赢的分数
+			FlorScore:r.currentRound.oneRoundFlorWinScore[playerid],			//玩flor各自输赢的分数
+			TotalScore:r.currentRound.scores[playerid],							//玩回合总的分数
 		}
 		oneRoundBetResult.OneRoundBet = append(oneRoundBetResult.OneRoundBet,playerBetResult)
 	}
@@ -664,10 +719,26 @@ func (r *Room)syncOneRoundBetResult()  {
 
 	oneRoundPacket,err := encodePbPacket(PktGameOneRoundResult,oneRoundData)
 
-	time.AfterFunc(2 *time.Second, func() {
+	timeDelay  := 3 * time.Second
+	if r.currentRound.isEnvidoFinish || r.currentRound.isFlorFinish {
+		timeDelay = 6 * time.Second
+	}
+	time.AfterFunc(timeDelay, func() {
 		r.group.Broadcast("PktGameOneRoundResult",oneRoundPacket)
+		r.isPlayEnvidoOrFlorPoint = false
 	})
 
+
+}
+
+func (r *Room)checkFirstGameWin() bool {
+	player1score := r.currentRound.scores[r.currentRound.player1]
+	player2score := r.currentRound.scores[r.currentRound.player2]
+	if player1score >= 30 || player2score >= 30{
+		return true
+	}else {
+		return false
+	}
 }
 
 func (r *Room)checkGameWin() bool {
@@ -697,7 +768,7 @@ func (r *Room)checkGameWin() bool {
 		}
 		wininfoDataPacket,err := encodePbPacket(PktGameWinRsp,wininfoData)
 
-		time.AfterFunc(2*time.Second, func() {
+		time.AfterFunc(3*time.Second, func() {
 			r.group.Broadcast("onWinInfo",wininfoDataPacket)
 
 			r.reportGameResult(Roundwinner)
@@ -709,7 +780,7 @@ func (r *Room)checkGameWin() bool {
 	return false
 
 }
-
+//现在没用这个函数
 func (r *Room)playerOneMoreTimeReq(reqId int64)  {
 	r.oneMoreTime = append(r.oneMoreTime,reqId)
 	if len(r.oneMoreTime) == 2 || r.aiPlayer != nil{
@@ -722,17 +793,18 @@ func (r *Room)playerOneMoreTimeReq(reqId int64)  {
 
 	}
 }
-
+//同步envido输赢分数客户端会弹个框，要他发确认协议回来，防止AI先出牌
 func (r *Room)playerEnvidoComfirm(reqId int64)  {
 	r.currentRound.envidoComfirm = append(r.currentRound.envidoComfirm,reqId)
 }
-
+//当一个玩家提前flor时，客户端自动判断自己有没有flor，没有就直接发协议过来帮他操作
 func (r *Room)noFlorReq(reqId int64)  {
 
 	r.currentRound.play(reqId,"no-quiero","")
 
 	r.syncPlayAction(reqId,"no-quiero")
 
+	r.isPlayEnvidoOrFlorPoint = true
 	r.syncFlorCompareData()
 
 	time.AfterFunc(3* time.Second, func() {
@@ -741,8 +813,14 @@ func (r *Room)noFlorReq(reqId int64)  {
 		if !r.checkGameWin(){
 			if r.currentRound.checkNewRound() && !r.isRoundFinish{
 				r.isRoundFinish = true
+
+				timeDelay  := 7 * time.Second
+				if r.currentRound.isEnvidoFinish || r.currentRound.isFlorFinish {
+					timeDelay = 9* time.Second
+				}
+				r.isPlayEnvidoOrFlorPoint = true
 				r.syncOneRoundBetResult()
-				time.AfterFunc(3 * time.Second, func() {
+				time.AfterFunc(timeDelay, func() {
 					r.beginNewRound()
 				})
 			}
@@ -761,14 +839,18 @@ func (r *Room) beginNewRound()  {
 	r.syncRoomStatus(nil)
 	r.isRoundFinish = false
 }
-
+//AI出牌逻辑
 func (r *Room)aiPlay()  {
 
 	if r.currentRound.currentTurn == r.aiPlayerId{
-		playerActionTimeCount := time.Now().Unix() - r.playerActionTime[r.getOtherPlayerId(r.aiPlayerId)]
-		//logger.Debug("aiplay~~~~~~ playerActionTimeCount = ",playerActionTimeCount,time.Now().Unix(),r.playerActionTime[r.getOtherPlayerId(r.aiPlayerId)])
-		randomDelay := rand.Int63n(5-2)+2
-		if(playerActionTimeCount < randomDelay){
+		//playerActionTimeCount := time.Now().Unix() - r.playerActionTime[r.getOtherPlayerId(r.aiPlayerId)]
+		playerActionTimeCount := time.Now().Unix() - r.playerActionTime[r.currentRound.preActionPlayer]
+		randomDelay := rand.Int63n(6-3)+3
+		if playerActionTimeCount < randomDelay {
+			return
+		}
+
+		if r.isPlayEnvidoOrFlorPoint {
 			return
 		}
 		if r.currentRound.isEnvidoFinish{
@@ -780,10 +862,10 @@ func (r *Room)aiPlay()  {
 		logger.Debug("room aiPlay~~~~~~",r.currentRound.currentTurn,r.currentRound.aiCacheAction,r.currentRound.isPlayingFlor)
 		hasFlor := r.currentRound.hasFlor[r.aiPlayerId]
 		if hasFlor && !r.currentRound.isFlorFinish && r.currentRound.aiCacheAction == "init"{
-			logger.Debug("room aiPlay~~~~~~ hasFlor play first")
-			r.onAiPlayerAction(r.aiPlayerId,"flor","")
-			return
-		}else if hasFlor && !r.currentRound.isFlorFinish{
+		//	logger.Debug("room aiPlay~~~~~~ hasFlor play first")
+		//	r.onAiPlayerAction(r.aiPlayerId,"flor","")
+		//	return
+		//}else if hasFlor && !r.currentRound.isFlorFinish{
 			var action string
 			florActions := []string{"flor","ContraFlor","ContraFlorAlResto"}
 			switch r.currentRound.aiCacheAction {
@@ -906,7 +988,7 @@ func (r *Room)aiPlay()  {
 	}
 }
 
-
+//玩家离线
 func (r *Room) onPlayerExit(s *session.Session,isDisconnect bool) {
 	uid := s.UID()
 	r.group.Leave(s)
@@ -925,7 +1007,7 @@ func (r *Room) onPlayerExit(s *session.Session,isDisconnect bool) {
 		r.destroy()
 	}
 }
-
+//玩家放弃此局
 func (r *Room)playerFlod(reqId int64){
 
 	r.currentRound.playerFold(reqId)
@@ -933,8 +1015,13 @@ func (r *Room)playerFlod(reqId int64){
 	r.syncScore()
 	if !r.checkGameWin(){
 		r.isRoundFinish = true
+		timeDelay  := 5 * time.Second
+		if r.currentRound.isEnvidoFinish || r.currentRound.isFlorFinish {
+			timeDelay = 7* time.Second
+		}
+		r.isPlayEnvidoOrFlorPoint = true
 		r.syncOneRoundBetResult()
-		time.AfterFunc(5 * time.Second, func() {
+		time.AfterFunc(timeDelay, func() {
 			for id := range r.players{
 				r.playerActionTime[id] = time.Now().Unix()
 			}

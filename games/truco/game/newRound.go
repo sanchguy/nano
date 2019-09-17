@@ -203,7 +203,7 @@ func GetnewRound(p1 int64,p2 int64) *Round {
 
 	return r
 }
-
+//一回合打完切换玩家
 func (r *Round) switchPlayer(pid int64) int64 {
 	if r.player1 == pid {
 		r.currentTurn = r.player2
@@ -213,11 +213,11 @@ func (r *Round) switchPlayer(pid int64) int64 {
 	return r.player1
 
 }
-
+//返回牌的花色
 func (r *Round) returnSuit(value string) string {
 	return strings.Split(value, "_")[0]
 }
-
+//返回牌的字面值
 func (r *Round) returnNumber(value string) int32 {
 	num, err := strconv.Atoi(strings.Split(value, "_")[1])
 	if err != nil {
@@ -225,7 +225,7 @@ func (r *Round) returnNumber(value string) int32 {
 	}
 	return int32(num)
 }
-
+//返回牌的真实分数
 func (r *Round) returnValueComplete(value string) string {
 	s := ""
 	s += strconv.Itoa(int(r.returnNumber(value)))
@@ -274,13 +274,13 @@ func (r *Round)reSetForNewRound(oneMoreGame bool)  {
 	r.oneRoundEnvidoWinScore = map[int64]int32{}
 
 	r.oneRoundFlorWinScore = map[int64]int32{}
-
+	//谁上一局放弃了，下一局就是另外的玩家先手
 	if r.foldPlayerId != 0 {
 		r.currentHand = r.getOtherPlayer(r.foldPlayerId)
 		r.currentTurn = r.currentHand
 		r.foldPlayerId = 0
 	}else {
-
+		//否则上一局赢的先手
 		r.currentTurn = r.winPlayerId
 	}
 
@@ -291,22 +291,25 @@ func (r *Round)reSetForNewRound(oneMoreGame bool)  {
 		r.scores = map[int64]int32{}
 		r.roundStartTime = time.Now().Unix()
 	}
-
+	//新局什么操作都可以
 	r.availeableAction = r.calculateAvailableAction(r.currentAction)
 
+	//发牌
 	deck := NewDeck().sorted()
 	r.handCards[r.player1] = []*Card{deck[0], deck[2], deck[4]}
 	r.handCards[r.player2] = []*Card{deck[1], deck[3], deck[5]}
-
+	//检查是否有flor
 	r.hasFlor[r.player1] = r.checkHasFlor(r.player1)
 	r.hasFlor[r.player2] = r.checkHasFlor(r.player2)
 }
-
+//检查是否可以开始新局
 func (r *Round)checkNewRound() bool {
+	//大家都出完牌了
 	if len(r.tableCards[r.player1]) == 3 && len(r.tableCards[r.player1]) == len(r.tableCards[r.player2]){
 		//r.reSetForNewRound(false)
 		return true
 	}
+	//或者在truco出了两轮牌都赢了或者不跟
 	if r.checkNewRoundState{
 		//r.reSetForNewRound(false)
 		return true
@@ -314,33 +317,40 @@ func (r *Round)checkNewRound() bool {
 	return false
 
 }
-
+//回合主要逻辑
 func (r *Round)play(playerid int64,action string,value string)  {
 	logger.Info("newRound play~~~~",playerid,action,value)
+	//AI要用的
 	r.aiCacheAction = action
 	r.preActionPlayer = playerid
+	//根据当前玩法设置各自状态
 	r.setActionState(action,playerid)
+	//出牌操作
 	if action == "playcard"{
 		r.preActionPlayCard = value
+		//把牌出到桌上
 		r.setTable(value,playerid)
+		//比牌
 		cardWin := r.compareTable()
-
+		//检查出牌有没有赢了,赢了就保存谁赢了，把开始新局的状态至上true，返回
 		winplayer := r.checkTrucoResult(action)
 		if winplayer != 0{
 			r.winPlayerId = winplayer
 			r.checkNewRoundState = true
 			return
 		}
-
+		//不是平局，谁赢下一回回合先手
 		if cardWin != 0{
 			r.currentTurn = cardWin
 			if r.flagTruco || r.flagRetruco || r.flagValeCuatro {
+				//一轮比牌结束状态
 				r.isTrucoCompareBegin = false
 			}
 		}else {
+			//平局换人
 			r.switchPlayer(playerid)
 		}
-
+	//玩家选择了跟，
 	}else if action == "quiero"{
 		if r.flagEnvido || r.flagRealEnvido || r.flagFaltaEnvido{
 			winPlayer := r.compareEnvido(playerid,r.getOtherPlayer(playerid))

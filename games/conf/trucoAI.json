@@ -2,11 +2,11 @@
   "play": [
     {
       "action": "playcard",
-      "rate": 60
+      "rate": 50
     },
     {
       "action": "truco",
-      "rate": 50
+      "rate": 80
     },
     {
       "action": "envido",
@@ -14,11 +14,11 @@
     },
     {
       "action": "real",
-      "rate": 50
+      "rate": 35
     },
     {
       "action": "falta",
-      "rate": 50
+      "rate": 30
     }
   ],
   "truco": [
@@ -62,25 +62,25 @@
   "envido": [
     {
       "action": "quiero",
-      "rate": 50
+      "rate": 70
     },
     {
       "action": "no-quiero",
-      "rate": 50
+      "rate": 70
     },
     {
       "action": "real",
-      "rate": 50
+      "rate": 65
     },
     {
       "action": "falta",
-      "rate": 50
+      "rate": 10
     }
   ],
   "real": [
     {
       "action": "quiero",
-      "rate": 50
+      "rate": 70
     },
     {
       "action": "no-quiero",
@@ -88,7 +88,7 @@
     },
     {
       "action": "falta",
-      "rate": 50
+      "rate": 5
     }
   ],
   "falta": [
@@ -104,11 +104,11 @@
   "flor": [
     {
       "action": "quiero",
-      "rate": 50
+      "rate": 60
     },
     {
       "action": "no-quiero",
-      "rate": 50
+      "rate": 60
     },
     {
       "action": "ContraFlor",
@@ -116,21 +116,21 @@
     },
     {
       "action": "ContraFlorAlResto",
-      "rate": 30
+      "rate": 20
     }
   ],
   "ContraFlor": [
     {
       "action": "quiero",
-      "rate": 50
+      "rate": 55
     },
     {
       "action": "no-quiero",
-      "rate": 50
+      "rate": 55
     },
     {
       "action": "ContraFlorAlResto",
-      "rate": 30
+      "rate": 10
     }
   ],
   "ContraFlorAlResto": [
